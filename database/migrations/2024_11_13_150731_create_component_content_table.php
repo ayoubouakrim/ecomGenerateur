@@ -29,7 +29,7 @@ return new class extends Migration
 
             $table->foreign('userInput_id')
                   ->references('id')
-                  ->on('userInput')
+                  ->on('user_input')
                   ->onDelete('cascade');
         });
     }

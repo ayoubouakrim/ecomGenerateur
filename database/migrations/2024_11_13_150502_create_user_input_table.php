@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('color1');
             $table->string('color2');
             $table->string('color3');
-            $table->unsignedBigInteger('template-id');
+            $table->unsignedBigInteger('template_id');
             $table->timestamps();
 
 
