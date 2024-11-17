@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\InputUserController;
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('login');
-});
+//login
+Route::get('/login', [LoginController::class, 'show'])->name('login.show');
+Route::post('/login', [LoginController::class, 'login'])->name('login');
+//logout
+Route::get('/logout', [LoginController::class, 'logout'])->name('login.logout');
 
+
+//inputUser
+Route::get('/inputUser', [InputUserController::class, 'index'])->name('inputUser');
