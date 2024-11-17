@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/styles.css') }}" >
 </head>
 <body>
-    <div class="container">
+    <div class="container sign-up-mode">
         <div class="forms-container">
             <div class="signin-signup">
                 <form action="" method="POST" class="sign-in-form">
@@ -32,15 +32,15 @@
                     <h2 class="title">Sign up</h2>
                     <div class="input-field">
                         <i class="pi pi-user"></i>
-                        <input type="text" placeholder="First name" />
+                        <input type="text" placeholder="First name" name="first_name"/>
                     </div>
                     <div class="input-field">
                         <i class="pi pi-user"></i>
-                        <input type="text" placeholder="Last Name"/>
+                        <input type="text" placeholder="Last Name" name="last_name"/>
                     </div>
                     <div class="input-field">
                         <i class="pi pi-phone"></i>
-                        <input type="text" placeholder="Phone"/>
+                        <input type="text" placeholder="Phone" name="phone"/>
                     </div>
                     <div class="input-field">
                         <i class="pi pi-user"></i>
