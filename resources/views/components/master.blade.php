@@ -17,12 +17,11 @@
 </head>
 <body>
 
-    @include('partials.nav')
+{{--    @include('partials.nav')--}}
 
 
 
 
-<main>
     <div>
         <div class="row my-3">
             @include('partials.flashbag')
@@ -31,7 +30,6 @@
         {{ $slot }}
     </div>
 
-</main>
 <script>
     function toggleSignUpMode() {
         document.querySelector('.container').classList.toggle('sign-up-mode');

@@ -1,5 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 * {
     margin: 0;
     padding: 0;
@@ -11,12 +16,19 @@ input {
     font-family: "PT Sans", sans-serif;
 }
 
+/*.container {*/
+/*    position: relative;*/
+/*    width: 100%;*/
+/*    background-color: #fff;*/
+/*    min-height: 100vh;*/
+/*    overflow: hidden;*/
+/*    margin: 0 !important;*/
+/*    padding: 0 !important;*/
+
+/*}*/
 .container {
-    position: relative;
-    width: 100%;
-    background-color: #fff;
-    min-height: 100vh;
-    overflow: hidden;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 .forms-container {
