@@ -7,6 +7,7 @@
 @push('scripts')
     <script src="{{ asset('js/formulaire.js') }}"></script>
 @endpush
+@auth
 <x-master title='InputUser'>
 
     <div class="background"></div>
@@ -177,3 +178,4 @@
     </main>
 </x-master>
 
+@endauth

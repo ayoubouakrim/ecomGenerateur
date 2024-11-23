@@ -20,7 +20,7 @@ class InputUserController extends Controller
         $color1 = $request->color1;
         $color2 = $request->color2;
         $color3 = $request->color3;
-        $template_id = 1;
+//        $template_id = 1;
         UserInput::create( [
             'siteName'=> $siteName,
             'description' => $description,
@@ -29,7 +29,7 @@ class InputUserController extends Controller
             'color1' => $color1,
             'color2' => $color2,
             'color3' => $color3,
-            'template_id' => $template_id,
+//            'template_id' => $template_id,
         ]);
     }
 }

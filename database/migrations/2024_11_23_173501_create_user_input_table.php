@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('color1'); // Première couleur
             $table->string('color2'); // Deuxième couleur
             $table->string('color3'); // Troisième couleur (optionnel)
-            $table->unsignedBigInteger('template_id'); // Clé étrangère vers la table templates
+            $table->unsignedBigInteger('template_id')->nullable(); // Clé étrangère vers la table templates
             $table->timestamps(); // Colonnes created_at et updated_at
 
             // Définir la clé étrangère
