@@ -26,7 +26,10 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('login.logout');
 
 
 //inputUser
-Route::get('/inputUser', [InputUserController::class, 'index'])->name('inputUser');
+Route::get('/inputUser', [InputUserController::class, 'index'])->name('index');
+Route::post('/inputUser', [InputUserController::class, 'store'])->name('inputUser');
+
+
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');

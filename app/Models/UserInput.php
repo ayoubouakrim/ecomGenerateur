@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserInput extends Model
 {
     use HasFactory;
+    protected $table = 'userinput'; // Nom exact de la table
 
     protected $fillable = [
         'siteName',

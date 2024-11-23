@@ -57,14 +57,14 @@
                               <a href="mailto:Publius@mil.com">Publius@mil.com</a>
                             </p> -->
                         </div>
-                        <form action="index.html" method="post" class="contact-form">
+                        <form method="POST" action="{{ route('inputUser') }}" class="contact-form">
 
-
+                            @csrf
                             <div class="input-wrap w-100">
                                 <input
                                         class="contact-input"
                                         autocomplete="off"
-                                        name="Site Name"
+                                        name="siteName"
                                         type="text"
                                         required
                                 />
@@ -74,7 +74,7 @@
 
                             <div class="input-wrap textare w-100">
                   <textarea
-                          name="Description"
+                          name="description"
                           auto-complete="off"
                           class="contact-input"
                           required
@@ -88,7 +88,7 @@
                                 <input
                                         class="contact-input"
 
-                                        name="Color 1"
+                                        name="color1"
                                         type="color"
                                         required
                                 />
@@ -100,7 +100,7 @@
                                 <input
                                         class="contact-input"
                                         autocomplete="off"
-                                        name="Color 2"
+                                        name="color2"
                                         type="color"
                                         required
                                 />
@@ -112,7 +112,7 @@
                                 <input
                                         class="contact-input"
                                         autocomplete="off"
-                                        name="Color 3"
+                                        name="color3"
                                         type="color"
                                         required
                                 />
@@ -125,13 +125,13 @@
                     <span>
                       <i class="fa-solid fa-paperclip"></i> Add Logo
                     </span>
-                                    <input type="file" name="attachement"/>
+                                    <input type="file" name="logoUrl"/>
                                 </button>
                                 <button class="btn upload">
                     <span>
                       <i class="fa-solid fa-paperclip"></i> Add Icons
                     </span>
-                                    <input type="file" name="attachement"/>
+                                    <input type="file" name="faveIcon"/>
                                 </button>
                             </div>
 
