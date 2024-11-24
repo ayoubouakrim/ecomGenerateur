@@ -32,7 +32,7 @@ Route::post('/inputUser', [InputUserController::class, 'store'])->name('inputUse
 
 //templatesPages
 Route::get('/templates', [TemplatesController::class, 'index'])->name('templates');
-Route::post('/templates', [TemplatesController::class, 'store'])->name('templates');
+Route::post('/template/save', [TemplatesController::class, 'store'])->name('save.template');
 
 Route::get('/', function () {
     return view('welcome');
