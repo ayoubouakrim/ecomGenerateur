@@ -31,5 +31,6 @@ class InputUserController extends Controller
             'color3' => $color3,
 //            'template_id' => $template_id,
         ]);
+        return to_route('templates');
     }
 }

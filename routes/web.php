@@ -3,6 +3,7 @@
 use App\Http\Controllers\InputUserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TemplatesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,6 +30,9 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('login.logout');
 Route::get('/inputUser', [InputUserController::class, 'index'])->name('index');
 Route::post('/inputUser', [InputUserController::class, 'store'])->name('inputUser');
 
+//templatesPages
+Route::get('/templates', [TemplatesController::class, 'index'])->name('templates');
+Route::post('/templates', [TemplatesController::class, 'store'])->name('templates');
 
 Route::get('/', function () {
     return view('welcome');
