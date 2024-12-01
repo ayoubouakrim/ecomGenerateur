@@ -20,6 +20,7 @@ class InputUserController extends Controller
         $color1 = $request->color1;
         $color2 = $request->color2;
         $color3 = $request->color3;
+
 //        $template_id = 1;
         UserInput::create( [
             'siteName'=> $siteName,
@@ -30,6 +31,19 @@ class InputUserController extends Controller
             'color2' => $color2,
             'color3' => $color3,
 //            'template_id' => $template_id,
+        ]);
+
+        // Stocker les informations dans la session
+        session([
+            'userinputtemp' => [
+                'siteName' => $request->siteName,
+                'description' => $request->description,
+                'logoUrl' => $request->logoUrl,
+                'faveIcon' => $request->faveIcon,
+                'color1' => $request->color1,
+                'color2' => $request->color2,
+                'color3' => $request->color3,
+            ]
         ]);
         return to_route('templates');
     }

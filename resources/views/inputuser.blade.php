@@ -76,7 +76,6 @@
                             <div class="input-wrap textare w-100">
                   <textarea
                           name="description"
-                          auto-complete="off"
                           class="contact-input"
                           required
                   >

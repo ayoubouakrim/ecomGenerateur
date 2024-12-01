@@ -20,7 +20,10 @@ body {
     --input-bg: hsla(var(--main-hue), 50%, 50%, 6.5%);
     --input-bg-hover: hsla(var(--main-hue), 50%, 50%, 14%);
     --input-text: #8c9aaf;
-    --input-shadow: hsla(var(--main-hue), 92%, 54%, 0.169);
+    --input-shadow: hsla(var(--main-hue), 92%, 54%, 0.169)
+
+
+
 }
 
 .dark {
@@ -156,8 +159,8 @@ header ul {
     background-color: var(--bg-color);
 }
 .contact .container {
-    height: 100vh;
-    min-height: 700px;
+    height: auto;
+    min-height: 900px;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
@@ -206,7 +209,8 @@ header ul {
 }
 
 .form-wrapper {
-    max-width: 32rem;
+    max-width: 30rem;
+    max-height: 120rem;
 }
 
 .contact-form {
@@ -458,6 +462,7 @@ textarea.contact-input ~ .icon {
         font-size: 0.87rem;
         padding: 1.5rem 1.2rem calc(0.75rem - 2px) 1.2rem;
     }
+
     .input-wrap label {
         font-size: 0.91rem;
         left: calc(1.2rem + 2px);

@@ -13,7 +13,8 @@ body {
     margin: 0;
     min-height: 100vh;
     font-family: 'Open Sans';
-    background: #fafafa;
+    background: #032859;
+    font-size: xx-small;
 }
 
 a {
@@ -70,17 +71,17 @@ a {
     transform: translate(-50%, -50%);
     font-size: 5rem;
     font-weight: bold;
-    color: #fa5555;
+    color: #032859;
     opacity: 0;
     z-index: 1;
     text-align: center;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     font-family: 'Heebo', sans-serif;
-    text-shadow: 0 0 15px rgba(250, 85, 85, 0.5),
-    0 0 30px rgba(250, 85, 85, 0.3),
-    0 0 45px rgba(250, 85, 85, 0.2);
-    background: linear-gradient(45deg, #fa5555, #ff7676, #ffa6a6);
+    text-shadow: 0 0 15px rgb(3, 40, 89),
+    0 0 30px rgb(7, 73, 115),
+    0 0 45px rgb(8, 103, 140);
+    background: linear-gradient(45deg, #011126, #032859, #08678c);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: glow 3s infinite alternate;
@@ -90,14 +91,14 @@ a {
 /* Animation pour un effet "glow" */
 @keyframes glow {
     0% {
-        text-shadow: 0 0 20px rgba(250, 85, 85, 0.7),
-        0 0 40px rgba(250, 85, 85, 0.5),
-        0 0 60px rgba(250, 85, 85, 0.3);
+        text-shadow: 0 0 20px rgb(1, 17, 38),
+        0 0 40px rgb(3, 40, 89),
+        0 0 60px rgb(8, 103, 140);
     }
     100% {
-        text-shadow: 0 0 40px rgba(250, 85, 85, 0.9),
-        0 0 80px rgba(250, 85, 85, 0.7),
-        0 0 120px rgba(250, 85, 85, 0.5);
+        text-shadow: 0 0 40px rgb(1, 17, 38),
+        0 0 80px rgb(3, 40, 89),
+        0 0 120px rgb(8, 103, 140);
     }
 }
 
@@ -188,6 +189,7 @@ a {
     font-size: 3em;
     margin-bottom: 1.2rem;
     margin-left: 1rem;
+    color: #ffffff;
 }
 
 .info {
@@ -407,7 +409,7 @@ a {
 }
 
 .modal-content {
-    background-color: #ffffff;
+    background-color: #032859;
     border-radius: 60px; /* Coins arrondis plus marqués */
     padding: 80px;
     width: 100%;
@@ -430,7 +432,7 @@ a {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid #ddd;
+    border-bottom: 2px solid #032859;
     padding-bottom: 15px;
 }
 
@@ -484,18 +486,18 @@ a {
 }
 
 .modal-footer .btn-secondary {
-    background-color: #f1f1f1;
+    background-color: #032859;
     color: #333;
 }
 
 .modal-footer .btn-primary {
     background-color: #0066cc;
-    color: #fff;
+    color: #032859;
 }
 
 /* Boutons au survol */
 .modal-footer .btn-secondary:hover {
-    background-color: #e1e1e1;
+    background-color: #032859;
 }
 
 .modal-footer .btn-primary:hover {
