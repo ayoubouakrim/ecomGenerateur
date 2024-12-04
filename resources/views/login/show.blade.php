@@ -1,5 +1,5 @@
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/login.css'm true) }}">
+    <link rel="stylesheet" href="{{ asset('css/login.css', true) }}">
 @endpush
 <x-master title='login'>
 
