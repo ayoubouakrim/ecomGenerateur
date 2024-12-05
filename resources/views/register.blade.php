@@ -79,7 +79,7 @@
                     <p>
                         go back whit sing-in and use your user-name and password for login
                     </p>
-                    <button class="btn transparent" id="sign-in-btn">
+                    <button type="button" class="btn transparent" id="sign-in-btn" onclick="window.location.href='{{route('login.show')}}'">
                         Sign in
                     </button>
                 </div>
