@@ -27,7 +27,7 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('login.logout');
 
 
 //inputUser
-Route::get('/inputUser', [InputUserController::class, 'index'])->name('inputUser');
+Route::get('/inputUser', [InputUserController::class, 'index'])->name('inputuser');
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
