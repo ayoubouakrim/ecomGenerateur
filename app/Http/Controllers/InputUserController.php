@@ -8,6 +8,6 @@ class InputUserController extends Controller
 {
     //
     public function index(){
-        return view('inputUser');
+        return view('inputuser');
     }
 }
