@@ -5,6 +5,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
   <title>Choose Components</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
@@ -508,87 +510,87 @@
           localStorage.setItem('selectedComponentId', button.dataset.style);
           localStorage.setItem('selectedTypeId', button.dataset.type);
       }
-  
-      // Function to handle form submission
+
       function saveComponentSettings(event) {
-          event.preventDefault();
-          const form = event.target;
-          const formData = new FormData(form);
-          
-          // Add CSRF token
-          formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
-          
-          // Add type and style from data attributes
-          formData.append('type_id', form.dataset.type);
-          formData.append('component_id', form.dataset.style);
-  
-          // Show loading state
-          const submitButton = form.querySelector('button[type="submit"]');
-          const originalText = submitButton.textContent;
-          submitButton.textContent = 'Saving...';
-          submitButton.disabled = true;
-  
-          // Send AJAX request
-          fetch('/components/save-settings', {
-              method: 'POST',
-              body: formData,
-              headers: {
-                  'X-Requested-With': 'XMLHttpRequest',
-                  'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-              }
-          })
-          .then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  // Show success message
-                  showNotification('Settings saved successfully!', 'success');
-                  
-                  // Update any UI elements if needed
-                  updateUIAfterSave(data);
-              } else {
-                  showNotification(data.message || 'Error saving settings', 'error');
-              }
-          })
-          .catch(error => {
-              console.error('Error:', error);
-              showNotification('Error saving settings. Please try again.', 'error');
-          })
-          .finally(() => {
-              // Reset button state
-              submitButton.textContent = originalText;
-              submitButton.disabled = false;
-          });
-      }
-  
-      // Helper function to show notifications
-      function showNotification(message, type = 'success') {
-          // Create notification element
-          const notification = document.createElement('div');
-          notification.className = `alert alert-${type} position-fixed top-0 end-0 m-3`;
-          notification.style.zIndex = '1050';
-          notification.textContent = message;
-  
-          // Add to document
-          document.body.appendChild(notification);
-  
-          // Remove after 3 seconds
-          setTimeout(() => {
-              notification.remove();
-          }, 3000);
-      }
-  
-      // Helper function to update UI after successful save
-      function updateUIAfterSave(data) {
-          // Update any necessary UI elements with the saved data
-          const selectedCard = document.querySelector('.selected-card');
-          if (selectedCard) {
-              const title = selectedCard.querySelector('.component-title');
-              if (title && data.component_name) {
-                  title.textContent = data.component_name;
-              }
-          }
-      }
-  
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const componentData = {};
+    
+    // Collect all form inputs
+    for (let [key, value] of formData.entries()) {
+        // Handle complex nested structures
+        if (key.startsWith('menu_item_')) {
+            componentData.menu_items = componentData.menu_items || [];
+            componentData.menu_items.push(value);
+        } else if (key.startsWith('feature_')) {
+            if (key.includes('_title')) {
+                const featureIndex = key.split('_')[1] - 1;
+                componentData.features = componentData.features || [];
+                componentData.features[featureIndex] = componentData.features[featureIndex] || {};
+                componentData.features[featureIndex].title = value;
+            } else if (key.includes('_description')) {
+                const featureIndex = key.split('_')[1] - 1;
+                componentData.features = componentData.features || [];
+                componentData.features[featureIndex] = componentData.features[featureIndex] || {};
+                componentData.features[featureIndex].description = value;
+            }
+        } else if (key.startsWith('contact_field_')) {
+            if (key.includes('_label')) {
+                const fieldIndex = key.split('_')[2] - 1;
+                componentData.contact_fields = componentData.contact_fields || [];
+                componentData.contact_fields[fieldIndex] = componentData.contact_fields[fieldIndex] || {};
+                componentData.contact_fields[fieldIndex].label = value;
+            } else if (key.includes('_type')) {
+                const fieldIndex = key.split('_')[2] - 1;
+                componentData.contact_fields = componentData.contact_fields || [];
+                componentData.contact_fields[fieldIndex] = componentData.contact_fields[fieldIndex] || {};
+                componentData.contact_fields[fieldIndex].type = value;
+            }
+        } else if (key.startsWith('footer_link_')) {
+            if (key.includes('_text')) {
+                const linkIndex = key.split('_')[2] - 1;
+                componentData.footer_links = componentData.footer_links || [];
+                componentData.footer_links[linkIndex] = componentData.footer_links[linkIndex] || {};
+                componentData.footer_links[linkIndex].text = value;
+            } else if (key.includes('_url')) {
+                const linkIndex = key.split('_')[2] - 1;
+                componentData.footer_links = componentData.footer_links || [];
+                componentData.footer_links[linkIndex] = componentData.footer_links[linkIndex] || {};
+                componentData.footer_links[linkIndex].url = value;
+            }
+        } else {
+            // Handle other individual fields
+            componentData[key] = value;
+        }
+    }
+    
+    // Get component ID from form data attributes
+    const componentId = form.dataset.style;
+    
+    // Send data to backend via AJAX
+    fetch('/save-component-content', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            component_id: componentId,
+            content: componentData
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert('Component settings saved successfully!');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to save component settings.');
+    });
+}
+      
       // Function to restore selected state on page load
       function restoreSelectedState() {
           const componentId = localStorage.getItem('selectedComponentId');

@@ -41,3 +41,6 @@ Route::get('/register', [AuthController::class , 'register'] )-> name('register'
 Route::post('/register', [AuthController::class , 'store'] )-> name('register');
 
 Route::get('/component-builder', [TypeController::class, 'index'])->name('comp.chose_comp');
+
+
+Route::post('/save-component-content', [TypeController::class, 'saveComponentContent'])->name('save.component.content');
