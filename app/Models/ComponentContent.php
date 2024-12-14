@@ -9,6 +9,8 @@ class ComponentContent extends Model
 {
     use HasFactory;
 
+    protected $table = 'component_content';
+
     protected $fillable = [
         'content',
         'component_id',
