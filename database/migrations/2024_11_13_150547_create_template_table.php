@@ -14,10 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create('template', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('filePath');
-            $table->timestamps();
+            $table->id(); // Clé primaire
+            $table->string('name'); // Nom du template
+            $table->string('filePath'); // Chemin vers le fichier
+            $table->timestamps(); // Colonnes created_at et updated_at
         });
     }
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\InputUserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\TypeController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,10 +29,14 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('login.logout');
 
 
 //inputUser
-Route::get('/inputUser', [InputUserController::class, 'index'])->name('inputuser');
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+
+Route::get('/inputUser', [InputUserController::class, 'index'])->name('index');
+Route::post('/inputUser', [InputUserController::class, 'store'])->name('inputUser');
+
+//templatesPages
+Route::get('/templates', [TemplatesController::class, 'index'])->name('templates');
+Route::post('/template/save', [TemplatesController::class, 'store'])->name('save.template');
+
 
 
 

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Template extends Model
 {
     use HasFactory;
+    protected $table = 'template'; // Nom exact de la table
 
     protected $fillable = [
         'name',
@@ -17,5 +18,5 @@ class Template extends Model
     /**
      * Get the user input associated with the template.
      */
-    
+
 }
