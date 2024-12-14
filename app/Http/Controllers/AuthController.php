@@ -32,7 +32,7 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password'] ),
         ]);
 
-        return redirect()->route('welcome')
+        return redirect()->route('login.show')
                          ->with('success', 'Registration successful! Please login.');
     }
 }
