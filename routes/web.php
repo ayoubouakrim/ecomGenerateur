@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\TypeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GenerationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,3 +51,11 @@ Route::get('/component-builder', [TypeController::class, 'index'])->name('comp.c
 
 
 Route::post('/save-component-content', [TypeController::class, 'saveComponentContent'])->name('save.component.content');
+
+
+Route::get('/generate-template/1', [GenerationController::class, 'renderTemplateWithComponents'])->name('template.generate');
+
+
+Route::get('/generate', function () {
+    return view('generate');
+});
