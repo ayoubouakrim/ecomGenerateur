@@ -9,7 +9,7 @@ class InputUserController extends Controller
 {
     //
     public function index(){
-        return view('inputUser');
+        return view('inputuser');
     }
     public function store(Request $request){
 //        $request->
