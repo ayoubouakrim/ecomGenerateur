@@ -7,7 +7,7 @@
     <title>Login & Register</title>
     <!-- PrimeIcons CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/primeicons@6.0.1/primeicons.css">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/styles.css', true) }}" >
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/styles.css') }}" >
 </head>
 <body>
     <div class="container sign-up-mode">

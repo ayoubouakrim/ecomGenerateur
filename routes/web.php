@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 //login
 Route::get('/login', [LoginController::class, 'show'])->name('login.show');
-Route::get('/', [LoginController::class, 'show'])->name('login.show');
+//Route::get('/', [LoginController::class, 'show'])->name('login.show');
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 //logout
 Route::get('/logout', [LoginController::class, 'logout'])->name('login.logout');
