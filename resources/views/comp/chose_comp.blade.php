@@ -215,6 +215,8 @@
       transition: all 0.2s;
     }
 
+    
+
     .btn-save:hover {
       background-color: var(--secondary-color);
     }
@@ -464,7 +466,7 @@
                                                name="footer_link_{{ $j }}_text"
                                                value="{{ $component->settings['footer_links'][$j-1]['text'] ?? '' }}"
                                                placeholder="Enter link text">
-                                        <input type="url" class="form-control mt-2"
+                                        <input type="text" class="form-control mt-2"
                                                name="footer_link_{{ $j }}_url"
                                                value="{{ $component->settings['footer_links'][$j-1]['url'] ?? '' }}"
                                                placeholder="Enter link URL">
@@ -479,6 +481,10 @@
         </div>
     </section>
 @endif
+
+    <section class="section-container">
+        <button onclick="window.location='{{ route('generate') }}'" class="btn btn-save">next</button>
+    </section>
     </div>
 
     <script>

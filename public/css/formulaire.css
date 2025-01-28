@@ -154,9 +154,10 @@ header ul {
     width: 100%;
     overflow: hidden;
     background-color: var(--bg-color);
+    
 }
 .contact .container {
-    height: 100vh;
+    
     min-height: 700px;
     display: grid;
     grid-template-columns: 1fr;
@@ -301,6 +302,7 @@ textarea.contact-input ~ .icon {
     grid-template-columns: 1fr 1fr;
     column-gap: 1rem;
     margin-top: 1rem;
+    margin-bottom: 10vh;
     width: 100%;
     grid-column: span 2;
 }

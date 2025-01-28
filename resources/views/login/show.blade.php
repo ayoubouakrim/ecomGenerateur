@@ -54,7 +54,6 @@
                         <input type="password" placeholder="Password"/>
                     </div>
                     <input type="submit" class="btn" value="Sign up"/>
-                    <p class="social-text">Or Sign up with social platforms</p>
                 </form>
 
             </div>
@@ -66,7 +65,7 @@
                 <div class="content">
                     <h3>Are you new here?</h3>
                     <p>You can create your account by pressing Sign up.</p>
-                    <button class="btn transparent" id="sign-up-btn" onclick="toggleSignUpMode()">Sign up</button>
+                    <button class="btn transparent" id="sign-up-btn" onclick="window.location.href='{{route('register')}}'">Sign up</button>
                 </div>
                 <img src="assets/demo/images/login/sing-in.svg" class="image" alt=""/>
             </div>

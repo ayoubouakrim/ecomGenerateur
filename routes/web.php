@@ -23,7 +23,9 @@ use App\Http\Controllers\GenerationController;
 
 //login
 Route::get('/login', [LoginController::class, 'show'])->name('login.show');
-Route::get('/', [LoginController::class, 'show'])->name('login.show');
+Route::get('/', function () {
+    return view('welcome'); 
+    });
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 //logout
 Route::get('/logout', [LoginController::class, 'logout'])->name('login.logout');
@@ -36,7 +38,7 @@ Route::post('/inputUser', [InputUserController::class, 'store'])->name('inputUse
 
 //templatesPages
 Route::get('/templates', [TemplatesController::class, 'index'])->name('templates');
-Route::post('/template/save', [TemplatesController::class, 'store'])->name('save.template');
+Route::post('/template/save', [TemplatesController::class, 'choseTemplate'])->name('save.template');
 
 
 
@@ -53,9 +55,9 @@ Route::get('/component-builder', [TypeController::class, 'index'])->name('comp.c
 Route::post('/save-component-content', [TypeController::class, 'saveComponentContent'])->name('save.component.content');
 
 
-Route::get('/generate-template/1', [GenerationController::class, 'renderTemplateWithComponents'])->name('template.generate');
+Route::get('/generate-template', [GenerationController::class, 'renderTemplateWithComponents'])->name('template.generate');
 
 
 Route::get('/generate', function () {
     return view('generate');
-});
+})->name('generate');

@@ -8,6 +8,8 @@ use App\Models\Component;
 use App\Models\ComponentContent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
+use App\Models\UserInput;
 
 class TypeController extends Controller
 {
@@ -23,10 +25,19 @@ class TypeController extends Controller
     ));
     }
 
+    public function getUserInputId() {
+        $siteName = Session::get('siteName', 'Default Site Name');
+        
+        return UserInput::where('siteName', $siteName)->first()->id;
+    }
+
 
     public function saveComponentContent(Request $request)
     {
         try {
+
+            $user_input_id = $this->getUserInputId();
+            
             // Validate the incoming request
             $validatedData = $request->validate([
                 'component_id' => 'required|numeric|exists:component,id',
@@ -37,7 +48,7 @@ class TypeController extends Controller
             $componentContent = ComponentContent::create([
                 'content' => json_encode($validatedData['content']),
                 'component_id' => $validatedData['component_id'],
-                'userInput_id' => auth()->id() ?? 1 ,
+                'userInput_id' =>  $user_input_id,
             ]);
 
             return response()->json([

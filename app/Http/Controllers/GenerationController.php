@@ -86,68 +86,99 @@ class GenerationController extends Controller
      * @return string
      */
     private function injectContentIntoHtml($htmlStructure, $contentData)
-{
-    try {
-        $contentData = json_decode($contentData, true, 512, JSON_THROW_ON_ERROR);
+    {
+        try {
+            $contentData = json_decode($contentData, true, 512, JSON_THROW_ON_ERROR);
 
-        foreach ($contentData as $key => $value) {
-            $placeholder = "{{" . preg_quote($key, '/') . "}}";
+            foreach ($contentData as $key => $value) {
+                $placeholder = "{{" . preg_quote($key, '/') . "}}";
 
-            if ($key === 'contact_fields' && is_array($value)) {
-                // Specialized handling for dynamic form fields
-                $replacement = $this->generateFormFields($value);
-            } elseif (is_array($value)) {
-                // Advanced array handling (e.g., menu items, list items)
-                $replacement = $this->generateArrayReplacement($value, $key);
-            } elseif (Str::contains($key, ['image', 'src', 'url'])) {
-                // Special handling for image/URL placeholders
-                $replacement = htmlspecialchars($value);
-            } else {
-                // General content replacement
-                $replacement = htmlspecialchars($value);
+                if ($key === 'contact_fields' && is_array($value)) {
+                    // Specialized handling for dynamic form fields
+                    $replacement = $this->generateFormFields($value);
+                } elseif ($key === 'footer_links' && is_array($value)) {
+                    // Handling for footer links
+                    $replacement = $this->generateFooterLinks($value);
+                } elseif (is_array($value)) {
+                    // Advanced array handling (e.g., menu items, list items)
+                    $replacement = $this->generateArrayReplacement($value, $key);
+                } elseif (Str::contains($key, ['image', 'src', 'url'])) {
+                    // Special handling for image/URL placeholders
+                    $replacement = htmlspecialchars($value);
+                } else {
+                    // General content replacement
+                    $replacement = htmlspecialchars($value);
+                }
+
+                // Replace placeholders in the HTML structure
+                $htmlStructure = preg_replace("/{$placeholder}/", $replacement, $htmlStructure);
             }
 
-            // Replace placeholders in the HTML structure
-            $htmlStructure = preg_replace("/{$placeholder}/", $replacement, $htmlStructure);
+            return $htmlStructure;
+        } catch (\JsonException $e) {
+            Log::error('JSON Parsing Error: ' . $e->getMessage());
+            return $htmlStructure;
+        }
+    }
+
+    /**
+     * Generate HTML for footer links
+     *
+     * @param array $links
+     * @return string
+     */
+    private function generateFooterLinks($links)
+    {
+        $html = '';
+
+        foreach ($links as $link) {
+            $text = htmlspecialchars($link['text'] ?? '');
+            $url = htmlspecialchars($link['url'] ?? '#');
+
+            $html .= <<<HTML
+<li>
+    <a class="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm" href="{$url}">{$text}</a>
+</li>
+HTML;
         }
 
-        return $htmlStructure;
-    } catch (\JsonException $e) {
-        Log::error('JSON Parsing Error: ' . $e->getMessage());
-        return $htmlStructure;
+        return <<<HTML
+<ul class="list-unstyled">
+    {$html}
+</ul>
+HTML;
     }
-}
 
 
 
     private function generateFormFields($fields)
-{
-    $formHtml = '';
+    {
+        $formHtml = '';
 
-    foreach ($fields as $field) {
-        $label = htmlspecialchars($field['label'] ?? '');
-        $type = htmlspecialchars($field['type'] ?? 'text');
-        $name = Str::slug($label, '_');
+        foreach ($fields as $field) {
+            $label = htmlspecialchars($field['label'] ?? '');
+            $type = htmlspecialchars($field['type'] ?? 'text');
+            $name = Str::slug($label, '_');
 
-        if ($type === 'textarea') {
-            $formHtml .= <<<HTML
+            if ($type === 'textarea') {
+                $formHtml .= <<<HTML
 <div class="form-group">
     <label for="{$name}">{$label}</label>
     <textarea id="{$name}" name="{$name}" rows="5" placeholder="Enter your {$label}" required></textarea>
 </div>
 HTML;
-        } else {
-            $formHtml .= <<<HTML
+            } else {
+                $formHtml .= <<<HTML
 <div class="form-group">
     <label for="{$name}">{$label}</label>
     <input type="{$type}" id="{$name}" name="{$name}" placeholder="Enter your {$label}" required />
 </div>
 HTML;
+            }
         }
-    }
 
-    return $formHtml;
-}
+        return $formHtml;
+    }
 
 
     /**
@@ -195,16 +226,17 @@ HTML;
     /**
      * Comprehensive template rendering with download support
      *
-     * @param int $userInputId
      * @param bool $forceDownload Optional flag to control download behavior
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function renderTemplateWithComponents($userInputId, $forceDownload = true)
+    public function renderTemplateWithComponents($forceDownload = true)
     {
         try {
             // Fetch necessary data
+            $templatesController = new TemplatesController();
+            $userInputId = $templatesController->getUserInputId();
             $userInput = $this->getUserInputById($userInputId);
-            
+
             if (!$userInput->template_id) {
                 throw new \Exception('No template associated with this UserInput.');
             }
@@ -238,10 +270,9 @@ HTML;
 
             // If not forcing download, return a view response or the HTML content
             return response($htmlOutput);
-
         } catch (\Exception $e) {
             Log::error('Template Rendering Error: ' . $e->getMessage());
-            
+
             // Return error response
             return response()->json([
                 'error' => $e->getMessage(),
@@ -266,8 +297,8 @@ HTML;
             })
             ->unique()
             ->values();
-        $cssStyles = $cssCollection->count() > 0 
-            ? $cssCollection->implode("\n") 
+        $cssStyles = $cssCollection->count() > 0
+            ? $cssCollection->implode("\n")
             : '/* No custom styles */';
 
         // Safely handle body content
@@ -292,6 +323,7 @@ HTML;
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
+ <link href="https://cdn.tailwindcss.com" rel="stylesheet">
     <title>{$title}</title>
     <style>
         /* Reset and Base Styles */
@@ -309,6 +341,8 @@ HTML;
     </style>
 </head>
 <body>
+<link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css">
+<link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css">
     {$bodyContent}
 </body>
 </html>
@@ -323,9 +357,9 @@ HTML;
      */
     private function generateDownloadFilename($templateDetails)
     {
-        return Str::slug($templateDetails->name ?? 'template') . 
-               '_' . 
-               now()->format('YmdHis') . 
-               '.html';
+        return Str::slug($templateDetails->name ?? 'template') .
+            '_' .
+            now()->format('YmdHis') .
+            '.html';
     }
 }

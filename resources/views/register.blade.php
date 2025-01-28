@@ -55,7 +55,6 @@
                         <input type="password" placeholder="Password"  name="password"/>
                     </div>
                     <input type="submit" class="btn" value="Sign up" />
-                    <p class="social-text">Or Sign up with social platforms</p>
                 </form>
             </div>
         </div>

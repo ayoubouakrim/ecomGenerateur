@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Template;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use App\Models\UserInput;
 
 class TemplatesController extends Controller
 {
@@ -11,19 +13,24 @@ class TemplatesController extends Controller
     public function index(){
         return view('templates');
     }
-    public function store(Request $request)
-    {
-        // Valider les données envoyées
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'filePath' => 'required|string|max:255',
-        ]);
+    
 
-        // Créer le nouveau template dans la base de données
-        Template::create($validated);
+    public function getUserInputId() {
+        $siteName = Session::get('siteName', 'Default Site Name');
+        
+        return UserInput::where('siteName', $siteName)->first()->id;
+    }
 
-        // Retourner une réponse, ou rediriger vers une page de succès
-        return redirect()->route('templates')->with('success', 'Template enregistré avec succès!');
+    public function choseTemplate(Request $request) {
+        $userInputId = $this->getUserInputId();
+        $templateId = $request->input('name');
+
+        // Update the user input with the selected template ID
+        $userInput = UserInput::find($userInputId);
+        $userInput->template_id = $templateId;
+        $userInput->save();
+
+        return redirect()->route('comp.chose_comp')->with('success', 'Template choisi avec succès!');
     }
 
 }
