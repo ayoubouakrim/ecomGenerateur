@@ -8,12 +8,20 @@ html, body {
     height: 100%;
 }
 
+/*body {*/
+/*    font-family: "Lato", sans-serif;*/
+/*    background: #eee;*/
+/*    padding: 100px 60px;*/
+/*    animation: fade-in 3s ease-in-out forwards;*/
+/*}*/
 body {
     font-family: "Lato", sans-serif;
     background: #eee;
     padding: 100px 60px;
+    /* Retirez cette ligne pour tester */
     animation: fade-in 3s ease-in-out forwards;
 }
+
 
 strong {
     font-weight: 900;
