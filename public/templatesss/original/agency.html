@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agence Landing Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        header .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #007BFF;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #333;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #007BFF;
+        }
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: url('https://via.placeholder.com/1600x900') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .hero a {
+            padding: 15px 30px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .hero a:hover {
+            background-color: #0056b3;
+        }
+        .section {
+            padding: 60px 50px;
+        }
+        .services, .contact {
+            display: flex;
+            justify-content: space-between;
+        }
+        .service-item {
+            width: 30%;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+        }
+        .footer {
+            padding: 20px;
+            background: #333;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">MyAgency</div>
+    <nav>
+        <a href="#services">Services</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#contact">Contact</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>Welcome to MyAgency</h1>
+    <p>We help businesses grow with modern digital solutions.</p>
+    <a href="#contact">Get in Touch</a>
+</section>
+
+<section class="section services" id="services">
+    <div class="service-item">
+        <h3>Web Development</h3>
+        <p>Create modern and responsive websites tailored to your needs.</p>
+    </div>
+    <div class="service-item">
+        <h3>SEO Optimization</h3>
+        <p>Improve your website’s visibility and attract more customers.</p>
+    </div>
+    <div class="service-item">
+        <h3>Digital Marketing</h3>
+        <p>Boost your online presence with targeted strategies.</p>
+    </div>
+</section>
+
+<section class="section contact" id="contact">
+    <div>
+        <h2>Contact Us</h2>
+        <p>Email: contact@myagency.com</p>
+        <p>Phone: +123 456 789</p>
+    </div>
+    <form>
+        <label for="name">Name</label><br>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="email">Email</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+        <label for="message">Message</label><br>
+        <textarea id="message" name="message" rows="5" required></textarea><br><br>
+        <button type="submit">Send Message</button>
+    </form>
+</section>
+
+<footer class="footer">
+    <p>&copy; 2025 MyAgency. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

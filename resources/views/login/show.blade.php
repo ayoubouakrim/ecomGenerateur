@@ -1,8 +1,15 @@
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
-@endpush
-<x-master title='login'>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Login & Register</title>
+    <!-- PrimeIcons CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/primeicons@6.0.1/primeicons.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/login.css') }}" >
+</head>
+<body>
     <div class="container">
         <div class="forms-container">
             <div class="signin-signup">
@@ -79,4 +86,5 @@
             </div>
         </div>
     </div>
-</x-master>
+</body>
+</html>

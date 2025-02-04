@@ -19,12 +19,19 @@ use App\Http\Controllers\GenerationController;
 |
 
 */
+Route::get('/templateso', [TemplatesController::class, 'index'])->name('templateso.index');
+Route::post('/templateso/choose', [TemplatesController::class, 'choose'])->name('templateso.choose');
 
+
+Route::get('/templateso/preview/{templateName}', [TemplatesController::class, 'preview'])->name('templateso.preview');
+Route::get('/templateso/edit/{templateName}', [TemplatesController::class, 'edit'])->name('templateso.edit');
+Route::post('/templateso/update/{templateName}', [TemplatesController::class, 'update'])->name('templateso.update');
+Route::get('/templateso/download/{templateName}', [TemplatesController::class, 'download'])->name('templateso.download');
 
 //login
 Route::get('/login', [LoginController::class, 'show'])->name('login.show');
 Route::get('/', function () {
-    return view('welcome'); 
+    return view('welcome');
     });
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 //logout
@@ -37,8 +44,8 @@ Route::get('/inputUser', [InputUserController::class, 'index'])->name('index');
 Route::post('/inputUser', [InputUserController::class, 'store'])->name('inputUser');
 
 //templatesPages
-Route::get('/templates', [TemplatesController::class, 'index'])->name('templates');
-Route::post('/template/save', [TemplatesController::class, 'choseTemplate'])->name('save.template');
+//Route::get('/templateso', [TemplatesController::class, 'index'])->name('templateso');
+//Route::post('/template/save', [TemplatesController::class, 'choseTemplate'])->name('save.template');
 
 
 
@@ -49,15 +56,15 @@ Route::get('/register', [AuthController::class , 'register'] )-> name('register'
 
 Route::post('/register', [AuthController::class , 'store'] )-> name('register');
 
-Route::get('/component-builder', [TypeController::class, 'index'])->name('comp.chose_comp');
-
-
-Route::post('/save-component-content', [TypeController::class, 'saveComponentContent'])->name('save.component.content');
-
-
-Route::get('/generate-template', [GenerationController::class, 'renderTemplateWithComponents'])->name('template.generate');
-
-
-Route::get('/generate', function () {
-    return view('generate');
-})->name('generate');
+//Route::get('/component-builder', [TypeController::class, 'index'])->name('comp.chose_comp');
+//
+//
+//Route::post('/save-component-content', [TypeController::class, 'saveComponentContent'])->name('save.component.content');
+//
+//
+//Route::get('/generate-template', [GenerationController::class, 'renderTemplateWithComponents'])->name('template.generate');
+//
+//
+//Route::get('/generate', function () {
+//    return view('generate');
+//})->name('generate');

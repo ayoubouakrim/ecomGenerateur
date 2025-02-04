@@ -14,7 +14,7 @@ class InputUserController extends Controller
     {
         return view('inputuser');
     }
-    
+
     public function store(Request $request)
     {
         //        $request->
@@ -29,7 +29,7 @@ class InputUserController extends Controller
 
         Session::put(
             'siteName', $siteName
-        );        
+        );
 
         UserInput::create([
             'siteName' => $siteName,
@@ -41,6 +41,6 @@ class InputUserController extends Controller
             'color3' => $color3,
             'template_id' => $template_id,
         ]);
-        return to_route('templates');
+        return redirect()->route('templateso.index')->with('success', 'Informations sauvegardées. Veuillez choisir un template.');
     }
 }

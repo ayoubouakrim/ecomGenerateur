@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brew&Go - Café Artisanal</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Palette */
+        :root {
+            --brown: #6F4E37;
+            --cream: #FFF5EB;
+            --copper: #B76E79;
+        }
+
+        /* Header */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+            url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-1.2.1');
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--cream);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Menu Section */
+        .menu {
+            padding: 4rem 2rem;
+            background: var(--cream);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .menu-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Story Section */
+        .story {
+            padding: 4rem 2rem;
+            background: var(--brown);
+            color: var(--cream);
+            text-align: center;
+        }
+
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 300px;
+        }
+
+        /* Reservation */
+        .reservation {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border: 1px solid var(--brown);
+        }
+
+        button {
+            background: var(--copper);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Hero Section -->
+<header class="hero">
+    <div>
+        <h1>Brew&Go</h1>
+        <p>Artisan Coffee Since 2010</p>
+    </div>
+</header>
+
+<!-- Menu -->
+<section class="menu">
+    <h2>Notre Carte</h2>
+    <div class="menu-grid">
+        <div class="menu-item">
+            <h3>Café Filtre</h3>
+            <p>Origine Colombie - 120cal</p>
+            <p>4.50€</p>
+        </div>
+        <div class="menu-item">
+            <h3>Croissant Artisanal</h3>
+            <p>Beurre AOP - 240cal</p>
+            <p>3.80€</p>
+        </div>
+    </div>
+</section>
+
+<!-- Story -->
+<section class="story">
+    <h2>Notre Histoire</h2>
+    <p>Depuis 2010, nous torréfions nos grains avec passion...</p>
+    <div class="parallax" style="background-image: url('https://images.unsplash.com/photo-1463797221720-6b07e6426c24')"></div>
+</section>
+
+<!-- Reservation -->
+<section class="reservation">
+    <h2>Réservation</h2>
+    <form>
+        <input type="text" placeholder="Nom">
+        <input type="email" placeholder="Email">
+        <select>
+            <option>Nombre de personnes</option>
+            <option>1-2</option>
+            <option>3-4</option>
+        </select>
+        <button>Réserver</button>
+    </form>
+</section>
+</body>
+</html>
