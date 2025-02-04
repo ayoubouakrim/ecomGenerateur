@@ -115,6 +115,15 @@ class TemplatesController extends Controller
         $templates = array_filter(scandir($templateDir), function($file) use ($templateDir) {
             return is_file($templateDir . '/' . $file) && pathinfo($file, PATHINFO_EXTENSION) === 'html';
         });
+        // Génération des URLs d'accès
+        $templates = array_map(function($template) {
+            return [
+                'name' => $template,
+                'url' => asset("templatesss/original/{$template}") // Génération de l'URL complète
+            ];
+        }, $templates);
+
+//        dd($templates);
         return view('templateso.index', compact('templates'));
     }
 
