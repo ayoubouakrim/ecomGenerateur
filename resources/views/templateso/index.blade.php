@@ -97,13 +97,20 @@
                             >
                                 <i class="fas fa-expand"></i>
                             </button>
-                            <form method="POST" action="{{ route('templateso.choose') }}" class="w-100">
+                            {{--<form method="POST" action="{{ route('templateso.choose') }}" class="w-100">
                                 @csrf
                                 <input type="hidden" name="templateName" value="{{ $template->name }}">
                                 <button type="submit" class="btn btn-primary btn-sm w-100">
                                     <i class="fas fa-check me-2"></i>Sélectionner
                                 </button>
+                            </form>--}}
+                            <form method="GET" action="{{ route('templateso.edit', ['id' => $template->id]) }}" class="w-100">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                    <i class="fas fa-check me-2"></i>Sélectionner
+                                </button>
                             </form>
+
+
                         </div>
                     </div>
                 </div>

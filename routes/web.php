@@ -19,17 +19,17 @@ use App\Http\Controllers\GenerationController;
 |
 
 */
-
+Route::get('/template/edit/{id}', [TemplatesController::class, 'edit'])->name('templateso.edit');
 Route::get('/template-content/{id}', [TemplatesController::class, 'getTemplateContent'])->name('templateso.content');
 
 Route::get('/templateso', [TemplatesController::class, 'index'])->name('templateso.index');
 Route::post('/templateso/choose', [TemplatesController::class, 'choose'])->name('templateso.choose');
 
 
-Route::get('/templateso/preview/{templateName}', [TemplatesController::class, 'preview'])->name('templateso.preview');
-Route::get('/templateso/edit/{templateName}', [TemplatesController::class, 'edit'])->name('templateso.edit');
-Route::post('/templateso/update/{templateName}', [TemplatesController::class, 'update'])->name('templateso.update');
-Route::get('/templateso/download/{templateName}', [TemplatesController::class, 'download'])->name('templateso.download');
+//Route::get('/templateso/preview/{templateName}', [TemplatesController::class, 'preview'])->name('templateso.preview');
+//Route::get('/templateso/edit/{templateName}', [TemplatesController::class, 'edit'])->name('templateso.edit');
+//Route::post('/templateso/update/{templateName}', [TemplatesController::class, 'update'])->name('templateso.update');
+//Route::get('/templateso/download/{templateName}', [TemplatesController::class, 'download'])->name('templateso.download');
 
 //login
 Route::get('/login', [LoginController::class, 'show'])->name('login.show');
