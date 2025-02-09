@@ -105,27 +105,52 @@ class TemplatesController extends Controller
     {
         $this->templateService = $templateService;
     }
-
     public function index()
     {
-        // Voir méthode précédente pour lister les templateso
-        $templateDir = public_path('templatesss\original');
-//        dd($templateDir, file_exists($templateDir));
-
-        $templates = array_filter(scandir($templateDir), function($file) use ($templateDir) {
-            return is_file($templateDir . '/' . $file) && pathinfo($file, PATHINFO_EXTENSION) === 'html';
-        });
-        // Génération des URLs d'accès
-        $templates = array_map(function($template) {
+        // Récupérer tous les templates depuis la base de données
+        $templates = Template::all();
+        /*()->map(function ($template) {
             return [
-                'name' => $template,
-                'url' => asset("templatesss/original/{$template}") // Génération de l'URL complète
+                'name' => $template->name, // Supposons que 'nom' contient le nom du fichier
+                'content' => $template->filepath // Le contenu HTML stocké dans la BD
             ];
-        }, $templates);
-
+        });*/
 //        dd($templates);
         return view('templateso.index', compact('templates'));
     }
+    public function getTemplateContent($id)
+    {
+        $template = Template::find($id);
+
+        if (!$template) {
+            abort(404, 'Template not found');
+        }
+
+        return response($template->filePath)
+            ->header('Content-Type', 'text/html');
+    }
+
+
+    /* public function index()
+     {
+         // Voir méthode précédente pour lister les templateso
+         $templateDir = public_path('templatesss\original');
+ //        dd($templateDir, file_exists($templateDir));
+
+         $templates = array_filter(scandir($templateDir), function($file) use ($templateDir) {
+             return is_file($templateDir . '/' . $file) && pathinfo($file, PATHINFO_EXTENSION) === 'html';
+         });
+         // Génération des URLs d'accès
+         $templates = array_map(function($template) {
+             return [
+                 'name' => $template,
+                 'url' => asset("templatesss/original/{$template}") // Génération de l'URL complète
+             ];
+         }, $templates);
+
+ //        dd($templates);
+         return view('templateso.index', compact('templates'));
+     }*/
 
 
 
@@ -158,8 +183,21 @@ class TemplatesController extends Controller
     }
 
 
-
     public function preview($templateName)
+    {
+        // Récupérer le template correspondant depuis la base de données
+        $template = Template::where('name', $templateName)->first();
+
+        if (!$template) {
+            return redirect()->route('templateso.index')->with('error', 'Template non trouvé.');
+        }
+
+        return view('templateso.preview', ['templateContent' => $template->filepath]);
+    }
+
+
+
+    /*public function preview($templateName)
     {
         $templatePath = asset("templatesss/original/$templateName");
 //        dd($templatePath);
@@ -171,7 +209,7 @@ class TemplatesController extends Controller
     {
         $templatePath = $this->templateService->getTemplatePath($templateName);
         return view('templateso.editor', ['templatePath' => $templatePath, 'templateName' => $templateName]);
-    }
+    }*/
 
     public function update(UpdateTemplateRequest $request, $templateName)
     {

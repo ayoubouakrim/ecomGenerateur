@@ -19,6 +19,9 @@ use App\Http\Controllers\GenerationController;
 |
 
 */
+
+Route::get('/template-content/{id}', [TemplatesController::class, 'getTemplateContent'])->name('templateso.content');
+
 Route::get('/templateso', [TemplatesController::class, 'index'])->name('templateso.index');
 Route::post('/templateso/choose', [TemplatesController::class, 'choose'])->name('templateso.choose');
 

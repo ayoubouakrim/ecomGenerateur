@@ -3,66 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Choix du Template</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Choix de Template</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .template-card {
-            transition: transform 0.3s, box-shadow 0.3s;
-            height: 100%;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 12px;
+            transition: transform 0.2s;
+            background: white;
         }
+
         .template-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
+            transform: translateY(-3px);
         }
-        .preview-container {
-            height: 300px;
+
+        .preview-wrapper {
+            height: 250px;
             overflow: hidden;
-            border-bottom: 1px solid #eee;
+            border-radius: 12px 12px 0 0;
+            background: #f8f9fa;
         }
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 500;
+
+        .preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            pointer-events: none;
+        }
+
+        .card-footer {
+            padding: 1rem;
+        }
+
+        .btn-group {
+            width: 100%;
+            gap: 0.5rem;
+        }
+
+        .btn-preview {
+            background: #e9ecef;
+            color: #0d6efd;
+        }
+
+        .btn-preview:hover {
+            background: #dee2e6;
+        }
+
+        /* Modal fullscreen */
+        .modal-iframe {
+            width: 100%;
+            height: 80vh;
+            border: 0;
+        }
+
+        @media (min-width: 992px) {
+            .modal-lg {
+                max-width: 90%;
+            }
         }
     </style>
 </head>
 <body class="bg-light">
 <div class="container py-5">
-    <h1 class="mb-4 text-center">Choisissez un template</h1>
+    <h1 class="text-center mb-5 display-6 fw-bold text-dark">Choisissez un template</h1>
 
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div class="row g-4">
         @foreach($templates as $template)
-            <div class="col">
-                <div class="card template-card h-100">
-                    <div class="preview-container">
+            <div class="col-md-4">
+                <div class="template-card h-100">
+                    <div class="preview-wrapper">
                         <iframe
-                            src="{{ $template['url'] }}"
-                            class="w-100 h-100"
-                            style="border:0;"
+                            src="{{ route('templateso.content', ['id' => $template->id]) }}"
+                            class="preview-iframe"
                             loading="lazy"
-                            title="Aperçu de {{ $template['name'] }}">
-                        </iframe>
+                            title="Prévisualisation {{ $template->name }}"
+                        ></iframe>
                     </div>
-                    <div class="card-body">
-                        <h5 class="card-title text-truncate">
-                            {{ pathinfo($template['name'], PATHINFO_FILENAME) }}
-                        </h5>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <form action="{{ route('templateso.choose') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="templateName" value="{{ $template['name'] }}">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="bi bi-check2-circle me-2"></i>Sélectionner
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="m-0 fw-semibold text-truncate">
+                                {{ $template->name }}
+                            </h5>
+                            <i class="fas fa-file-code text-muted"></i>
+                        </div>
+                        <div class="btn-group">
+                            <button
+                                type="button"
+                                class="btn btn-preview btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#previewModal"
+                                data-template-url="{{ route('templateso.content', ['id' => $template->id]) }}"
+                            >
+                                <i class="fas fa-expand"></i>
                             </button>
-                        </form>
+                            <form method="POST" action="{{ route('templateso.choose') }}" class="w-100">
+                                @csrf
+                                <input type="hidden" name="templateName" value="{{ $template->name }}">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                    <i class="fas fa-check me-2"></i>Sélectionner
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -70,6 +112,42 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Prévisualisation du template</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <iframe
+                    class="modal-iframe"
+                    src=""
+                    frameborder="0"
+                    allowfullscreen
+                ></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Gestion de la prévisualisation
+    const previewModal = document.getElementById('previewModal')
+    const modalIframe = previewModal.querySelector('iframe')
+
+    previewModal.addEventListener('show.bs.modal', event => {
+        const button = event.relatedTarget
+        const templateUrl = button.getAttribute('data-template-url')
+        modalIframe.src = templateUrl
+    })
+
+    // Reset l'iframe à la fermeture
+    previewModal.addEventListener('hidden.bs.modal', () => {
+        modalIframe.src = ''
+    })
+</script>
 </body>
 </html>
