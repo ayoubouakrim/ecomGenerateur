@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateTemplateRequest;
 use App\Models\Template;
+use App\Models\TempTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Models\UserInput;
@@ -131,13 +132,13 @@ class TemplatesController extends Controller
     }
 
 
-    public function edit($id)
+  /*  public function edit($id)
     {
         $template = Template::findOrFail($id);
         $templateUrl = route('templateso.content', ['id' => $template->id]);
 
         return view('templateso.edit', compact('template', 'templateUrl'));
-    }
+    }*/
 
 
 
@@ -199,18 +200,74 @@ class TemplatesController extends Controller
         return view('templateso.editor', ['templatePath' => $templatePath, 'templateName' => $templateName]);
     }*/
 
-    public function update(UpdateTemplateRequest $request, $templateName)
+    /*public function update(UpdateTemplateRequest $request, $templateName)
     {
         $modifiedContent = $request->input('content');
         $this->templateService->saveModifiedTemplate($templateName, $modifiedContent);
 
         return redirect()->route('templateso.preview', ['templateName' => $templateName])
             ->with('success', 'Template modifié avec succès.');
-    }
+    }*/
 
-    public function download($templateName)
+   /* public function download($templateName)
     {
         $zipPath = $this->templateService->createZip($templateName);
         return response()->download($zipPath)->deleteFileAfterSend(true);
+    }*/
+
+    // Afficher l'éditeur avec le template temporaire
+    public function edit($id)
+    {
+        $template = Template::findOrFail($id);
+
+        // Récupérer ou créer un template temporaire
+        $tempTemplate = TempTemplate::firstOrCreate(
+            [
+                'user_id' => auth()->id(),
+                'original_id' => $id
+            ],
+            ['content' => $template->filePath] // Contenu initial = template original
+        );
+
+        return view('templateso.edit', [
+            'templateUrl' => route('templateso.tempContent', $tempTemplate->id),
+            'templateId' => $id
+        ]);
+    }
+
+    // Afficher le contenu du template temporaire
+    public function tempContent($id)
+    {
+        $tempTemplate = TempTemplate::findOrFail($id);
+        return response($tempTemplate->content)->header('Content-Type', 'text/html');
+    }
+
+    // Sauvegarder les modifications temporaires
+    public function saveDraft(Request $request)
+    {
+        $validated = $request->validate([
+            'content' => 'required',
+            'templateId' => 'required|exists:templates,id'
+        ]);
+
+        // Mettre à jour ou créer le template temporaire
+        TempTemplate::updateOrCreate(
+            [
+                'user_id' => auth()->id(),
+                'original_id' => $validated['templateId']
+            ],
+            ['content' => $validated['content']]
+        );
+
+        return response()->json(['success' => true]);
+    }
+
+    // Récupérer le contenu original du template
+    public function original($id)
+    {
+        $template = Template::findOrFail($id);
+        return response()->json([
+            'content' => $template->filePath
+        ]);
     }
 }

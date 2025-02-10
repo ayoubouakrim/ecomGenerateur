@@ -23,6 +23,13 @@ use App\Http\Controllers\GenerationController;
 //Route::get('/temp-content/{id}', [TemplatesController::class, 'tempContent'])->name('template.tempContent');
 //Route::post('/save-draft', [TemplatesController::class, 'saveDraft'])->name('template.saveDraft');
 
+Route::get('/template/original/{id}', [TemplatesController::class, 'original'])->name('templateso.original');
+
+
+Route::get('/editor/{id}', [TemplatesController::class, 'edit'])->name('editor');
+Route::get('/temp-content/{id}', [TemplatesController::class, 'tempContent'])->name('templateso.tempContent');
+Route::post('/save-draft', [TemplatesController::class, 'saveDraft'])->name('templateso.saveDraft');
+
 Route::get('/template/edit/{id}', [TemplatesController::class, 'edit'])->name('templateso.edit');
 Route::get('/template-content/{id}', [TemplatesController::class, 'getTemplateContent'])->name('templateso.content');
 
