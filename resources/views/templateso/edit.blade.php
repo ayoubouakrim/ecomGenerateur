@@ -3,8 +3,6 @@
 
 
 
-
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -81,14 +79,14 @@
             padding: 1rem;
             overflow-y: auto;
         }
-        .draggable-element {
-            padding: 10px;
-            background: #4F46E5;
-            color: white;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            cursor: grab;
-        }
+        /*.draggable-element {*/
+        /*    padding: 10px;*/
+        /*    background: #4F46E5;*/
+        /*    color: white;*/
+        /*    border-radius: 5px;*/
+        /*    margin-bottom: 10px;*/
+        /*    cursor: grab;*/
+        /*}*/
         .dropzone {
             border: 2px dashed #4F46E5;
             padding: 20px;
@@ -117,6 +115,33 @@
             font-size: 12px;
             cursor: pointer;
         }
+
+
+    /*    */
+        .draggable-elements {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .draggable-element {
+            padding: 0.75rem;
+            background: #4F46E5;
+            color: white;
+            border-radius: 0.5rem;
+            cursor: grab;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .draggable-element:hover {
+            background: #4338CA;
+        }
+
+        .draggable-element:active {
+            cursor: grabbing;
+        }
     </style>
 </head>
 <body>
@@ -133,10 +158,18 @@
         </div>
 
 {{--        --}}
-        <h4>Ajouter des éléments</h4>
-        <div class="draggable-element" draggable="true" data-type="text">Texte</div>
-        <div class="draggable-element" draggable="true" data-type="image">Image</div>
-        <div class="draggable-element" draggable="true" data-type="section">Section</div>
+        <h4 class="mt-4">Éléments à glisser</h4>
+        <div class="draggable-elements">
+            <div class="draggable-element" draggable="true" data-type="text">
+                <i class="bi bi-text-paragraph me-2"></i>Texte
+            </div>
+            <div class="draggable-element" draggable="true" data-type="image">
+                <i class="bi bi-image me-2"></i>Image
+            </div>
+            <div class="draggable-element" draggable="true" data-type="section">
+                <i class="bi bi-layout-wtf me-2"></i>Section
+            </div>
+        </div>>
 
         <div class="mt-4 border-top pt-3">
             <button class="btn btn-success w-100 mb-2" id="saveDraft">
@@ -173,19 +206,31 @@
         enableElementPicker();
     });*/
 
-    // Initialisation après chargement du DOM principal
     document.addEventListener('DOMContentLoaded', async () => {
-        // Charger le contenu original (pour sauvegarde ou comparaison ultérieure)
+        // Charger le contenu original
         const response = await fetch("{{ route('templateso.original', ['id' => $templateId]) }}");
         state.originalContent = await response.text();
 
-        // Attendre le chargement complet de l'iframe
+        // Activer le mode sélection et le drag and drop
         // const iframe = document.getElementById('templatePreview');
         // iframe.addEventListener('load', () => {
-            // Activer le mode sélection dans l'iframe
             enableElementPicker();
+            setupDragAndDrop();
         // });
     });
+    // Initialisation après chargement du DOM principal
+    {{--document.addEventListener('DOMContentLoaded', async () => {--}}
+    {{--    // Charger le contenu original (pour sauvegarde ou comparaison ultérieure)--}}
+    {{--    const response = await fetch("{{ route('templateso.original', ['id' => $templateId]) }}");--}}
+    {{--    state.originalContent = await response.text();--}}
+
+    {{--    // Attendre le chargement complet de l'iframe--}}
+    {{--    // const iframe = document.getElementById('templatePreview');--}}
+    {{--    // iframe.addEventListener('load', () => {--}}
+    {{--        // Activer le mode sélection dans l'iframe--}}
+    {{--        enableElementPicker();--}}
+    {{--    // });--}}
+    {{--});--}}
 
     // Fonction d'activation du mode sélection dans l'iframe via délégation d'événements
     function enableElementPicker() {
@@ -208,19 +253,7 @@
             showElementSettings(element);
         });
     }
-    // function enableElementPicker() {
-    //     const iframe = document.getElementById('templatePreview');
-    //     const iframeDoc = iframe.contentDocument;
-    //
-    //     iframeDoc.body.querySelectorAll('*').forEach(element => {
-    //         element.style.cursor = 'pointer';
-    //         element.addEventListener('click', (e) => {
-    //             e.stopPropagation();
-    //             state.selectedElement = element;
-    //             showElementSettings(element);
-    //         });
-    //     });
-    // }
+
 
     // Génération dynamique de la sidebar avec les paramètres modifiables
     function showElementSettings(element) {
@@ -345,7 +378,7 @@
         alert('Brouillon sauvegardé !');
     });
 
-    // Drag & Drop
+   /* // Drag & Drop
     const dropzone = document.getElementById('dropzone');
 
     dropzone.addEventListener('dragover', (e) => {
@@ -397,6 +430,110 @@
             element.remove();
         });
 
+        return element;
+    }*/
+
+//
+//
+
+    // Gestion du drag and drop
+    function setupDragAndDrop() {
+        const iframe = document.getElementById('templatePreview');
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+        // Écouter l'événement de dépôt (drop)
+        iframeDoc.body.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const type = e.dataTransfer.getData('type');
+            const { clientX, clientY } = e;
+
+            // Créer un nouvel élément en fonction du type
+            const newElement = createElementByType(type);
+            if (newElement) {
+                // Positionner l'élément à l'endroit où il a été déposé
+                newElement.style.position = 'absolute';
+                newElement.style.left = `${clientX}px`;
+                newElement.style.top = `${clientY}px`;
+
+                // Ajouter l'élément à la prévisualisation
+                iframeDoc.body.appendChild(newElement);
+
+                // Activer l'édition pour le nouvel élément
+                enableElementPicker();
+            }
+        });
+
+        // Écouter l'événement de survol (dragover)
+        iframeDoc.body.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        // Activer le drag pour les éléments de la sidebar
+        document.querySelectorAll('.draggable-element').forEach(el => {
+            el.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('type', el.dataset.type);
+            });
+        });
+    }
+
+    // Créer un nouvel élément en fonction du type
+    function createElementByType(type) {
+        switch (type) {
+            case 'text':
+                return createTextElement();
+            case 'image':
+                return createImageElement();
+            case 'section':
+                return createSectionElement();
+            default:
+                return null;
+        }
+    }
+
+    // Créer un élément de texte
+    function createTextElement() {
+        const element = document.createElement('div');
+        element.contentEditable = true;
+        element.textContent = 'Nouveau texte';
+        element.style.padding = '10px';
+        element.style.border = '1px dashed #4F46E5';
+        element.style.backgroundColor = '#F3F4F6';
+
+
+        // Ajouter un bouton de suppression
+        const removeButton = document.createElement('button');
+        removeButton.textContent = '×';
+        removeButton.style.position = 'absolute';
+        removeButton.style.top = '-10px';
+        removeButton.style.right = '-10px';
+        removeButton.style.background = 'red';
+        removeButton.style.color = 'white';
+        removeButton.style.border = 'none';
+        removeButton.style.borderRadius = '50%';
+        removeButton.style.cursor = 'pointer';
+        removeButton.addEventListener('click', () => element.remove());
+
+        element.appendChild(removeButton);
+        return element;
+    }
+
+    // Créer un élément d'image
+    function createImageElement() {
+        const element = document.createElement('img');
+        element.src = 'https://via.placeholder.com/150';
+        element.alt = 'Nouvelle image';
+        element.style.maxWidth = '100%';
+        element.style.height = 'auto';
+        return element;
+    }
+
+    // Créer un élément de section
+    function createSectionElement() {
+        const element = document.createElement('div');
+        element.style.padding = '20px';
+        element.style.backgroundColor = '#E0E7FF';
+        element.style.border = '1px solid #4F46E5';
+        element.textContent = 'Nouvelle section';
         return element;
     }
 </script>
