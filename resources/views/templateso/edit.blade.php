@@ -233,7 +233,6 @@
     };
 
     // Configuration OpenAI (ChatGPT API)
-    const OPENAI_API_KEY = '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'; // Remplacez par votre clé API
     const OPENAI_ENDPOINT = 'https://models.inference.ai.azure.com/chat/completions';
 
     // État de l'IA
