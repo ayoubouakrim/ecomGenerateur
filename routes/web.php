@@ -3,6 +3,7 @@
 use App\Http\Controllers\InputUserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OpenAiController;
 use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\TypeController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,9 @@ use App\Http\Controllers\GenerationController;
 //Route::get('/editor/{id}', [TemplatesController::class, 'edit'])->name('editor');
 //Route::get('/temp-content/{id}', [TemplatesController::class, 'tempContent'])->name('template.tempContent');
 //Route::post('/save-draft', [TemplatesController::class, 'saveDraft'])->name('template.saveDraft');
+
+Route::post('/chat', [OpenAiController::class, 'processChat']);
+
 
 Route::get('/template/original/{id}', [TemplatesController::class, 'original'])->name('templateso.original');
 
