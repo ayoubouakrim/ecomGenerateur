@@ -42,7 +42,6 @@ class OpenAiController extends Controller
         // Appel à l'API Azure OpenAI
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
-//            'Authorization' => 'Bearer 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',
         'Authorization' => 'Bearer ' . $apiKey,
         ])->post($azureEndpoint, $payload);
 
