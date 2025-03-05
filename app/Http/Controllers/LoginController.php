@@ -31,7 +31,7 @@ class LoginController extends Controller
         if ($user && Hash::check($password, $user->password)) {
             Auth::loginUsingId($user->id);
             $request->session()->regenerate();
-            return to_route('inputUser')->with('success', 'Bienvenue sur cette page ' . $user->name . ' .');
+            return to_route('templateso.index')->with('success', 'Bienvenue sur cette page ' . $user->name . ' .');
         } else {
             return back()->withErrors([
                 'email' => 'Login ou mot de passe incorrect'
