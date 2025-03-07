@@ -166,6 +166,89 @@
             background: #f3f4f6;
             margin-right: auto;
         }
+
+        /**/
+        /* Style du popup */
+        .deploy-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .deploy-popup.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .deploy-popup-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .deploy-popup h3 {
+            margin-bottom: 1.5rem;
+            color: #4F46E5;
+        }
+
+        .deploy-popup a {
+            color: #4F46E5;
+            text-decoration: none;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .deploy-popup a:hover {
+            text-decoration: underline;
+        }
+
+        .deploy-popup-buttons {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .deploy-popup-buttons button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .deploy-popup-buttons .copy-btn {
+            background: #4F46E5;
+            color: white;
+        }
+
+        .deploy-popup-buttons .copy-btn:hover {
+            background: #4338CA;
+        }
+
+        .deploy-popup-buttons .close-btn {
+            background: #f3f4f6;
+            color: #333;
+        }
+
+        .deploy-popup-buttons .close-btn:hover {
+            background: #e0e7ff;
+        }
     </style>
 </head>
 <body>
@@ -225,386 +308,25 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-{{--<script>
-    // ATTENTION : Exposer votre clé API dans le code client n'est PAS sécurisé.
-    // Ce code est fourni à titre d'exemple. Il est recommandé d'effectuer les appels API depuis un backend.
-    const state = {
-        originalContent: null,
-        modifications: new Map(),
-        selectedElement: null
-    };
 
-    // Configuration OpenAI (ChatGPT API)
-    const OPENAI_ENDPOINT = 'https://models.inference.ai.azure.com/chat/completions';
-
-    // État de l'IA
-    const aiState = {
-        isProcessing: false,
-        chatHistory: []
-    };
-
-    document.addEventListener('DOMContentLoaded', async () => {
-        const response = await fetch("{{ route('templateso.original', ['id' => $templateId]) }}");
-        state.originalContent = await response.text();
-        enableElementPicker();
-        setupDragAndDrop();
-    });
-
-    function enableElementPicker() {
-        const iframe = document.getElementById('templatePreview');
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        iframeDoc.body.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const element = e.target;
-            if (state.selectedElement) {
-                state.selectedElement.classList.remove('element-highlight');
-            }
-            state.selectedElement = element;
-            element.classList.add('element-highlight');
-            showElementSettings(element);
-        });
-    }
-
-    function showElementSettings(element) {
-        const settingsPanel = document.getElementById('dynamicSettings');
-        element.dataset.elementType = element.tagName;
-        const commonProperties = {
-            'textContent': 'Texte',
-            'color': 'Couleur du texte',
-            'backgroundColor': 'Couleur de fond',
-            'fontSize': 'Taille de police',
-            'src': 'Source image',
-            'href': 'Lien'
-        };
-        const formGroups = Object.entries(commonProperties).map(([prop, label]) => {
-            let value = '';
-            if (prop === 'textContent' || prop === 'href') {
-                value = element[prop] || '';
-            } else if (prop === 'src') {
-                value = element.getAttribute('src') || '';
-            } else {
-                value = window.getComputedStyle(element)[prop] || '';
-            }
-            return `
-        <div class="dynamic-form-group">
-          <label class="form-label">${label}</label>
-          ${getInputForProperty(prop, value)}
+<!-- Popup de déploiement -->
+<div class="deploy-popup" id="deployPopup">
+    <div class="deploy-popup-content">
+        <h3>Site hébergé avec succès !</h3>
+        <p>Votre site est maintenant en ligne :</p>
+        <a id="deployLink" target="_blank" rel="noopener noreferrer">Chargement du lien...</a>
+        <div class="deploy-popup-buttons">
+            <button class="copy-btn" id="copyLinkBtn">
+                <i class="bi bi-clipboard me-2"></i>Copier le lien
+            </button>
+            <button class="close-btn" id="closePopupBtn">
+                Fermer
+            </button>
         </div>
-      `;
-        });
-        settingsPanel.innerHTML = formGroups.join('');
-        attachEventListeners(element);
-    }
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    function getInputForProperty(prop, value) {
-        switch(prop) {
-            case 'color':
-            case 'backgroundColor':
-                return `<input type="color" class="form-control form-control-color" data-property="${prop}" value="${value || '#000000'}">`;
-            case 'fontSize':
-                let size = parseInt(value) || 16;
-                return `<input type="range" class="form-range" min="8" max="72" data-property="${prop}" value="${size}">`;
-            default:
-                return `<input type="text" class="form-control" data-property="${prop}" value="${value || ''}">`;
-        }
-    }
-
-    function attachEventListeners(element) {
-        document.querySelectorAll('[data-property]').forEach(input => {
-            input.addEventListener('input', () => {
-                const prop = input.dataset.property;
-                let value = input.value;
-                if (input.type === 'file' && input.files.length > 0) {
-                    const file = input.files[0];
-                    value = `url(${URL.createObjectURL(file)})`;
-                }
-                if (prop === 'textContent') {
-                    element.textContent = value;
-                } else if (prop === 'src') {
-                    element.setAttribute('src', value);
-                } else if (prop === 'href') {
-                    element.setAttribute('href', value);
-                } else if (prop === 'fontSize') {
-                    element.style[prop] = value + 'px';
-                } else {
-                    element.style[prop] = value;
-                }
-                state.modifications.set(element, { ...(state.modifications.get(element) || {}), [prop]: value });
-            });
-        });
-    }
-
-    async function getModifiedContent() {
-        const iframe = document.getElementById('templatePreview');
-        const serializer = new XMLSerializer();
-        return serializer.serializeToString(iframe.contentDocument);
-    }
-
-    document.getElementById('downloadBtn').addEventListener('click', async () => {
-        const modifiedContent = await getModifiedContent();
-        const blob = new Blob([modifiedContent], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `template-modifie-${Date.now()}.html`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    });
-
-    document.getElementById('saveDraft').addEventListener('click', async () => {
-        const modifiedContent = await getModifiedContent();
-        await fetch("{{ route('templateso.saveDraft') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({ content: modifiedContent, templateId: "{{ $templateId }}" })
-        });
-        alert('Brouillon sauvegardé !');
-    });
-
-    function setupDragAndDrop() {
-        const iframe = document.getElementById('templatePreview');
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        iframeDoc.body.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const type = e.dataTransfer.getData('type');
-            const { clientX, clientY } = e;
-            const newElement = createElementByType(type);
-            if (newElement) {
-                newElement.style.position = 'absolute';
-                newElement.style.left = `${clientX}px`;
-                newElement.style.top = `${clientY}px`;
-                iframeDoc.body.appendChild(newElement);
-                enableElementPicker();
-            }
-        });
-        iframeDoc.body.addEventListener('dragover', (e) => {
-            e.preventDefault();
-        });
-        document.querySelectorAll('.draggable-element').forEach(el => {
-            el.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('type', el.dataset.type);
-            });
-        });
-    }
-
-    function createElementByType(type) {
-        switch (type) {
-            case 'text': return createTextElement();
-            case 'image': return createImageElement();
-            case 'section': return createSectionElement();
-            default: return null;
-        }
-    }
-
-    function createTextElement() {
-        const element = document.createElement('div');
-        element.contentEditable = true;
-        element.textContent = 'Nouveau texte';
-        element.style.padding = '10px';
-        element.style.border = '1px dashed #4F46E5';
-        element.style.backgroundColor = '#F3F4F6';
-        const removeButton = document.createElement('button');
-        removeButton.textContent = '×';
-        removeButton.style.position = 'absolute';
-        removeButton.style.top = '-10px';
-        removeButton.style.right = '-10px';
-        removeButton.style.background = 'red';
-        removeButton.style.color = 'white';
-        removeButton.style.border = 'none';
-        removeButton.style.borderRadius = '50%';
-        removeButton.style.cursor = 'pointer';
-        removeButton.addEventListener('click', () => element.remove());
-        element.appendChild(removeButton);
-        return element;
-    }
-
-    function createImageElement() {
-        const element = document.createElement('img');
-        element.src = 'https://via.placeholder.com/150';
-        element.alt = 'Nouvelle image';
-        element.style.maxWidth = '100%';
-        element.style.height = 'auto';
-        return element;
-    }
-
-    function createSectionElement() {
-        const element = document.createElement('div');
-        element.style.padding = '20px';
-        element.style.backgroundColor = '#E0E7FF';
-        element.style.border = '1px solid #4F46E5';
-        element.textContent = 'Nouvelle section';
-        return element;
-    }
-
-    // Interface IA : Toggle et auto-description du template avec ChatGPT
-    document.getElementById('aiButton').addEventListener('click', () => {
-        const aiChatEl = document.getElementById('aiChat');
-        if (aiChatEl.style.display === 'block') {
-            aiChatEl.style.display = 'none';
-        } else {
-            aiChatEl.style.display = 'block';
-            if (document.getElementById('chatMessages').childElementCount === 0) {
-                autoDescribeTemplate();
-            }
-        }
-    });
-
-    // document.getElementById('sendButton').addEventListener('click', async () => {
-    //     if (aiState.isProcessing) return;
-    //     const input = document.getElementById('aiInput');
-    //     const message = input.value.trim();
-    //     if (!message) return;
-    //     aiState.isProcessing = true;
-    //     input.disabled = true;
-    //     try {
-    //         addMessage(message, 'user');
-    //         const currentHtml = await getModifiedContent();
-    //         const response = await fetch(OPENAI_ENDPOINT, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'Authorization': `Bearer ${OPENAI_API_KEY}`
-    //             },
-    //             body: JSON.stringify({
-    //                 model: "gpt-3.5-turbo",
-    //                 messages: [
-    //                     { role: "system", content: "Vous êtes un assistant expert en édition de templates HTML." },
-    //                     { role: "user", content: `Modifie ce template HTML selon ces instructions: ${message}\n\nHTML Actuel:\n${currentHtml}` }
-    //                 ]
-    //             })
-    //         });
-    //         if (!response.ok) {
-    //             throw new Error(`Erreur HTTP ${response.status}`);
-    //         }
-    //         const data = await response.json();
-    //         const aiResponse = data.choices[0].message.content;
-    //         addMessage(aiResponse, 'ai');
-    //         applyAiModifications(aiResponse);
-    //     } catch (error) {
-    //         console.error('Erreur API:', error);
-    //         addMessage("Désolé, une erreur s'est produite.", 'ai');
-    //     } finally {
-    //         aiState.isProcessing = false;
-    //         input.disabled = false;
-    //         input.value = '';
-    //     }
-    // });
-
-    document.getElementById('sendButton').addEventListener('click', async () => {
-        if (aiState.isProcessing) return;
-        const input = document.getElementById('aiInput');
-        const message = input.value.trim();
-        if (!message) return;
-        aiState.isProcessing = true;
-        input.disabled = true;
-        try {
-            addMessage(message, 'user');
-            const currentHtml = await getModifiedContent();
-
-            // Préparez les messages pour le modèle (incluant éventuellement un message "system")
-            const messages = [
-                { role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et css." },
-                { role: "user", content: `Modifie ce template HTML selon ces instructions: ${message}\n\nHTML Actuel:\n${currentHtml}` }
-            ];
-
-            // Appeler notre endpoint backend sécurisé
-            const response = await fetch('/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ messages })
-            });
-
-            if (!response.ok) {
-                throw new Error(`Erreur HTTP ${response.status}`);
-            }
-
-            const data = await response.json();
-            const aiResponse = data.choices[0].message.content;
-            addMessage(aiResponse, 'ai');
-            applyAiModifications(aiResponse);
-        } catch (error) {
-            console.error('Erreur API:', error);
-            addMessage("Désolé, une erreur s'est produite.", 'ai');
-        } finally {
-            aiState.isProcessing = false;
-            input.disabled = false;
-            input.value = '';
-        }
-    });
-
-
-    function addMessage(content, sender) {
-        const messagesDiv = document.getElementById('chatMessages');
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${sender}-message`;
-        messageDiv.textContent = content;
-        messagesDiv.appendChild(messageDiv);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    async function autoDescribeTemplate() {
-        const currentHtml = await getModifiedContent();
-        const prompt = `Donne-moi quelques caractéristiques et une description du template HTML actuel. HTML Actuel:\n${currentHtml}`;
-        aiState.isProcessing = true;
-        try {
-            addMessage("Chargement de la description...", 'ai');
-            const response = await fetch(OPENAI_ENDPOINT, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${OPENAI_API_KEY}`
-                },
-                body: JSON.stringify({
-                    model: "gpt-3.5-turbo",
-                    messages: [
-                        { role: "system", content: "Vous êtes un assistant expert en édition de templates HTML." },
-                        { role: "user", content: prompt }
-                    ]
-                })
-            });
-            if (!response.ok) {
-                throw new Error(`Erreur HTTP ${response.status}`);
-            }
-            const data = await response.json();
-            const aiResponse = data.choices[0].message.content;
-            addMessage(aiResponse, 'ai');
-        } catch (error) {
-            console.error('Erreur dans la description automatique:', error);
-            addMessage("Erreur lors de la description du template.", 'ai');
-        } finally {
-            aiState.isProcessing = false;
-        }
-    }
-
-    async function applyAiModifications(aiResponse) {
-        try {
-            const modifiedHtml = extractHtmlFromResponse(aiResponse);
-            const iframe = document.getElementById('templatePreview');
-            const iframeDoc = iframe.contentDocument;
-            iframeDoc.open();
-            iframeDoc.write(modifiedHtml);
-            iframeDoc.close();
-            enableElementPicker();
-            setupDragAndDrop();
-        } catch (error) {
-            console.error('Erreur application modifications:', error);
-            addMessage("Impossible d'appliquer les modifications.", 'ai');
-        }
-    }
-
-    function extractHtmlFromResponse(response) {
-        const htmlMatch = response.match(/```html\n([\s\S]*?)\n```/);
-        return htmlMatch ? htmlMatch[1] : response;
-    }
-</script>--}}
 </body>
 </html>
 

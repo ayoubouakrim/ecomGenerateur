@@ -673,3 +673,81 @@ function extractHtmlFromResponse(response) {
     const match = response.match(regex);
     return match ? match[1].trim() : response.trim();
 }
+
+// Fonction pour afficher le popup de déploiement
+function showDeployPopup(url) {
+    const popup = document.getElementById('deployPopup');
+    const deployLink = document.getElementById('deployLink');
+    const copyLinkBtn = document.getElementById('copyLinkBtn');
+    const closePopupBtn = document.getElementById('closePopupBtn');
+
+    // Mettre à jour le lien
+    deployLink.href = url;
+    deployLink.textContent = url;
+
+    // Gestion du clic sur "Copier le lien"
+    copyLinkBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(url).then(() => {
+            alert('Lien copié dans le presse-papiers !');
+        }).catch(() => {
+            alert('Impossible de copier le lien.');
+        });
+    });
+
+    // Gestion du clic sur "Fermer"
+    closePopupBtn.addEventListener('click', () => {
+        popup.classList.remove('active');
+    });
+
+    // Afficher le popup
+    popup.classList.add('active');
+}
+
+// Gestion du clic sur le bouton "Héberger le site"
+document.getElementById('deployBtn').addEventListener('click', async () => {
+    try {
+        const modifiedContent = await getModifiedContent();
+        const response = await fetch('/deploy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ content: modifiedContent })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        // Afficher le popup avec le lien du site hébergé
+        showDeployPopup(data.siteUrl);
+    } catch (error) {
+        console.error('Erreur de déploiement :', error);
+        alert("Erreur lors du déploiement du site.");
+    }
+});
+/*document.getElementById('deployBtn').addEventListener('click', async () => {
+    try {
+        const modifiedContent = await getModifiedContent();
+        const response = await fetch('/deploy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ content: modifiedContent })
+        });
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        // Afficher un popup avec le lien du site hébergé
+        alert(`Site hébergé avec succès !\n\nLien : ${data.siteUrl}`);
+    } catch (error) {
+        console.error('Erreur de déploiement :', error);
+        alert("Erreur lors du déploiement du site.");
+    }
+});*/
+

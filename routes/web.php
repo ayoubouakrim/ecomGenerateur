@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DeployController;
 use App\Http\Controllers\InputUserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AuthController;
@@ -23,6 +24,8 @@ use App\Http\Controllers\GenerationController;
 //Route::get('/editor/{id}', [TemplatesController::class, 'edit'])->name('editor');
 //Route::get('/temp-content/{id}', [TemplatesController::class, 'tempContent'])->name('template.tempContent');
 //Route::post('/save-draft', [TemplatesController::class, 'saveDraft'])->name('template.saveDraft');
+
+Route::post('/deploy', [DeployController::class, 'deploySite']);
 
 Route::post('/chat', [OpenAiController::class, 'processChat']);
 

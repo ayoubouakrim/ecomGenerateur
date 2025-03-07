@@ -33,5 +33,12 @@ return [
     'openai' => [
         'key' => getenv('GITHUB_TOKEN') ?: env('GITHUB_TOKEN'),
     ],
+    'github' => [
+        'token'  => env('GITHUB_API_TOKEN'),
+        'owner'  => env('GITHUB_OWNER'),
+        'repo'   => env('GITHUB_REPO'),
+        'branch' => env('GITHUB_BRANCH', 'gh-pages'),
+    ],
+
 
 ];
