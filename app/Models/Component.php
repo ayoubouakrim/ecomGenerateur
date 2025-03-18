@@ -15,6 +15,7 @@ class Component extends Model
         'name',
         'htmlStructure',
         'cssStyle',
+        'img_path',
         'type_id',
     ];
 

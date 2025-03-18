@@ -7,6 +7,7 @@ use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\TypeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GenerationController;
+use App\Http\Controllers\StripeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +57,12 @@ Route::post('/save-component-content', [TypeController::class, 'saveComponentCon
 
 
 Route::get('/generate-template', [GenerationController::class, 'renderTemplateWithComponents'])->name('template.generate');
+
+
+
+Route::get('/checkout', [StripeController::class, 'checkout'])->name('stripe.checkout');
+Route::post('/session', [StripeController::class, 'session'])->name('stripe.session');
+Route::get('/success', [StripeController::class, 'success'])->name('stripe.success');
 
 
 Route::get('/generate', function () {

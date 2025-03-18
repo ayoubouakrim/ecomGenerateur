@@ -105,6 +105,21 @@
       font-weight: 500;
     }
 
+    .img-fluid {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .img-nav-fluid {
+      max-width: 100%;
+      height: 50%;
+    }
+
+    .img-contact-fluid {
+      max-width: 100%;
+      height: 100%;
+    }
+
     .card-body {
       padding: 1.25rem;
     }
@@ -237,9 +252,9 @@
         @foreach($allComponents->where('type_id', $types->where('name', 'Navbars')->first()->id) as $component)
             <div class="col-md-4">
                 <div class="component-card">
-                    <div class="preview-area">Navbar Style</div>
+                    <div class="preview-area"><img src=" {{$component->img_path}} " alt="Navbar Preview" class="img-nav-fluid"></div>
                     <div class="card-body">
-                        <h5 class="component-title">{{ $component->name }}</h5>
+                        <h5 class="component-title"> {{$component->name}} </h5>
                         <button class="btn btn-select" onclick="selectCard(this)"
                                 data-type="{{ $types->where('name', 'Navbars')->first()->id }}"
                                 data-style="{{ $component->id }}">
@@ -284,7 +299,7 @@
             @foreach($allComponents->where('type_id', $types->where('name', 'Hero Sections')->first()->id) as $component)
                 <div class="col-md-4">
                     <div class="component-card">
-                        <div class="preview-area">Hero Style</div>
+                        <div class="preview-area"><img src=" {{$component->img_path}} " alt="Hero Preview" class="img-fluid"></div>
                         <div class="card-body">
                             <h5 class="component-title">{{ $component->name }}</h5>
                             <button class="btn btn-select" onclick="selectCard(this)"
@@ -336,7 +351,7 @@
             @foreach($allComponents->where('type_id', $types->where('name', 'About us')->first()->id) as $component)
                 <div class="col-md-4">
                     <div class="component-card">
-                        <div class="preview-area">About Us Style</div>
+                        <div class="preview-area"><img src=" {{$component->img_path}} " alt="Features Preview" class="img-fluid"></div>
                         <div class="card-body">
                             <h5 class="component-title">{{ $component->name }}</h5>
                             <button class="btn btn-select" onclick="selectCard(this)"
@@ -386,7 +401,7 @@
             @foreach($allComponents->where('type_id', $types->where('name', 'Contact us')->first()->id) as $component)
                 <div class="col-md-4">
                     <div class="component-card">
-                        <div class="preview-area">Contact Us Style</div>
+                        <div class="preview-area"><img src=" {{$component->img_path}} " alt="Contact Preview" class="img-contact-fluid"></div>
                         <div class="card-body">
                             <h5 class="component-title">{{ $component->name }}</h5>
                             <button class="btn btn-select" onclick="selectCard(this)"
@@ -439,7 +454,7 @@
             @foreach($allComponents->where('type_id', $types->where('name', 'Footers')->first()->id) as $component)
                 <div class="col-md-4">
                     <div class="component-card">
-                        <div class="preview-area">Footer Style</div>
+                        <div class="preview-area"><img src=" {{$component->img_path}} " alt="Footer Preview" class="img-fluid"></div>
                         <div class="card-body">
                             <h5 class="component-title">{{ $component->name }}</h5>
                             <button class="btn btn-select" onclick="selectCard(this)"

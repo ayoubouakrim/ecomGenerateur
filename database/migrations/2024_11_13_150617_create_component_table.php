@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->longText('htmlStructure');
             $table->longText('cssStyle');
+            $table->string('img_path');
             $table->unsignedBigInteger('type_id');
             $table->timestamps();
 
