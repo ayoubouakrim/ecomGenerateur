@@ -728,26 +728,5 @@ document.getElementById('deployBtn').addEventListener('click', async () => {
         alert("Erreur lors du déploiement du site.");
     }
 });
-/*document.getElementById('deployBtn').addEventListener('click', async () => {
-    try {
-        const modifiedContent = await getModifiedContent();
-        const response = await fetch('/deploy', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({ content: modifiedContent })
-        });
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP ${response.status}`);
-        }
-        const data = await response.json();
-        // Afficher un popup avec le lien du site hébergé
-        alert(`Site hébergé avec succès !\n\nLien : ${data.siteUrl}`);
-    } catch (error) {
-        console.error('Erreur de déploiement :', error);
-        alert("Erreur lors du déploiement du site.");
-    }
-});*/
+
 

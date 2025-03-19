@@ -146,6 +146,8 @@ class TemplatesController extends Controller
         return response()->json(['success' => true]);
     }
 
+    //test
+
     // Récupérer le contenu original du template
     public function original($id)
     {

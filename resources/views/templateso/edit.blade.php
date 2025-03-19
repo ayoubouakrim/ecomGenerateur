@@ -16,23 +16,7 @@
             --sidebar-width: 360px;
             --primary-color: #4F46E5;
         }
-        /* Surlignage de l’élément sélectionné */
-        .element-highlight {
-            outline: 2px solid var(--primary-color) !important;
-            position: relative;
-            transition: outline 0.2s;
-        }
-        .element-highlight::after {
-            content: attr(data-element-type);
-            position: absolute;
-            top: -20px;
-            left: 0;
-            background: var(--primary-color);
-            color: white;
-            padding: 2px 5px;
-            font-size: 12px;
-            border-radius: 3px;
-        }
+
         .editor-container {
             display: grid;
             grid-template-columns: var(--sidebar-width) 1fr;
@@ -45,50 +29,15 @@
             padding: 1rem;
             overflow-y: auto;
         }
-        .element-picker {
-            cursor: crosshair;
-            position: absolute;
-            z-index: 1000;
-            background: rgba(79, 70, 229, 0.1);
-            border: 2px solid var(--primary-color);
-        }
-        .dynamic-form-group {
-            margin-bottom: 1rem;
-        }
+
+
         .preview-wrapper {
             position: relative;
             background: #f8f9fa;
             padding: 1rem;
             overflow-y: auto;
         }
-        .dropzone {
-            border: 2px dashed #4F46E5;
-            padding: 20px;
-            min-height: 200px;
-            background: white;
-        }
-        .editable {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin: 5px 0;
-            position: relative;
-        }
-        .editable:hover {
-            outline: 2px solid #4F46E5;
-        }
-        .remove-btn {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background: red;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 12px;
-            cursor: pointer;
-        }
+
         .draggable-elements {
             display: flex;
             flex-direction: column;
@@ -150,21 +99,6 @@
             display: flex;
             padding: 10px;
             border-top: 1px solid #eee;
-        }
-        .message {
-            margin: 8px 0;
-            padding: 10px;
-            border-radius: 8px;
-            max-width: 80%;
-        }
-        .user-message {
-            background: #4F46E5;
-            color: white;
-            margin-left: auto;
-        }
-        .ai-message {
-            background: #f3f4f6;
-            margin-right: auto;
         }
 
         /**/
