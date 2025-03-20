@@ -68,3 +68,7 @@ Route::get('/success', [StripeController::class, 'success'])->name('stripe.succe
 Route::get('/generate', function () {
     return view('generate');
 })->name('generate');
+
+Route::get('/greeting', function () {
+    return view('greeting');
+})->name('gretting');
