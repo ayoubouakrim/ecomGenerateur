@@ -337,7 +337,7 @@
                 <h2>Build from Scratch</h2>
                 <p>Start with a blank canvas and create your website exactly how you want it, with complete creative
                     freedom.</p>
-                <button class="hero-btn">Start Building</button>
+                <button class="hero-btn" onclick="window.location.href='{{route('index')}}'">Start Building</button>
             </div>
             <div class="hero-content right">
                 <h2>Edit Template</h2>

@@ -53,7 +53,8 @@ Route::post('/register', [AuthController::class , 'store'] )-> name('register');
 Route::get('/component-builder', [TypeController::class, 'index'])->name('comp.chose_comp');
 
 
-Route::post('/save-component-content', [TypeController::class, 'saveComponentContent'])->name('save.component.content');
+Route::post('/save-content', [TypeController::class, 'saveContent'])->name('save.content');
+
 
 
 Route::get('/generate-template', [GenerationController::class, 'renderTemplateWithComponents'])->name('template.generate');

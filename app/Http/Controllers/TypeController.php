@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Type;
 use App\Models\Component;
 use App\Models\ComponentContent;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use App\Models\UserInput;
@@ -15,20 +14,47 @@ class TypeController extends Controller
 {
     public function index()
     {
-        
+
         $allComponents = Component::all();
-        $types = Type::all(); 
+        $types = Type::all();
 
         return view('comp.chose_comp', compact(
-         'allComponents',
-         'types'
-    ));
+            'allComponents',
+            'types'
+        ));
     }
 
-    public function getUserInputId() {
+    public function getUserInputId()
+    {
         $siteName = Session::get('siteName', 'Default Site Name');
-        
+
         return UserInput::where('siteName', $siteName)->first()->id;
+    }
+
+    public function saveContent(Request $request)
+    {
+        $user_input_id = $this->getUserInputId();
+        $component_id = $request->component_id;
+
+        // Get all request data
+        $requestData = $request->all();
+        unset($requestData['component_id'], $requestData['_token']);
+
+        $json_data = json_encode($requestData);
+
+        // Create a new ComponentContent record
+        $componentContent = ComponentContent::create([
+            'content' => $json_data,
+            'component_id' => $component_id,
+            'userInput_id' =>  $user_input_id,
+        ]);
+
+        return response()->json([
+            'message' => 'Component content saved successfully',
+            'id' => $componentContent->id
+        ], 200);
+
+
     }
 
 
@@ -37,7 +63,7 @@ class TypeController extends Controller
         try {
 
             $user_input_id = $this->getUserInputId();
-            
+
             // Validate the incoming request
             $validatedData = $request->validate([
                 'component_id' => 'required|numeric|exists:component,id',
@@ -55,7 +81,6 @@ class TypeController extends Controller
                 'message' => 'Component content saved successfully',
                 'id' => $componentContent->id
             ], 200);
-
         } catch (\Exception $e) {
             Log::error('Component Content Save Error: ' . $e->getMessage());
 

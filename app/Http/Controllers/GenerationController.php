@@ -10,13 +10,9 @@ use Illuminate\Support\Facades\Log;
 
 class GenerationController extends Controller
 {
-    /**
-     * Retrieve UserInput record by ID with enhanced error handling
-     *
-     * @param int $id
-     * @return object
-     * @throws \Exception
-     */
+    
+    // Retrieve UserInput record by ID with enhanced error handling
+     
     private function getUserInputById($id)
     {
         $userInput = DB::table('user_input')
@@ -30,25 +26,7 @@ class GenerationController extends Controller
         return $userInput;
     }
 
-    /**
-     * Retrieve template details with more comprehensive information
-     *
-     * @param int $templateId
-     * @return object
-     * @throws \Exception
-     */
-    private function getTemplateDetails($templateId)
-    {
-        $template = DB::table('template')
-            ->where('id', $templateId)
-            ->first();
 
-        if (!$template) {
-            throw new \Exception("Template with ID {$templateId} not found.");
-        }
-
-        return $template;
-    }
 
     /**
      * Retrieve components with advanced filtering and validation
@@ -80,10 +58,6 @@ class GenerationController extends Controller
 
     /**
      * Advanced content injection with more robust replacement
-     *
-     * @param string $htmlStructure
-     * @param string $contentData
-     * @return string
      */
     private function injectContentIntoHtml($htmlStructure, $contentData)
     {
@@ -143,8 +117,7 @@ HTML;
         }
 
         return <<<HTML
-<ul class="list-unstyled">
-    {$html}
+<ul class="list-unstyled">{$html}
 </ul>
 HTML;
     }
