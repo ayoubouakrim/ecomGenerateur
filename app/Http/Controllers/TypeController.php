@@ -27,8 +27,10 @@ class TypeController extends Controller
     public function getUserInputId()
     {
         $siteName = Session::get('siteName', 'Default Site Name');
+        
 
         return UserInput::where('siteName', $siteName)->first()->id;
+        
     }
 
     public function saveContent(Request $request)
