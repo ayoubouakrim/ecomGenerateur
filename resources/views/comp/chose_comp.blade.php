@@ -234,6 +234,26 @@
         .btn-save:hover {
             background-color: var(--secondary-color);
         }
+
+        .toast-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: white;
+            background: green;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+            z-index: 9999;
+            /* Ensures it's above everything */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .toast-message.error {
+            background: red;
+        }
     </style>
 </head>
 
@@ -243,7 +263,17 @@
             <h1 class="page-title">Website Component Builder</h1>
             <p class="page-subtitle">Select components to create your perfect website</p>
         </header>
+        @if (session('success') || session('error'))
+            <div id="toast" class="toast-message {{ session('success') ? 'success' : 'error' }}">
+                {{ session('success') ?? session('error') }}
+            </div>
 
+            <script>
+                setTimeout(() => {
+                    document.getElementById("toast").style.display = "none";
+                }, 10000);
+            </script>
+        @endif
         {{-- Navbars Section --}}
         @if ($types->where('name', 'Navbars')->count() > 0)
             <section class="section-container">

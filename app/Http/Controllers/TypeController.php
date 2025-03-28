@@ -27,69 +27,42 @@ class TypeController extends Controller
     public function getUserInputId()
     {
         $siteName = Session::get('siteName', 'Default Site Name');
-        
 
-        return UserInput::where('siteName', $siteName)->first()->id;
-        
+
+        //return UserInput::where('siteName', $siteName)->first()->id;
+        return 16; // For testing purposes, return a static ID
     }
 
     public function saveContent(Request $request)
     {
-        $user_input_id = $this->getUserInputId();
-        $component_id = $request->component_id;
-
-        // Get all request data
-        $requestData = $request->all();
-        unset($requestData['component_id'], $requestData['_token']);
-
-        $json_data = json_encode($requestData);
-
-        // Create a new ComponentContent record
-        $componentContent = ComponentContent::create([
-            'content' => $json_data,
-            'component_id' => $component_id,
-            'userInput_id' =>  $user_input_id,
-        ]);
-
-        return response()->json([
-            'message' => 'Component content saved successfully',
-            'id' => $componentContent->id
-        ], 200);
 
 
-    }
-
-
-    public function saveComponentContent(Request $request)
-    {
         try {
 
             $user_input_id = $this->getUserInputId();
+            $component_id = $request->component_id;
 
-            // Validate the incoming request
-            $validatedData = $request->validate([
-                'component_id' => 'required|numeric|exists:component,id',
-                'content' => 'required|array'
-            ]);
+            // Get all request data
+            $requestData = $request->all();
+            unset($requestData['component_id'], $requestData['_token']);
+
+            $json_data = json_encode($requestData);
 
             // Create a new ComponentContent record
             $componentContent = ComponentContent::create([
-                'content' => json_encode($validatedData['content']),
-                'component_id' => $validatedData['component_id'],
+                'content' => $json_data,
+                'component_id' => $component_id,
                 'userInput_id' =>  $user_input_id,
             ]);
 
-            return response()->json([
-                'message' => 'Component content saved successfully',
-                'id' => $componentContent->id
-            ], 200);
+            return redirect()->back()->with('success', 'Content saved successfully!');
         } catch (\Exception $e) {
             Log::error('Component Content Save Error: ' . $e->getMessage());
 
-            return response()->json([
-                'message' => 'Error saving component content',
-                'error' => $e->getMessage()
-            ], 500);
+            return redirect()->back()->with('error', 'Error saving component content');
         }
     }
+
+
+    
 }

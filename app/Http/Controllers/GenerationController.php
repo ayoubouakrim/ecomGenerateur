@@ -19,7 +19,7 @@ class GenerationController extends Controller
     {
         $siteName = Session::get('siteName', 'Default Site Name');
 
-        $userInput = UserInput::where('siteName', $siteName)->first();
+        $userInput = UserInput::where('id', 16)->first();
 
         if (!$userInput) {
             throw new \Exception("UserInput with siteName {$siteName} not found.");
@@ -46,6 +46,8 @@ class GenerationController extends Controller
             )
             ->get();
 
+            
+
         if ($components->isEmpty()) {
             throw new \Exception('No components found for the given UserInput.');
         }
@@ -64,8 +66,6 @@ class GenerationController extends Controller
             switch ($componentType) {
                 case 1:
                     return $this->injectNavbarContent($htmlStructure, $contentData);
-                case 5:
-                    return $this->injectFooterContent($htmlStructure, $contentData);
                 case 4:
                     return $this->injectContactFormContent($htmlStructure, $contentData);
                 case 2:
@@ -73,7 +73,7 @@ class GenerationController extends Controller
                 case 3:
                     return $this->injectFeaturesContent($htmlStructure, $contentData);
                 default:
-                    return $this->injectDefaultContent($htmlStructure, $contentData);
+                    return $this->injectFooterContent($htmlStructure, $contentData);
             }
         } catch (\JsonException $e) {
             Log::error('JSON Parsing Error: ' . $e->getMessage());
@@ -83,7 +83,7 @@ class GenerationController extends Controller
 
     public function injectNavbarContent($htmlStructure, $contentData)
     {
-        $htmlStructure = str_replace('{{brand_name}}', htmlspecialchars($contentData['website_name'] ?? 'Brand Name'), $htmlStructure);
+        $htmlStructure = str_replace('{{website_name}}', htmlspecialchars($contentData['website_name'] ?? 'Brand Name'), $htmlStructure);
         $htmlStructure = str_replace('{{menu_item_1}}', htmlspecialchars($contentData['menu_item_1'] ?? 'Home'), $htmlStructure);
         $htmlStructure = str_replace('{{menu_item_2}}', htmlspecialchars($contentData['menu_item_3'] ?? 'Features'), $htmlStructure);
         $htmlStructure = str_replace('{{menu_item_3}}', htmlspecialchars($contentData['menu_item_4'] ?? 'Contact'), $htmlStructure);
@@ -116,7 +116,7 @@ class GenerationController extends Controller
 
     public function injectContactFormContent($htmlStructure, $contentData)
     {
-        $htmlStructure = str_replace('{{section_title}}', htmlspecialchars($contentData['form_title'] ?? 'Contact Us'), $htmlStructure);
+        $htmlStructure = str_replace('{{form_title}}', htmlspecialchars($contentData['form_title'] ?? 'Contact Us'), $htmlStructure);
         $htmlStructure = str_replace('{{contact_field_1_label}}', htmlspecialchars($contentData['contact_field_1_label'] ?? 'Full Name'), $htmlStructure);
         $htmlStructure = str_replace('{{contact_field_1_type}}', htmlspecialchars($contentData['contact_field_1_type'] ?? 'text'), $htmlStructure);
         $htmlStructure = str_replace('{{contact_field_2_label}}', htmlspecialchars($contentData['contact_field_2_label'] ?? 'Email'), $htmlStructure);
@@ -139,6 +139,8 @@ class GenerationController extends Controller
         $htmlStructure = str_replace('{{product_2_url}}', htmlspecialchars($contentData['product_link_2_url'] ?? '#'), $htmlStructure);
         $htmlStructure = str_replace('{{product_3_name}}', htmlspecialchars($contentData['product_3_name'] ?? 'Product 3'), $htmlStructure);
         $htmlStructure = str_replace('{{product_3_url}}', htmlspecialchars($contentData['product_link_3_url'] ?? '#'), $htmlStructure);
+
+        return $htmlStructure;
     }
 
 
@@ -149,7 +151,7 @@ class GenerationController extends Controller
         try {
 
             $userInput = $this->getUserInputId();
-            
+
 
             $components = $this->getComponentsByUserInputId($userInput->id);
 
@@ -195,13 +197,13 @@ class GenerationController extends Controller
 
 
 
-    
 
 
 
 
 
-    
+
+
 
     // Generate a complete HTML document
     private function generateFullHtmlDocument($components, $userInput)
@@ -249,9 +251,17 @@ class GenerationController extends Controller
         --text-color: #1f2937;
         --bg-light: #f3f4f6;
         --spacing-unit: 1rem;
+        --gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        --text-dark: #1f2937;
+        --text-light: #f9fafb;
+        --spacing: 2rem;
       }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial, sans-serif; line-height: 1.6; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+    }
         
         {$cssStyles}
     </style>
