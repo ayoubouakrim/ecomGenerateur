@@ -7,183 +7,15 @@
 
     {{--    <script src="{{ asset('js/templateso/edit.js') }}"></script>--}}
     @vite('resources/js/templateso/edit.js')
+    @vite('resources/css/edit.css')
 
     <title>Éditeur Universel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        :root {
-            --sidebar-width: 360px;
-            --primary-color: #4F46E5;
-        }
-
-        .editor-container {
-            display: grid;
-            grid-template-columns: var(--sidebar-width) 1fr;
-            height: 100vh;
-            background: #1A1C22;
-        }
-        .sidebar {
-            background: #252830;
-            color: #fff;
-            padding: 1rem;
-            overflow-y: auto;
-        }
-
-
-        .preview-wrapper {
-            position: relative;
-            background: #f8f9fa;
-            padding: 1rem;
-            overflow-y: auto;
-        }
-
-        .draggable-elements {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .draggable-element {
-            padding: 0.75rem;
-            background: #4F46E5;
-            color: white;
-            border-radius: 0.5rem;
-            cursor: grab;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-        }
-        .draggable-element:hover {
-            background: #4338CA;
-        }
-        .draggable-element:active {
-            cursor: grabbing;
-        }
-        /* Interface IA */
-        .ai-assistant {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 10000;
-        }
-        .ai-button {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #4F46E5;
-            color: white;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-        .ai-button:hover {
-            transform: scale(1.1);
-        }
-        .ai-chat {
-            position: absolute;
-            bottom: 70px;
-            right: 0;
-            width: 400px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            display: none;
-        }
-        .chat-messages {
-            height: 300px;
-            overflow-y: auto;
-            padding: 15px;
-        }
-        .chat-input {
-            display: flex;
-            padding: 10px;
-            border-top: 1px solid #eee;
-        }
-
-        /**/
-        /* Style du popup */
-        .deploy-popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-
-        .deploy-popup.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .deploy-popup-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .deploy-popup h3 {
-            margin-bottom: 1.5rem;
-            color: #4F46E5;
-        }
-
-        .deploy-popup a {
-            color: #4F46E5;
-            text-decoration: none;
-            font-weight: 500;
-            word-break: break-all;
-        }
-
-        .deploy-popup a:hover {
-            text-decoration: underline;
-        }
-
-        .deploy-popup-buttons {
-            margin-top: 1.5rem;
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .deploy-popup-buttons button {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background 0.2s;
-        }
-
-        .deploy-popup-buttons .copy-btn {
-            background: #4F46E5;
-            color: white;
-        }
-
-        .deploy-popup-buttons .copy-btn:hover {
-            background: #4338CA;
-        }
-
-        .deploy-popup-buttons .close-btn {
-            background: #f3f4f6;
-            color: #333;
-        }
-
-        .deploy-popup-buttons .close-btn:hover {
-            background: #e0e7ff;
-        }
-    </style>
+    <!-- Animation library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Progress bar for deployment -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
 </head>
 <body>
 <div class="editor-container">
@@ -196,7 +28,7 @@
         <div id="dynamicSettings">
             <p class="fst-italic">Sélectionnez un élément dans la prévisualisation pour éditer ses propriétés.</p>
         </div>
-        <h4 class="mt-4">Éléments à glisser</h4>
+        {{--<h4 class="mt-4">Éléments à glisser</h4>
         <div class="draggable-elements">
             <div class="draggable-element" draggable="true" data-type="text">
                 <i class="bi bi-text-paragraph me-2"></i>Texte
@@ -207,7 +39,7 @@
             <div class="draggable-element" draggable="true" data-type="section">
                 <i class="bi bi-layout-wtf me-2"></i>Section
             </div>
-        </div>
+        </div>--}}
         <div class="mt-5 border-top pt-3">
             <button class="btn btn-success w-100 mb-2" id="saveDraft">
                 <i class="bi bi-cloud-arrow-up me-2"></i>Sauvegarder le brouillon
@@ -215,8 +47,21 @@
             <button class="btn btn-outline-light mb-3" id="downloadBtn">
                 <i class="bi bi-download me-2"></i>Télécharger le template
             </button>
-            <button class="btn btn-info w-100 mb-2" id="deployBtn">
+            {{--<button class="btn btn-info w-100 mb-2" id="deployBtn">
                 <i class="bi bi-rocket-takeoff me-2"></i>Héberger le site
+            </button>--}}
+            <button class="btn btn-info w-100 mb-2 deploy-button" id="deployBtn">
+    <span class="button-content">
+        <i class="bi bi-rocket-takeoff me-2"></i>Héberger le site
+    </span>
+                <span class="button-loader">
+        <div class="spinner-wave">
+            <div class="spinner-wave-dot"></div>
+            <div class="spinner-wave-dot"></div>
+            <div class="spinner-wave-dot"></div>
+            <div class="spinner-wave-dot"></div>
+        </div>
+    </span>
             </button>
         </div>
     </div>
@@ -233,11 +78,69 @@
         </button>
         <div class="ai-chat" id="aiChat">
             <div class="chat-messages" id="chatMessages"></div>
+
+            <!-- Nouveau loader moderne -->
+            <div class="ai-thinking" id="aiThinking" style="display: none;">
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <p class="thinking-text">L'IA génère votre réponse...</p>
+            </div>
+
             <div class="chat-input">
                 <input type="text" id="aiInput" class="form-control" placeholder="Décrivez vos modifications...">
                 <button class="btn btn-primary ms-2" id="sendButton">
                     <i class="bi bi-send"></i>
                 </button>
+            </div>
+        </div>
+       {{-- <div class="ai-chat" id="aiChat">
+            <div class="chat-messages" id="chatMessages">
+
+            </div>
+            <div class="chat-loading" id="chatLoading" style="display: none;">
+                <div class="spinner-border text-primary spinner-border-sm" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                </div>
+                <span class="ms-2">L'IA réfléchit...</span>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="aiInput" class="form-control" placeholder="Décrivez vos modifications...">
+                <button class="btn btn-primary ms-2" id="sendButton">
+                    <i class="bi bi-send"></i>
+                </button>
+            </div>
+        </div>--}}
+    </div>
+</div>
+
+<!-- Fullscreen Deployment Loader -->
+<div class="deployment-loader" id="deploymentLoader">
+    <div class="loader-content">
+        <div class="orbit-spinner">
+            <div class="orbit"></div>
+            <div class="orbit"></div>
+            <div class="orbit"></div>
+        </div>
+        <h3 class="loader-title">Déploiement en cours</h3>
+        <p class="loader-subtitle">Votre site est en train d'être hébergé...</p>
+        <div class="progress-container">
+            <div class="progress-bar" id="deployProgress"></div>
+        </div>
+        <div class="loader-stats">
+            <div class="stat-item">
+                <i class="bi bi-speedometer2"></i>
+                <span id="serverSetup">Configuration du serveur...</span>
+            </div>
+            <div class="stat-item">
+                <i class="bi bi-database"></i>
+                <span id="dbSetup">Préparation de la base de données...</span>
+            </div>
+            <div class="stat-item">
+                <i class="bi bi-shield-lock"></i>
+                <span id="securitySetup">Mise en place de la sécurité...</span>
             </div>
         </div>
     </div>
@@ -260,7 +163,8 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+<!-- Progress bar library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
 </body>
 </html>
 
