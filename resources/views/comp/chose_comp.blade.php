@@ -258,6 +258,7 @@
 </head>
 
 <body>
+    @include('layout.nav')
     <div class="main-container">
         <header class="page-header">
             <h1 class="page-title">Website Component Builder</h1>

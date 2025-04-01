@@ -61,11 +61,12 @@ class GenerationController extends Controller
     {
         try {
             $contentData = json_decode($contentData, true, 512, JSON_THROW_ON_ERROR);
+            $logo_path = $this->getLogoPath();
 
             // Call specific injection method based on component type
             switch ($componentType) {
                 case 1:
-                    return $this->injectNavbarContent($htmlStructure, $contentData);
+                    return $this->injectNavbarContent($htmlStructure, $contentData, $logo_path);
                 case 4:
                     return $this->injectContactFormContent($htmlStructure, $contentData);
                 case 2:
@@ -81,12 +82,14 @@ class GenerationController extends Controller
         }
     }
 
-    public function injectNavbarContent($htmlStructure, $contentData)
+    public function injectNavbarContent($htmlStructure, $contentData, $logo_path)
     {
         $htmlStructure = str_replace('{{website_name}}', htmlspecialchars($contentData['website_name'] ?? 'Brand Name'), $htmlStructure);
+        $htmlStructure = str_replace('{{logo_path}}', htmlspecialchars($logo_path), $htmlStructure);
         $htmlStructure = str_replace('{{menu_item_1}}', htmlspecialchars($contentData['menu_item_1'] ?? 'Home'), $htmlStructure);
-        $htmlStructure = str_replace('{{menu_item_2}}', htmlspecialchars($contentData['menu_item_3'] ?? 'Features'), $htmlStructure);
-        $htmlStructure = str_replace('{{menu_item_3}}', htmlspecialchars($contentData['menu_item_4'] ?? 'Contact'), $htmlStructure);
+        $htmlStructure = str_replace('{{menu_item_2}}', htmlspecialchars($contentData['menu_item_2'] ?? 'Features'), $htmlStructure);
+        $htmlStructure = str_replace('{{menu_item_3}}', htmlspecialchars($contentData['menu_item_3'] ?? 'Contact'), $htmlStructure);
+        $htmlStructure = str_replace('{{menu_item_4}}', htmlspecialchars($contentData['menu_item_4'] ?? 'About'), $htmlStructure);
 
         return $htmlStructure;
     }
@@ -141,6 +144,14 @@ class GenerationController extends Controller
         $htmlStructure = str_replace('{{product_3_url}}', htmlspecialchars($contentData['product_link_3_url'] ?? '#'), $htmlStructure);
 
         return $htmlStructure;
+    }
+
+    public function getLogoPath()
+    {
+        $userInput = $this->getUserInputId();
+        $logoPath = $userInput->logoUrl ?? '/path/to/default/logo.png';
+
+        return $logoPath;
     }
 
 
@@ -226,32 +237,39 @@ class GenerationController extends Controller
 
         // Use heredoc with proper escaping
         $title = $userInput->siteName ?? 'Generated Site';
-
+        $nav_color = $userInput->color1 ?? '#2563eb';
+        $hero_color = $userInput->color2 ?? '#2563eb';
+        $texto_color = $userInput->color3 ?? '#2563eb';
+        $favicon_path = $userInput->faveIcon ?? '/path/to/default/favicon.ico';
+        $logo_path = $userInput->logoUrl ?? '/path/to/default/logo.png';
+        $description = $userInput->description ?? 'Default description for the site.';
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-            rel="stylesheet"
-    />
-    <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
- <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <link rel="icon" href="{$favicon_path}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{$favicon_path}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
     <title>{$title}</title>
     <style>
         /* Reset and Base Styles */
         :root {
+        --navfooter-color: $nav_color;
+        --hero-color: $hero_color;
+        --texto-color: $texto_color;
         --primary-color: #2563eb;
         --primary-dark: #1d4ed8;
         --text-color: #1f2937;
         --bg-light: #f3f4f6;
         --spacing-unit: 1rem;
         --gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        --custom_gradient: linear-gradient(135deg, #2563eb 0%, $hero_color 100%);
         --text-dark: #1f2937;
         --text-light: #f9fafb;
         --spacing: 2rem;

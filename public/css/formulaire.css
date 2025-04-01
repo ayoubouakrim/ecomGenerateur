@@ -209,6 +209,10 @@ header ul {
 .form-wrapper {
     max-width: 32rem;
 }
+.stick-in {
+    padding-left: 10px;
+    margin-bottom: -15px;
+}
 
 .contact-form {
     display: grid;

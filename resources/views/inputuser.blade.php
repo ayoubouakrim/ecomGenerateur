@@ -10,6 +10,7 @@
 
 <x-master title='InputUser'>
     <main>
+        @include('layout.nav')
         <section class="contact">
             <div class="container">
                 <div class="left">
@@ -35,24 +36,34 @@
 
                                 <i class="icon fa-solid fa-inbox"></i>
                             </div>
-
+                            
+                            <div class="input-wrap w-100 stick-in">
+                                <p>this color will be applied to the NavBar and the Footer</p>
+                            </div>
+                            
                             <div class="input-wrap w-100">
                                 <input class="contact-input" name="color1" type="color" required />
-                                <label>Color 1</label>
+                                <label>Primary color</label>
                                 <i class="icon fa-solid fa-palette"></i>
                             </div>
 
+                            <div class="input-wrap w-100 stick-in">
+                                <p>this color will be applied to the Hero Section and the features</p>
+                            </div>
                             <div class="input-wrap w-100">
                                 <input class="contact-input" autocomplete="off" name="color2" type="color"
                                     required />
-                                <label>Color 2</label>
+                                <label>Secondary color</label>
                                 <i class="icon fa-solid fa-palette"></i>
                             </div>
 
+                            <div class="input-wrap w-100 stick-in">
+                                <p>this color will be applied to some of the essentiel text of the interface</p>
+                            </div>
                             <div class="input-wrap w-100">
                                 <input class="contact-input" autocomplete="off" name="color3" type="color"
                                     required />
-                                <label>Color 3</label>
+                                <label>Text color</label>
                                 <i class="icon fa-solid fa-palette"></i>
                             </div>
 

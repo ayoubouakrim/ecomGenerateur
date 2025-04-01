@@ -323,6 +323,9 @@
 </head>
 
 <body>
+
+    @include('layout.nav')
+    
     <div class="container">
         <div class="welcome-header">
             <h1>Welcome to Your Website Builder</h1>
