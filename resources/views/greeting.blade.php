@@ -41,102 +41,7 @@
             margin: 0 auto 30px;
             color: #4a5568;
         }
-
-        /* New hero section styling */
-        .hero-container {
-            position: relative;
-            height: 500px;
-            margin-bottom: 30px;
-            overflow: hidden;
-            display: flex;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .hero-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(120deg, #becde9 50%, #373d5c 50%);
-            z-index: 1;
-            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 40px;
-            width: 50%;
-            transition: transform 0.3s ease;
-        }
-
-        .hero-content.left {
-            color: #333;
-            text-align: left;
-            
-        }
-
-        .hero-content.right {
-            color: white;
-            text-align: right;
-            
-        }
-
-        .hero-content h2 {
-            font-size: 2rem;
-            margin-bottom: 30px;
-            font-weight: bold;
-            align-self: center
-
-        }
-
-        .hero-content p {
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-            max-width: 80%;
-        }
-
-        .hero-content.left p {
-            align-self: center;
-        }
-
-        .hero-content.right p {
-            align-self: center
-        }
-
-        .hero-btn {
-            background-color: #4299e1;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            align-self: center;
-        }
-
-        .hero-content.right .hero-btn {
-            align-self: center;
-            background-color: white;
-            color: #373d5c;
-
-        }
-
-        .hero-btn:hover {
-            background-color: #3182ce;
-            transform: translateY(-3px);
-        }
-
-        .hero-content.right .hero-btn:hover {
-            background-color: #f0f0ff;
-        }
+        
 
         /* Rest of the styling */
         .section-title {
@@ -282,50 +187,159 @@
         }
 
         @media (max-width: 768px) {
-            .hero-container {
-                flex-direction: column;
-                height: auto;
-            }
-
-            .hero-container::before {
-                background: linear-gradient(180deg, #becde9 50%, #373d5c 50%);
-            }
-
-            .hero-content {
-                width: 100%;
-                padding: 30px;
-            }
-
-            .hero-content.left {
-                text-align: center;
-            }
-
-            .hero-content.right {
-                text-align: center;
-            }
-
-            .hero-content p {
-                max-width: 100%;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .hero-content.right .hero-btn,
-            .hero-content.left .hero-btn {
-                align-self: center;
-            }
 
             .templates-container {
                 grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             }
         }
+
+       /* Hero section base styles */
+/* Hero section base styles */
+.hero-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 90vh;
+  min-height: 500px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hero content styling */
+.hero-content {
+  padding: 3em 2em;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  font-family: 'Open Sans', sans-serif;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* Left and right section backgrounds */
+.hero-content.left {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), 
+                    url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/74452/website-code.png");
+}
+
+.hero-content.right {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), 
+                    url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/74452/website-post-its.png");
+}
+
+/* Typography */
+.hero-content h2 {
+  margin-top: 2em
+  font-size: 2.5em;
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}
+
+.hero-content p {
+  font-size: 1.2em;
+  line-height: 1.2;
+  margin-bottom: 1.5em;
+  max-width: 400px;
+}
+
+/* Button styling */
+.hero-btn {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+  background: none;
+  border: 2px solid white;
+  border-radius: 5px;
+  padding: 0.8em 1.5em;
+  font-size: 1em;
+  transition: all 0.3s ease;
+  color: white;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.hero-content.left .hero-btn:hover {
+  background-color: white;
+  color: #4576a7;
+}
+
+.hero-content.right .hero-btn:hover {
+  background-color: white;
+  color: #ac47a9;
+}
+
+/* Center divider - optional, remove if not needed */
+.hero-divider {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.hero-divider span {
+  color: #333;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+/* Responsive layouts */
+@media (min-width: 768px) {
+  .hero-container {
+    flex-direction: row;
+  }
+  
+  .hero-content {
+    height: 100%;
+    width: 50%;
+  }
+  
+  .hero-content h2 {
+    font-size: 2.8em;
+  }
+  
+  .hero-content p {
+    font-size: 1.3em;
+  }
+}
+
+/* Small screen adjustments */
+@media (max-width: 767px) {
+  .hero-container {
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .hero-content {
+    padding: 4em 2em;
+  }
+  
+  .hero-divider {
+    top: 50%;
+    width: 40px;
+    height: 40px;
+  }
+}
     </style>
 </head>
 
 <body>
 
     @include('layout.nav')
-    
+
     <div class="container">
         <div class="welcome-header">
             <h1>Welcome to Your Website Builder</h1>
@@ -334,20 +348,22 @@
         </div>
 
         <!-- New Two-Column Hero Section -->
-        <!-- Hero Section HTML -->
         <div class="hero-container">
             <div class="hero-content left">
                 <h2>Build from Scratch</h2>
-                <p>Start with a blank canvas and create your website exactly how you want it, with complete creative
-                    freedom.</p>
-                <button class="hero-btn" onclick="window.location.href='{{route('index')}}'">Start Building</button>
+                <p>Start with a blank canvas and create your website exactly how you want it, with complete creative freedom.</p>
+                <button class="hero-btn" onclick="window.location.href='{{ route('index') }}'">Start Building</button>
             </div>
             <div class="hero-content right">
                 <h2>Edit Template</h2>
-                <p>Choose from our professionally designed templates and customize them to match your brand and needs.
-                </p>
+                <p>Choose from our professionally designed templates and customize them to match your brand and needs.</p>
                 <button class="hero-btn">Browse Templates</button>
             </div>
+            
+            <!-- Optional divider - add this if you want a divider between sections -->
+             <div class="hero-divider">
+                <span>OR</span>
+            </div> 
         </div>
 
         <h2 class="section-title">Available Templates</h2>
@@ -400,31 +416,22 @@
 
         <h2 class="section-title">Your Previous Sites</h2>
         <div class="previous-sites-container">
-            <!-- Site 1 -->
+            @foreach ( $sites as $site )
+                
+            
             <div class="site-item">
                 <div class="site-thumbnail">Site</div>
                 <div class="site-info">
-                    <div class="site-title">My Business Website</div>
-                    <div class="site-date">Last edited: March 12, 2025</div>
+                    <div class="site-title">{{$site->siteName}}</div>
+                    <div class="site-date">Last edited: {{$site->updated_at}}</div>
                 </div>
                 <div class="site-actions">
                     <button class="site-action-btn edit">Edit</button>
                     <button class="site-action-btn">View</button>
                 </div>
             </div>
+            @endforeach
 
-            <!-- Site 2 -->
-            <div class="site-item">
-                <div class="site-thumbnail">Site</div>
-                <div class="site-info">
-                    <div class="site-title">Personal Blog</div>
-                    <div class="site-date">Last edited: February 25, 2025</div>
-                </div>
-                <div class="site-actions">
-                    <button class="site-action-btn edit">Edit</button>
-                    <button class="site-action-btn">View</button>
-                </div>
-            </div>
 
             <!-- Empty state (alternative) -->
             <!--

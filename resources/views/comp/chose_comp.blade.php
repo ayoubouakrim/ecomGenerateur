@@ -230,6 +230,20 @@
         }
 
 
+        .submit-btn {
+            text-align: right;
+            margin-top: 2rem;
+        }
+        .submit-btn button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            width: 20%;
+            transition: all 0.2s;
+        }
 
         .btn-save:hover {
             background-color: var(--secondary-color);
@@ -344,7 +358,7 @@
                                 <div class="component-form">
                                     <form method="POST" action="{{ route('save.content') }}"
                                         data-type="{{ $types->where('name', 'Hero Sections')->first()->id }}"
-                                        data-style="{{ $component->id }}">
+                                        data-style="{{ $component->id }}"   enctype="multipart/form-data">
 
                                         @csrf
                                         <input type="hidden" name="component_id" value="{{ $component->id }}">
@@ -363,6 +377,13 @@
                                             <input type="text" class="form-control" name="cta_text"
                                                 placeholder="Enter CTA text">
                                         </div>
+                                        @if ($component->id == 11)
+                                        <div class="form-group">
+                                            <label class="form-label">The image</label>
+                                            <input type="file" name="hero_img" id="hero_img" required />
+                                        </div>
+                                            
+                                        @endif
                                         <button type="submit" class="btn btn-save">Save Settings</button>
                                     </form>
                                 </div>
@@ -545,7 +566,7 @@
             </section>
         @endif
 
-        <section class="section-container">
+        <section class="submit-btn">
             <button onclick="window.location='{{ route('generate') }}'" class="btn btn-save">next</button>
         </section>
     </div>

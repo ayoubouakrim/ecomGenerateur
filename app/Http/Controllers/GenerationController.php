@@ -46,7 +46,7 @@ class GenerationController extends Controller
             )
             ->get();
 
-            
+
 
         if ($components->isEmpty()) {
             throw new \Exception('No components found for the given UserInput.');
@@ -100,6 +100,7 @@ class GenerationController extends Controller
         $htmlStructure = str_replace('{{hero_subtitle}}', htmlspecialchars($contentData['hero_subtitle'] ?? 'Hero Subtitle'), $htmlStructure);
         $htmlStructure = str_replace('{{hero_cta_text}}', htmlspecialchars($contentData['hero_cta_text'] ?? 'Get Started'), $htmlStructure);
         $htmlStructure = str_replace('{{hero_cta_url}}', htmlspecialchars($contentData['hero_cta_url'] ?? '#'), $htmlStructure);
+        $htmlStructure = str_replace('{{hero_img}}', htmlspecialchars($contentData['hero_img'] ?? '/path/to/default/image.jpg'), $htmlStructure);
 
         return $htmlStructure;
     }
@@ -205,17 +206,6 @@ class GenerationController extends Controller
 
 
 
-
-
-
-
-
-
-
-
-
-
-
     // Generate a complete HTML document
     private function generateFullHtmlDocument($components, $userInput)
     {
@@ -293,17 +283,30 @@ class GenerationController extends Controller
 HTML;
     }
 
-    /**
-     * Generate a unique filename for download
-     *
-     * @param object $templateDetails
-     * @return string
-     */
+
+    // Generate a unique filename for download
     private function generateDownloadFilename()
     {
         return Str::slug('template') .
             '_' .
             now()->format('YmdHis') .
             '.html';
+    }
+
+
+
+
+
+
+
+    public function show()
+    {
+        $userInput = $this->getUserInputId();
+        $components = $this->getComponentsByUserInputId($userInput->id);
+        
+        return view('generate', [
+            'components' => $components,
+            'userInput' => $userInput,
+        ]);
     }
 }

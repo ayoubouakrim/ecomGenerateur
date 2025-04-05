@@ -37,47 +37,120 @@
         }
 
         /* Navigation */
-        nav {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            width: 100%;
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 0.5rem 5%;
+            position: relative;
             top: 0;
             z-index: 1000;
         }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0.5rem 1rem;
+        .navbar .logo {
             display: flex;
-            justify-content: space-between;
             align-items: center;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-decoration: none;
+        .navbar .logo img {
+            height: 40px;
+            margin-right: 10px;
         }
 
-        .nav-links {
+        .navbar .nav-links {
             display: flex;
             list-style: none;
-            gap: 2.5rem;
+            margin: 0 auto;
         }
 
-        .nav-links a {
+        .navbar .nav-links li {
+            margin-left: 0.5rem;
+            position: relative;
+        }
+
+        .navbar .nav-links a {
             text-decoration: none;
-            color: var(--text-dark);
+            color: #555;
             font-weight: 500;
-            transition: color 0.3s;
+            font-size: 1rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
         }
 
-        .nav-links a:hover {
-            color: var(--primary);
+        /* Hover effect with background */
+        .navbar .nav-links a:hover {
+            color: #3498db;
+
+        }
+
+        /* Active link style */
+        .navbar .nav-links a.active {
+            color: #3498db;
+
+            font-weight: 600;
+        }
+
+        /* Underline effect */
+        .navbar .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: #3498db;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .navbar .nav-links a:hover::after,
+        .navbar .nav-links a.active::after {
+            width: 80%;
+        }
+
+        /* Dropdown styles */
+        .navbar .nav-links .dropdown {
+            position: relative;
+        }
+
+
+
+        .navbar .nav-links .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+
+
+
+        .navbar .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+
+        .navbar .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: #333;
+            margin: 5px 0;
+            transition: all 0.3s ease;
         }
 
         .auth-buttons {
@@ -745,13 +818,7 @@
 
         /* Media Queries */
         @media (max-width: 768px) {
-            .nav-container {
-                padding: 1rem;
-            }
-
-            .nav-links {
-                display: none;
-            }
+            
 
             .hero {
                 padding: 4rem 1rem;
@@ -805,23 +872,65 @@
         .contact-form {
             animation: fadeIn 1s ease-out;
         }
+
+        /* Mobile styles */
+    @media screen and (max-width: 768px) {
+      .navbar .hamburger {
+            display: block;
+        }
+
+        .navbar .nav-links {
+            position: fixed;
+            right: -100%;
+            top: 70px;
+            flex-direction: column;
+            background-color: #ffffff;
+            width: 100%;
+            text-align: center;
+            transition: 0.3s;
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+        }
+
+        .navbar .nav-links.active {
+            right: 0;
+        }
+
+        .navbar .nav-links li {
+            margin: 1rem 0;
+        }
+        
+        
+        
+        .navbar .nav-links a::after {
+            bottom: -3px;
+        }
+    }
     </style>
 </head>
 
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">WebGen</div>
-            <ul class="nav-links">
-                <li><a href="#features">Features</a></li>
-                <li><a href="#templates">Templates</a></li>
-                <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <div class="auth-buttons">
-                <a href="{{ route('login.show') }}" class="btn btn-login">Login</a>
-                <a href="{{ route('register') }}" class="btn btn-signup">Sign Up</a>
-            </div>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="http://127.0.0.1:8000/assets/components/logo.svg" alt="Company Logo">
+
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="#" class="active">Home</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">Features</a></li>
+            <li><a href="#">Contact</a>
+            </li>
+        </ul>
+        <div class="auth-buttons">
+            <a href="{{ route('login.show') }}" class="btn btn-login">Login</a>
+            <a href="{{ route('register') }}" class="btn btn-signup">Sign Up</a>
+        </div>
+        <div class="hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
     </nav>
 
@@ -904,7 +1013,7 @@
                             </div>
                             <span class="buy-button">
                                 <form action="/session" method="POST">
-                                   
+
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="plan" value="monthly">
                                     <input type="hidden" name="price" value="5">
@@ -913,7 +1022,7 @@
                                         Buy
                                     </button>
                                 </form>
-                                
+
                             </span>
                         </div>
                     </div>
@@ -1083,7 +1192,7 @@
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-section">
-                <h3>WebGen</h3>
+                <h3>WebTorch</h3>
                 <p>Create beautiful websites in minutes with our easy-to-use website generator.</p>
             </div>
             <div class="footer-section">
@@ -1117,6 +1226,19 @@
             <p>&copy; 2024 WebGen. All rights reserved.</p>
         </div>
     </footer>
+    <script>
+        // JavaScript for toggle menu functionality
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const dropdowns = document.querySelectorAll('.dropdown');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        
+        
+    </script>
 </body>
 
 </html>

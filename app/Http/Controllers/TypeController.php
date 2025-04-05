@@ -42,8 +42,14 @@ class TypeController extends Controller
             $user_input_id = $this->getUserInputId();
             $component_id = $request->component_id;
 
+            $cloudinaryHeroImage = $request->file('hero_img')->storeOnCloudinary('hero');
+            $hero_url = $cloudinaryHeroImage->getSecurePath();
+            $public_hero_id = $cloudinaryHeroImage->getPublicId();
+
             // Get all request data
             $requestData = $request->all();
+
+            $requestData['hero_img'] = $hero_url;
             unset($requestData['component_id'], $requestData['_token']);
 
             $json_data = json_encode($requestData);
@@ -62,7 +68,4 @@ class TypeController extends Controller
             return redirect()->back()->with('error', 'Error saving component content');
         }
     }
-
-
-    
 }

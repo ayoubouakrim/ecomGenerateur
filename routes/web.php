@@ -7,6 +7,7 @@ use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\TypeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GenerationController;
+use App\Http\Controllers\GreetingController;
 use App\Http\Controllers\StripeController;
 
 /*
@@ -70,6 +71,4 @@ Route::get('/generate', function () {
     return view('generate');
 })->name('generate');
 
-Route::get('/greeting', function () {
-    return view('greeting');
-})->name('gretting');
+Route::get('/greeting', [GreetingController::class, 'getSites'])->name('gretting');
