@@ -7,9 +7,11 @@ use App\Models\Template;
 use App\Models\TempTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use App\Models\UserInput;
 use App\Service\TemplateService;
+use Illuminate\Validation\Rule;
 
 
 class TemplatesController extends Controller
@@ -126,25 +128,126 @@ class TemplatesController extends Controller
         return response($tempTemplate->content)->header('Content-Type', 'text/html');
     }
 
-    // Sauvegarder les modifications temporaires
     public function saveDraft(Request $request)
     {
+        $hello = "test";
+        dd($hello);
+/*
+        // Validation renforcée
         $validated = $request->validate([
-            'content' => 'required',
-            'templateId' => 'required|exists:templates,id'
+            'content' => 'required|string',
+            'templateId' => [
+                'required',
+                'integer',
+                Rule::exists('template', 'id')->where(function ($query) {
+                    $query->where('is_active', true); // Exemple de condition supplémentaire
+                })
+            ]
         ]);
 
-        // Mettre à jour ou créer le template temporaire
-        TempTemplate::updateOrCreate(
-            [
-                'user_id' => auth()->id(),
-                'original_id' => $validated['templateId']
-            ],
-            ['content' => $validated['content']]
-        );
+        // Convertir le templateId en entier, au cas où ce ne serait pas déjà un entier
+        $templateId = (int) $validated['templateId'];
 
-        return response()->json(['success' => true]);
+        // Vérifier si l'utilisateur a déjà un brouillon pour ce template
+        $existingDraft = TempTemplate::where('user_id', auth()->id())->where('original_id', $templateId)->first();
+
+
+
+        if ($existingDraft) {
+            // Si un brouillon existe, on met à jour le contenu seulement
+            $existingDraft->update([
+                'content' => $validated['content'],
+                'updated_at' => now() // Mettre à jour le champ updated_at
+            ]);
+        } else {
+            // Sinon, créer un nouveau brouillon
+            TempTemplate::create([
+                'user_id' => auth()->id(),
+                'original_id' => $templateId,
+                'content' => $validated['content'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+        ]);*/
     }
+
+
+    /*    public function saveDraft(Request $request)
+        {
+            // Validation renforcée
+            $validated = $request->validate([
+                'content' => 'required|string',
+                'templateId' => [
+                    'required',
+                    'integer',
+                    Rule::exists('template', 'id')->where(function ($query) {
+                        $query->where('is_active', true); // Exemple de condition supplémentaire
+                    })
+                ]
+            ]);
+
+            // Vérifier si l'utilisateur a déjà un brouillon pour ce template
+            $existingDraft = TempTemplate::where('user_id', auth()->id())
+                ->where('original_id', $validated['templateId'])
+                ->first();
+
+            if ($existingDraft) {
+                // Si un brouillon existe, on met à jour le contenu seulement
+                $existingDraft->update([
+                    'content' => $validated['content'],
+                    'updated_at' => now() // Mettre à jour le champ updated_at
+                ]);
+            } else {
+                // Sinon, créer un nouveau brouillon
+                TempTemplate::create([
+                    'user_id' => auth()->id(),
+                    'original_id' => $validated['templateId'],
+                    'content' => $validated['content'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+            ]);
+        }*/
+
+    /* public function saveDraft(Request $request)
+     {
+         // Validation renforcée
+         $validated = $request->validate([
+             'content' => 'required|string',
+             'templateId' => [
+                 'required',
+                 'integer',
+                 Rule::exists('template', 'id')->where(function ($query) {
+                     $query->where('is_active', true); // Exemple de condition supplémentaire
+                 })
+             ]
+         ]);
+
+
+         TempTemplate::updateOrCreate(
+             ['user_id' => auth()->id(), 'original_id' => $validated['templateId']],
+             [
+                 'content' => $validated['content'],
+                 'updated_at' => now() // Ajoute ici la mise à jour de `updated_at`
+             ]
+         );
+
+         return response()->json([
+             'success' => true,
+         ]);
+     }*/
+
+
+
+
 
     //test
 
@@ -158,62 +261,5 @@ class TemplatesController extends Controller
     }
 
 
-/*    public function deploySite(Request $request)
-    {
-        $request->validate([
-            'content' => 'required|string',
-            'templateId' => 'required|exists:templates,id'
-        ]);
 
-        // Créer un répertoire temporaire
-        $tempDir = storage_path('app/public/temp-' . uniqid());
-        mkdir($tempDir);
-
-        // Sauvegarder le contenu HTML
-        file_put_contents("$tempDir/index.html", $request->input('content'));
-
-        // Créer un dépôt GitHub
-        $repoName = 'site-' . uniqid();
-        $githubToken = config('services.github.token'); // À configurer dans .env
-
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $githubToken,
-            'Accept' => 'application/vnd.github.v3+json'
-        ])->post('https://api.github.com/user/repos', [
-            'name' => $repoName,
-            'private' => false
-        ]);
-
-        if ($response->failed()) {
-            return response()->json(['error' => 'Erreur lors de la création du dépôt GitHub'], 500);
-        }
-
-        $repoUrl = $response->json()['html_url'];
-        $cloneUrl = $response->json()['clone_url'];
-
-        // Pousser le site sur GitHub
-        exec("cd $tempDir && git init && git add . && git commit -m 'Initial commit' && git branch -M main && git remote add origin $cloneUrl && git push -u origin main");
-
-        // Activer GitHub Pages
-        $pagesResponse = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $githubToken,
-            'Accept' => 'application/vnd.github.v3+json'
-        ])->post("https://api.github.com/repos/{$response->json()['owner']['login']}/$repoName/pages", [
-            'source' => [
-                'branch' => 'main',
-                'path' => '/'
-            ]
-        ]);
-
-        if ($pagesResponse->failed()) {
-            return response()->json(['error' => 'Erreur lors de l\'activation de GitHub Pages'], 500);
-        }
-
-        // Nettoyer le répertoire temporaire
-        Storage::deleteDirectory($tempDir);
-
-        return response()->json([
-            'url' => "https://{$response->json()['owner']['login']}.github.io/$repoName"
-        ]);
-    }*/
 }

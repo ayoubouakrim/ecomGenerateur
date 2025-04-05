@@ -124,18 +124,75 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     document.body.removeChild(a);
 });
 
+const saveDraftUrl = window.saveDraftUrl;
+const csrfToken = window.csrfToken;
+const templateId = window.templateId;
+
+
 document.getElementById('saveDraft').addEventListener('click', async () => {
     const modifiedContent = await getModifiedContent();
-    await fetch("{{ route('templateso.saveDraft') }}", {
+    console.log('Envoi avec ID:', templateId, 'Type:', typeof templateId);
+
+    await fetch(saveDraftUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            'X-CSRF-TOKEN': csrfToken
         },
-        body: JSON.stringify({ content: modifiedContent, templateId: "{{ $templateId }}" })
+        body: JSON.stringify({
+            content: modifiedContent,
+            // templateId: parseInt(templateId)
+
+        })
+
     });
+
     alert('Brouillon sauvegardé !');
 });
+
+
+// Sauvegarde temporaire
+/*
+document.getElementById('saveDraft').addEventListener('click', async () => {
+    try {
+        // Méthode robuste pour récupérer l'ID
+        const templateElement = document.getElementById('templateIdContainer');
+        const templateId = templateElement ? parseInt(templateElement.dataset.templateId, 10) : null;
+
+        // Validation stricte
+        if (!templateId || isNaN(templateId)) {
+            throw new Error('ID de template invalide ou manquant');
+        }
+
+        console.log('Envoi avec ID:', templateId, 'Type:', typeof templateId);
+
+        const response = await fetch("/save-draft", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                content: await getModifiedContent(),
+                templateId: templateId
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || `Erreur serveur (${response.status})`);
+        }
+
+        alert('Sauvegarde réussie !');
+        window.location.reload(); // Recharge après succès
+    } catch (error) {
+        console.error('Erreur complète:', error);
+        alert(`Action impossible: ${error.message}`);
+    }
+});
+*/
 
 function setupDragAndDrop() {
     const iframe = document.getElementById('templatePreview');
@@ -225,52 +282,6 @@ document.getElementById('aiButton').addEventListener('click', () => {
     }
 });
 
-// Lorsque l'utilisateur envoie une demande de modification, on applique directement les changements sans afficher le code dans le chat
-/*document.getElementById('sendButton').addEventListener('click', async () => {
-    if (aiState.isProcessing) return;
-    const input = document.getElementById('aiInput');
-    const message = input.value.trim();
-    if (!message) return;
-    aiState.isProcessing = true;
-    input.disabled = true;
-    try {
-        // On affiche le message de l'utilisateur dans le chat si besoin
-        addMessage(message, 'user');
-        const currentHtml = await getModifiedContent();
-
-        // Préparez les messages pour le modèle avec un contexte "system"
-        const messages = [
-            { role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et CSS." },
-            { role: "user", content: `Modifie ce template HTML selon ces instructions: ${message}\n\nHTML Actuel:\n${currentHtml}` }
-        ];
-
-        // Appeler l'endpoint backend sécurisé (/chat)
-        const response = await fetch('/chat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ messages })
-        });
-
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
-        const aiResponse = data.choices[0].message.content;
-        // On n'affiche pas la réponse du modèle dans le chat,
-        // on applique directement les modifications au template.
-        applyAiModifications(aiResponse);
-    } catch (error) {
-        console.error('Erreur API:', error);
-        addMessage("Désolé, une erreur s'est produite.", 'ai');
-    } finally {
-        aiState.isProcessing = false;
-        input.disabled = false;
-        input.value = '';
-    }
-});*/
 
 
 // Pour le chat IA
@@ -325,59 +336,7 @@ document.getElementById('sendButton').addEventListener('click', async () => {
     }
 });
 
-/*
-document.getElementById('sendButton').addEventListener('click', async () => {
-    if (aiState.isProcessing) return;
-    const input = document.getElementById('aiInput');
-    const message = input.value.trim();
-    if (!message) return;
 
-    aiState.isProcessing = true;
-    input.disabled = true;
-    document.getElementById('sendButton').disabled = true;
-    document.getElementById('chatLoading').style.display = 'flex';
-
-    try {
-        // On affiche le message de l'utilisateur dans le chat si besoin
-        addMessage(message, 'user');
-        const currentHtml = await getModifiedContent();
-
-        // Préparez les messages pour le modèle avec un contexte "system"
-        const messages = [
-            { role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et CSS." },
-            { role: "user", content: `Modifie ce template HTML selon ces instructions: ${message}\n\nHTML Actuel:\n${currentHtml}` }
-        ];
-
-        // Appeler l'endpoint backend sécurisé (/chat)
-        const response = await fetch('/chat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ messages })
-        });
-
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
-        const aiResponse = data.choices[0].message.content;
-        // On n'affiche pas la réponse du modèle dans le chat,
-        // on applique directement les modifications au template.
-        applyAiModifications(aiResponse);
-    } catch (error) {
-        console.error('Erreur API:', error);
-        addMessage("Désolé, une erreur s'est produite.", 'ai');
-    } finally {
-        aiState.isProcessing = false;
-        input.disabled = false;
-        input.value = '';
-        document.getElementById('sendButton').disabled = false;
-        document.getElementById('chatLoading').style.display = 'none';
-    }
-});
-*/
 
 function addMessage(content, sender) {
     const messagesDiv = document.getElementById('chatMessages');
@@ -473,31 +432,7 @@ function showDeployPopup(url) {
     popup.classList.add('active');
 }
 
-// Gestion du clic sur le bouton "Héberger le site"
-/*document.getElementById('deployBtn').addEventListener('click', async () => {
-    try {
-        const modifiedContent = await getModifiedContent();
-        const response = await fetch('/deploy', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({ content: modifiedContent })
-        });
 
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
-        // Afficher le popup avec le lien du site hébergé
-        showDeployPopup(data.siteUrl);
-    } catch (error) {
-        console.error('Erreur de déploiement :', error);
-        alert("Erreur lors du déploiement du site.");
-    }
-});*/
 // Fonction pour afficher le loader de déploiement
 function showDeploymentLoader() {
     const loader = document.getElementById('deploymentLoader');

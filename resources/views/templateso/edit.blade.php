@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <script>
+        window.saveDraftUrl = "{{ route('templateso.saveDraft') }}";
+        window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        window.templateId = "{{ $templateId }}"; // Ajoute ce qui manque
+    </script>
+
     {{--    <script src="{{ asset('js/templateso/edit.js') }}"></script>--}}
     @vite('resources/js/templateso/edit.js')
     @vite('resources/css/edit.css')
@@ -28,28 +34,14 @@
         <div id="dynamicSettings">
             <p class="fst-italic">Sélectionnez un élément dans la prévisualisation pour éditer ses propriétés.</p>
         </div>
-        {{--<h4 class="mt-4">Éléments à glisser</h4>
-        <div class="draggable-elements">
-            <div class="draggable-element" draggable="true" data-type="text">
-                <i class="bi bi-text-paragraph me-2"></i>Texte
-            </div>
-            <div class="draggable-element" draggable="true" data-type="image">
-                <i class="bi bi-image me-2"></i>Image
-            </div>
-            <div class="draggable-element" draggable="true" data-type="section">
-                <i class="bi bi-layout-wtf me-2"></i>Section
-            </div>
-        </div>--}}
         <div class="mt-5 border-top pt-3">
-            <button class="btn btn-success w-100 mb-2" id="saveDraft">
+            <button class="btn btn-success w-100 mb-2" id="saveDraft" data-template-id="{{ $templateId }}">
                 <i class="bi bi-cloud-arrow-up me-2"></i>Sauvegarder le brouillon
             </button>
             <button class="btn btn-outline-light mb-3" id="downloadBtn">
                 <i class="bi bi-download me-2"></i>Télécharger le template
             </button>
-            {{--<button class="btn btn-info w-100 mb-2" id="deployBtn">
-                <i class="bi bi-rocket-takeoff me-2"></i>Héberger le site
-            </button>--}}
+
             <button class="btn btn-info w-100 mb-2 deploy-button" id="deployBtn">
     <span class="button-content">
         <i class="bi bi-rocket-takeoff me-2"></i>Héberger le site
@@ -96,23 +88,7 @@
                 </button>
             </div>
         </div>
-       {{-- <div class="ai-chat" id="aiChat">
-            <div class="chat-messages" id="chatMessages">
 
-            </div>
-            <div class="chat-loading" id="chatLoading" style="display: none;">
-                <div class="spinner-border text-primary spinner-border-sm" role="status">
-                    <span class="visually-hidden">Chargement...</span>
-                </div>
-                <span class="ms-2">L'IA réfléchit...</span>
-            </div>
-            <div class="chat-input">
-                <input type="text" id="aiInput" class="form-control" placeholder="Décrivez vos modifications...">
-                <button class="btn btn-primary ms-2" id="sendButton">
-                    <i class="bi bi-send"></i>
-                </button>
-            </div>
-        </div>--}}
     </div>
 </div>
 

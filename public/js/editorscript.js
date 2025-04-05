@@ -1,3 +1,4 @@
+/*
 
     const state = {
     originalContent: null,
@@ -129,3 +130,4 @@
 
     alert('Brouillon sauvegardé !');
 });
+*/
