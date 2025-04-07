@@ -23,6 +23,8 @@
     <!-- Progress bar for deployment -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
 </head>
+@include('layout.nav')
+
 <body>
 <div class="editor-container">
     <!-- Sidebar -->

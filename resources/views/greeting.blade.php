@@ -41,7 +41,7 @@
             margin: 0 auto 30px;
             color: #4a5568;
         }
-        
+
 
         /* Rest of the styling */
         .section-title {
@@ -223,12 +223,12 @@
 
 /* Left and right section backgrounds */
 .hero-content.left {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), 
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
                     url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/74452/website-code.png");
 }
 
 .hero-content.right {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), 
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
                     url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/74452/website-post-its.png");
 }
 
@@ -301,16 +301,16 @@
   .hero-container {
     flex-direction: row;
   }
-  
+
   .hero-content {
     height: 100%;
     width: 50%;
   }
-  
+
   .hero-content h2 {
     font-size: 2.8em;
   }
-  
+
   .hero-content p {
     font-size: 1.3em;
   }
@@ -322,11 +322,11 @@
     height: auto;
     min-height: 100vh;
   }
-  
+
   .hero-content {
     padding: 4em 2em;
   }
-  
+
   .hero-divider {
     top: 50%;
     width: 40px;
@@ -357,13 +357,13 @@
             <div class="hero-content right">
                 <h2>Edit Template</h2>
                 <p>Choose from our professionally designed templates and customize them to match your brand and needs.</p>
-                <button class="hero-btn">Browse Templates</button>
+                <button class="hero-btn" onclick="window.location.href='{{ route('templateso.index') }}'">Browse Templates</button>
             </div>
-            
+
             <!-- Optional divider - add this if you want a divider between sections -->
              <div class="hero-divider">
                 <span>OR</span>
-            </div> 
+            </div>
         </div>
 
         <h2 class="section-title">Available Templates</h2>
@@ -417,8 +417,8 @@
         <h2 class="section-title">Your Previous Sites</h2>
         <div class="previous-sites-container">
             @foreach ( $sites as $site )
-                
-            
+
+
             <div class="site-item">
                 <div class="site-thumbnail">Site</div>
                 <div class="site-info">
