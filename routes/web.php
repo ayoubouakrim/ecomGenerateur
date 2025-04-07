@@ -9,6 +9,8 @@ use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\TypeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GenerationController;
+use App\Http\Controllers\GreetingController;
+use App\Http\Controllers\StripeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,15 +81,24 @@ Route::get('/register', [AuthController::class , 'register'] )-> name('register'
 
 Route::post('/register', [AuthController::class , 'store'] )-> name('register');
 
-//Route::get('/component-builder', [TypeController::class, 'index'])->name('comp.chose_comp');
-//
-//
-//Route::post('/save-component-content', [TypeController::class, 'saveComponentContent'])->name('save.component.content');
-//
-//
-//Route::get('/generate-template', [GenerationController::class, 'renderTemplateWithComponents'])->name('template.generate');
-//
-//
-//Route::get('/generate', function () {
-//    return view('generate');
-//})->name('generate');
+Route::get('/component-builder', [TypeController::class, 'index'])->name('comp.chose_comp');
+
+
+Route::post('/save-content', [TypeController::class, 'saveContent'])->name('save.content');
+
+
+
+Route::get('/generate-template', [GenerationController::class, 'renderTemplateWithComponents'])->name('template.generate');
+
+
+
+Route::get('/checkout', [StripeController::class, 'checkout'])->name('stripe.checkout');
+Route::post('/session', [StripeController::class, 'session'])->name('stripe.session');
+Route::get('/success', [StripeController::class, 'success'])->name('stripe.success');
+
+
+Route::get('/generate', function () {
+    return view('generate');
+})->name('generate');
+
+Route::get('/greeting', [GreetingController::class, 'getSites'])->name('gretting');

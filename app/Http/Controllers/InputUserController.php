@@ -27,6 +27,14 @@ class InputUserController extends Controller
         $color3 = $request->color3;
         $template_id = 1;
 
+        $cloudinaryLogoImage = $request->file('logoUrl')->storeOnCloudinary('logos');
+        $logo_url = $cloudinaryLogoImage->getSecurePath();
+        $public_logo_id = $cloudinaryLogoImage->getPublicId();
+
+        $cloudinaryIconImage = $request->file('faveIcon')->storeOnCloudinary('icons');
+        $icon_url = $cloudinaryIconImage->getSecurePath();
+        $public_icon_id = $cloudinaryIconImage->getPublicId();
+
         Session::put(
             'siteName', $siteName
         );
@@ -34,13 +42,13 @@ class InputUserController extends Controller
         UserInput::create([
             'siteName' => $siteName,
             'description' => $description,
-            'logoUrl' => $logoUrl,
-            'faveIcon' => $faveIcon,
+            'logoUrl' => $logo_url,
+            'faveIcon' => $icon_url,
             'color1' => $color1,
             'color2' => $color2,
             'color3' => $color3,
             'template_id' => $template_id,
         ]);
-        return redirect()->route('templateso.index')->with('success', 'Informations sauvegardées. Veuillez choisir un template.');
+        return to_route('comp.chose_comp');
     }
 }

@@ -8,7 +8,6 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin-top: 50px;
         }
         .btn {
             display: inline-block;
@@ -27,6 +26,9 @@
     </style>
 </head>
 <body>
+    @include('layout.nav')
+
+    
     <h1>Generate Your Template</h1>
     <p>Click the button below to create and download your HTML template.</p>
     <a href="{{route('template.generate')}}" class="btn">Generate Template</a>

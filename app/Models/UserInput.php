@@ -19,10 +19,15 @@ class UserInput extends Model
         'color2',
         'color3',
         'template_id',
+        'user_id',
     ];
 
     public function template()
     {
         return $this->hasOne(Template::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

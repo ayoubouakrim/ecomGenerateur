@@ -25,3 +25,5 @@ inputs.forEach((ipt) => {
         ipt.parentNode.classList.remove("focus");
     });
 });
+
+

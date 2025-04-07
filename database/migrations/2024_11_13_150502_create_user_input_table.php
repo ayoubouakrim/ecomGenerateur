@@ -22,10 +22,15 @@ return new class extends Migration
             $table->string('color1'); // Première couleur
             $table->string('color2'); // Deuxième couleur
             $table->string('color3'); // Troisième couleur (optionnel)
-            $table->unsignedBigInteger('template_id')->nullable(); // Clé étrangère vers la table templateso
+            $table->unsignedBigInteger('template_id')->nullable(); // Clé étrangère vers la table templates
+            $table->unsignedBigInteger('user_id')->nullable(); // Clé étrangère vers la table users (optionnel)
             $table->timestamps(); // Colonnes created_at et updated_at
 
             // Définir la clé étrangère
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade'); // Supprime les entrées UserInput si l'utilisateur associé est supprimé
             $table->foreign('template_id')
                 ->references('id')
                 ->on('template')
