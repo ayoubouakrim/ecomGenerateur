@@ -6,23 +6,74 @@
     <title>Choix de Template</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #FFA500;
+            --primary-light: #FFB833;
+            --primary-lighter: #FFE0B2;
+            --gray-light: #F5F5F5;
+            --gray-medium: #E0E0E0;
+            --gray-dark: #616161;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: white;
+            color: #333;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 2rem;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .page-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .page-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--primary-color);
+        }
+
         .template-card {
-            border: 1px solid rgba(0,0,0,0.1);
+            border: none;
             border-radius: 12px;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
             background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
         }
 
         .template-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255,165,0,0.15);
         }
 
         .preview-wrapper {
-            height: 250px;
+            height: 200px;
             overflow: hidden;
-            border-radius: 12px 12px 0 0;
-            background: #f8f9fa;
+            background: var(--gray-light);
+            position: relative;
         }
 
         .preview-iframe {
@@ -30,49 +81,200 @@
             height: 100%;
             border: 0;
             pointer-events: none;
+            background: white;
         }
 
-        .card-footer {
-            padding: 1rem;
+        .card-body {
+            padding: 1.5rem;
         }
 
-        .btn-group {
-            width: 100%;
+        .template-name {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
             gap: 0.5rem;
         }
 
+        .template-name i {
+            color: var(--primary-color);
+        }
+
         .btn-preview {
-            background: #e9ecef;
-            color: #0d6efd;
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
         .btn-preview:hover {
-            background: #dee2e6;
+            background-color: var(--primary-lighter);
+            color: var(--primary-color);
         }
 
-        /* Modal fullscreen */
+        .btn-edit {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-edit:hover {
+            background-color: var(--primary-light);
+            color: white;
+        }
+
+        /* Section anciens templates */
+        .old-templates-section {
+            margin-bottom: 3rem;
+        }
+
+        .old-templates-title {
+            font-weight: 500;
+            color: var(--gray-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .old-templates-container {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            scrollbar-width: thin;
+        }
+
+        .old-template-card {
+            min-width: 180px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .old-template-preview {
+            height: 100px;
+            background: var(--gray-light);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .old-template-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-continue {
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 6px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            margin-top: auto;
+        }
+
+        .btn-continue:hover {
+            background-color: var(--primary-lighter);
+        }
+
+        /* Modal */
         .modal-iframe {
             width: 100%;
             height: 80vh;
             border: 0;
+            border-radius: 0 0 8px 8px;
         }
 
-        @media (min-width: 992px) {
-            .modal-lg {
-                max-width: 90%;
+        .modal-header {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .modal-title {
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .preview-wrapper {
+                height: 160px;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
             }
         }
+
+    /*    */
+        .btn-outline-secondary {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.45rem 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--gray-light);
+            color: var(--primary-color);
+        }
+
     </style>
 </head>
+
+<body>
 @include('layout.nav')
+{{--<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-pencil-alt me-2"></i>TemplateEditor
+        </a>
+    </div>
+</nav>--}}
+<div class="container d-flex justify-content-end mt-3">
+{{--    <a href="{{ route('templateso.drafts') }}" class="btn btn-outline-secondary">--}}
+    <a href="#" class="btn btn-outline-secondary">
+        <i class="fas fa-archive me-1"></i> Brouillons
+    </a>
+</div>
 
-<body class="bg-light">
-<div class="container py-5">
-    <h1 class="text-center mb-5 display-6 fw-bold text-dark">Choisissez un template</h1>
+<div class="container py-4 py-lg-5">
+    <h1 class="text-center page-title">Choisissez un template</h1>
 
-    <div class="row g-4">
+    <!-- Section anciens templates (conditionnelle) -->
+    @if(isset($userTemplates) && count($userTemplates) > 0)
+        <div class="old-templates-section">
+            <h3 class="old-templates-title">Mes anciens templates</h3>
+            <div class="old-templates-container">
+                @foreach($userTemplates as $userTemplate)
+                    <div class="old-template-card">
+                        <div class="old-template-preview">
+                            <iframe src="{{ route('templateso.content', ['id' => $userTemplate->template_id]) }}"
+                                    style="width:100%;height:100%;border:none;"></iframe>
+                        </div>
+                        <div class="old-template-name">{{ $userTemplate->name }}</div>
+                        <a href="{{ route('templateso.edit', ['id' => $userTemplate->template_id]) }}"
+                           class="btn btn-continue btn-sm">
+                            Continuer <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach($templates as $template)
-            <div class="col-md-4">
+            <div class="col">
                 <div class="template-card h-100">
                     <div class="preview-wrapper">
                         <iframe
@@ -82,31 +284,26 @@
                             title="Prévisualisation {{ $template->name }}"
                         ></iframe>
                     </div>
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="m-0 fw-semibold text-truncate">
-                                {{ $template->name }}
-                            </h5>
-                            <i class="fas fa-file-code text-muted"></i>
-                        </div>
-                        <div class="btn-group">
+                    <div class="card-body">
+                        <h5 class="template-name">
+                            <i class="fas fa-file-alt"></i>
+                            {{ $template->name }}
+                        </h5>
+                        <div class="d-flex gap-2 mt-3">
                             <button
                                 type="button"
-                                class="btn btn-preview btn-sm"
+                                class="btn btn-preview flex-grow-1"
                                 data-bs-toggle="modal"
                                 data-bs-target="#previewModal"
                                 data-template-url="{{ route('templateso.content', ['id' => $template->id]) }}"
                             >
-                                <i class="fas fa-expand"></i>
+                                <i class="fas fa-search me-2"></i>Prévisualiser
                             </button>
 
-                            <form method="GET" action="{{ route('templateso.edit', ['id' => $template->id]) }}" class="w-100">
-                                <button type="submit" class="btn btn-primary btn-sm w-100">
-                                    <i class="fas fa-check me-2"></i>Sélectionner
-                                </button>
-                            </form>
-
-
+                            <a href="{{ route('templateso.edit', ['id' => $template->id]) }}"
+                               class="btn btn-edit flex-grow-1">
+                                <i class="fas fa-edit me-2"></i>Modifier
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -115,13 +312,13 @@
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="previewModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<!-- Modal Preview -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Prévisualisation du template</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-0">
                 <iframe
