@@ -228,69 +228,118 @@
             color: var(--primary-color);
         }
 
+        /* Ajouts CSS */
+        .btn-toggle-drafts {
+            background: var(--primary-lighter);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-light);
+            border-radius: 10px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-toggle-drafts:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-toggle-drafts[aria-expanded="true"] {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-toggle-drafts[aria-expanded="true"] .fa-chevron-down {
+            transform: rotate(180deg);
+        }
+
+        .btn-toggle-drafts .fa-chevron-down {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fw-600 {
+            font-weight: 600;
+        }
+
     </style>
 </head>
 
 <body>
 @include('layout.nav')
-<nav class="navbar navbar-expand-lg">
-    <div class="container">
-        <a class="navbar-brand" href="#">
-            <i class="fas fa-pencil-alt me-2"></i>TemplateEditor
-        </a>
-    </div>
-</nav>
-<div class="container d-flex justify-content-end mt-3">
-{{--    <a href="{{ route('templateso.drafts') }}" class="btn btn-outline-secondary">--}}
-    <a href="#" class="btn btn-outline-secondary">
-        <i class="fas fa-archive me-1"></i> Brouillons
-    </a>
-</div>
+
 
 <div class="container py-4 py-lg-5">
     <h1 class="text-center page-title">Choisissez un template</h1>
 
-    <!-- Section templates bruillon -->
+    <!-- Nouveau bouton de toggle -->
+    <div class="text-center mb-4">
+        <button class="btn btn-toggle-drafts shadow-sm"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#draftsCollapse"
+                aria-expanded="false"
+                aria-controls="draftsCollapse">
+            <i class="fas fa-chevron-down me-2"></i>
+            Voir mes brouillons de templates
+        </button>
+    </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        @foreach($tempTemplates as $tempTemplate)
-            <div class="col">
-                <div class="template-card h-100">
-                    <div class="preview-wrapper">
-                        <iframe
-                            src="{{ route('templateso.contenttempTemplates', ['id' => $tempTemplate->id]) }}"
-                            class="preview-iframe"
-                            loading="lazy"
-{{--                            title="Prévisualisation {{ $template->name }}"--}}
-                        ></iframe>
-                    </div>
-                    <div class="card-body">
-{{--                        <h5 class="template-name">--}}
-{{--                            <i class="fas fa-file-alt"></i>--}}
-{{--                            {{ $template->name }}--}}
-{{--                        </h5>--}}
-                        <div class="d-flex gap-2 mt-3">
-                            <button
-                                type="button"
-                                class="btn btn-preview flex-grow-1"
-                                data-bs-toggle="modal"
-                                data-bs-target="#previewModal"
-                                data-template-url="{{ route('templateso.contenttempTemplates', ['id' => $tempTemplate->id]) }}"
-                            >
-                                <i class="fas fa-search me-2"></i>Prévisualiser
-                            </button>
 
-                            <a href="{{ route('templateso.edit', ['id' => $tempTemplate->id]) }}"
-                               class="btn btn-edit flex-grow-1">
-                                <i class="fas fa-edit me-2"></i>Modifier
-                            </a>
+
+
+
+
+    <!-- Section des brouillons masquée par défaut -->
+    <div class="collapse" id="draftsCollapse">
+        <h2 class="h5 mb-4 fw-600 text-muted">
+            <i class="fas fa-drafting-compass me-2"></i>Mes Brouillons
+        </h2>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach($tempTemplates as $tempTemplate)
+                <div class="col">
+                    <div class="template-card h-100">
+                        <div class="preview-wrapper">
+                            <iframe
+                                src="{{ route('templateso.contenttempTemplates', ['id' => $tempTemplate->id]) }}"
+                                class="preview-iframe"
+                                loading="lazy"
+                                {{--                            title="Prévisualisation {{ $template->name }}"--}}
+                            ></iframe>
+                        </div>
+                        <div class="card-body">
+                            {{--                        <h5 class="template-name">--}}
+                            {{--                            <i class="fas fa-file-alt"></i>--}}
+                            {{--                            {{ $template->name }}--}}
+                            {{--                        </h5>--}}
+                            <div class="d-flex gap-2 mt-3">
+                                <button
+                                    type="button"
+                                    class="btn btn-preview flex-grow-1"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#previewModal"
+                                    data-template-url="{{ route('templateso.contenttempTemplates', ['id' => $tempTemplate->id]) }}"
+                                >
+                                    <i class="fas fa-search me-2"></i>Prévisualiser
+                                </button>
+
+                                <a href="{{ route('templateso.edit', ['id' => $tempTemplate->id]) }}"
+                                   class="btn btn-edit flex-grow-1">
+                                    <i class="fas fa-edit me-2"></i>Modifier
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        @endforeach
+            @endforeach
+
+        </div>
     </div>
 
+    <!-- Section des templates standards -->
+    <h2 class="h5 mb-4 fw-600 text-muted">
+        <i class="fas fa-star me-2"></i>Templates Standards
+    </h2>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach($templates as $template)
@@ -329,8 +378,13 @@
                 </div>
             </div>
         @endforeach
+
     </div>
 </div>
+
+
+
+
 
 <!-- Modal Preview -->
 <div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">

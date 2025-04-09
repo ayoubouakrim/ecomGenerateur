@@ -51,39 +51,7 @@
             <div class="toggle-btn" id="sidebarToggle"><i class="bi bi-chevron-left"></i></div>
         </div>
     </div>
-    {{--
-        <div class="sidebar">
-            <div class="d-flex align-items-center mb-4">
-                <img src="logo.svg" alt="Logo" style="height: 32px;" class="me-2">
-                <h4 class="m-0">Éditeur Universel</h4>
-            </div>
-            <div id="dynamicSettings">
-                <p class="fst-italic">Sélectionnez un élément dans la prévisualisation pour éditer ses propriétés.</p>
-            </div>
-            <div class="mt-5 border-top pt-3">
-                <button class="btn btn-success w-100 mb-2" id="saveDraft" data-template-id="{{ $templateId }}">
-                    <i class="bi bi-cloud-arrow-up me-2"></i>Sauvegarder le brouillon
-                </button>
-                <button class="btn btn-outline-light mb-3" id="downloadBtn">
-                    <i class="bi bi-download me-2"></i>Télécharger le template
-                </button>
 
-                <button class="btn btn-info w-100 mb-2 deploy-button" id="deployBtn">
-        <span class="button-content">
-            <i class="bi bi-rocket-takeoff me-2"></i>Héberger le site
-        </span>
-                    <span class="button-loader">
-            <div class="spinner-wave">
-                <div class="spinner-wave-dot"></div>
-                <div class="spinner-wave-dot"></div>
-                <div class="spinner-wave-dot"></div>
-                <div class="spinner-wave-dot"></div>
-            </div>
-        </span>
-                </button>
-            </div>
-        </div>
-    --}}
     <!-- Preview -->
     <div class="preview-wrapper">
         <iframe src="{{ $templateUrl }}"
