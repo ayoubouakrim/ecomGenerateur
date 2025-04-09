@@ -27,6 +27,10 @@ use App\Http\Controllers\StripeController;
 //Route::get('/temp-content/{id}', [TemplatesController::class, 'tempContent'])->name('template.tempContent');
 //Route::post('/save-draft', [TemplatesController::class, 'saveDraft'])->name('template.saveDraft');
 
+Route::get('/temptemplate-content/{id}', [TemplatesController::class, 'gettempTemplateContent'])->name('templateso.contenttempTemplates');
+
+
+
 Route::post('/deploy', [DeployController::class, 'deploySite']);
 
 Route::post('/chat', [OpenAiController::class, 'processChat']);
@@ -45,7 +49,7 @@ Route::get('/template/edit/{id}', [TemplatesController::class, 'edit'])->name('t
 Route::get('/template-content/{id}', [TemplatesController::class, 'getTemplateContent'])->name('templateso.content');
 
 Route::get('/templateso', [TemplatesController::class, 'index'])->name('templateso.index');
-//Route::get('/drafts', [TemplatesController::class, 'drafts'])->name('templateso.drafts');
+Route::get('/templateso/drafts', [TemplatesController::class, 'drafts'])->name('templateso.drafts');
 Route::post('/templateso/choose', [TemplatesController::class, 'choose'])->name('templateso.choose');
 
 

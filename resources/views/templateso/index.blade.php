@@ -233,13 +233,13 @@
 
 <body>
 @include('layout.nav')
-{{--<nav class="navbar navbar-expand-lg">
+<nav class="navbar navbar-expand-lg">
     <div class="container">
         <a class="navbar-brand" href="#">
             <i class="fas fa-pencil-alt me-2"></i>TemplateEditor
         </a>
     </div>
-</nav>--}}
+</nav>
 <div class="container d-flex justify-content-end mt-3">
 {{--    <a href="{{ route('templateso.drafts') }}" class="btn btn-outline-secondary">--}}
     <a href="#" class="btn btn-outline-secondary">
@@ -250,56 +250,37 @@
 <div class="container py-4 py-lg-5">
     <h1 class="text-center page-title">Choisissez un template</h1>
 
-    <!-- Section anciens templates (conditionnelle) -->
-    {{--@if(isset($userTemplates) && count($userTemplates) > 0)
-        <div class="old-templates-section">
-            <h3 class="old-templates-title">Mes anciens templates</h3>
-            <div class="old-templates-container">
-                @foreach($userTemplates as $userTemplate)
-                    <div class="old-template-card">
-                        <div class="old-template-preview">
-                            <iframe src="{{ route('templateso.content', ['id' => $userTemplate->template_id]) }}"
-                                    style="width:100%;height:100%;border:none;"></iframe>
-                        </div>
-                        <div class="old-template-name">{{ $userTemplate->name }}</div>
-                        <a href="{{ route('templateso.edit', ['id' => $userTemplate->template_id]) }}"
-                           class="btn btn-continue btn-sm">
-                            Continuer <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    @endif--}}
-    {{--<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        @foreach($userTemplates as $template)
+    <!-- Section templates bruillon -->
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach($tempTemplates as $tempTemplate)
             <div class="col">
                 <div class="template-card h-100">
                     <div class="preview-wrapper">
                         <iframe
-                            src="{{ route('templateso.content', ['id' => $template->id]) }}"
+                            src="{{ route('templateso.contenttempTemplates', ['id' => $tempTemplate->id]) }}"
                             class="preview-iframe"
                             loading="lazy"
-                            title="Prévisualisation {{ $template->name }}"
+{{--                            title="Prévisualisation {{ $template->name }}"--}}
                         ></iframe>
                     </div>
                     <div class="card-body">
-                        --}}{{--<h5 class="template-name">
-                            <i class="fas fa-file-alt"></i>
-                            {{ $template->name }}
-                        </h5>--}}{{--
+{{--                        <h5 class="template-name">--}}
+{{--                            <i class="fas fa-file-alt"></i>--}}
+{{--                            {{ $template->name }}--}}
+{{--                        </h5>--}}
                         <div class="d-flex gap-2 mt-3">
                             <button
                                 type="button"
                                 class="btn btn-preview flex-grow-1"
                                 data-bs-toggle="modal"
                                 data-bs-target="#previewModal"
-                                data-template-url="{{ route('templateso.content', ['id' => $template->id]) }}"
+                                data-template-url="{{ route('templateso.contenttempTemplates', ['id' => $tempTemplate->id]) }}"
                             >
                                 <i class="fas fa-search me-2"></i>Prévisualiser
                             </button>
 
-                            <a href="{{ route('templateso.edit', ['id' => $template->id]) }}"
+                            <a href="{{ route('templateso.edit', ['id' => $tempTemplate->id]) }}"
                                class="btn btn-edit flex-grow-1">
                                 <i class="fas fa-edit me-2"></i>Modifier
                             </a>
@@ -308,7 +289,7 @@
                 </div>
             </div>
         @endforeach
-    </div>--}}
+    </div>
 
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">

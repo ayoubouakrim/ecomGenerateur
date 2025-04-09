@@ -21,6 +21,7 @@ class TemplatesController extends Controller
     {
 //        $userTemplates = TempTemplate::where('user_id', auth()->id())->get();
         $tempTemplates = TempTemplate::all();
+//        dd($tempTemplates);
         return view('templateso.index', compact('tempTemplates'));
     }
 
@@ -34,6 +35,8 @@ class TemplatesController extends Controller
     {
         // Récupérer tous les templates depuis la base de données
         $templates = Template::all();
+        $tempTemplates = TempTemplate::all();
+
         /*()->map(function ($template) {
             return [
                 'name' => $template->name, // Supposons que 'nom' contient le nom du fichier
@@ -41,7 +44,7 @@ class TemplatesController extends Controller
             ];
         });*/
 //        dd($templates);
-        return view('templateso.index', compact('templates'));
+        return view('templateso.index', compact(['templates','tempTemplates']));
     }
     public function getTemplateContent($id)
     {
@@ -52,6 +55,17 @@ class TemplatesController extends Controller
         }
 
         return response($template->filePath)
+            ->header('Content-Type', 'text/html');
+    }
+    public function gettempTemplateContent($id)
+    {
+        $temptemplate = TempTemplate::find($id);
+
+        if (!$temptemplate) {
+            abort(404, 'TempTemplate not found');
+        }
+
+        return response($temptemplate->content)
             ->header('Content-Type', 'text/html');
     }
 
@@ -128,6 +142,16 @@ class TemplatesController extends Controller
             'templateId' => $id
         ]);
     }
+    /*public function edittemp($id)
+    {
+        $template = TempTemplate::findOrFail($id);
+
+
+        return view('templateso.edit', [
+            'templateUrl' => route('templateso.tempContent', $tempTemplate->id),
+            'templateId' => $id
+        ]);
+    }*/
 
     // Afficher le contenu du template temporaire
     public function tempContent($id)
