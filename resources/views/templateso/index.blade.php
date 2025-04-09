@@ -251,7 +251,7 @@
     <h1 class="text-center page-title">Choisissez un template</h1>
 
     <!-- Section anciens templates (conditionnelle) -->
-    @if(isset($userTemplates) && count($userTemplates) > 0)
+    {{--@if(isset($userTemplates) && count($userTemplates) > 0)
         <div class="old-templates-section">
             <h3 class="old-templates-title">Mes anciens templates</h3>
             <div class="old-templates-container">
@@ -270,7 +270,46 @@
                 @endforeach
             </div>
         </div>
-    @endif
+    @endif--}}
+    {{--<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach($userTemplates as $template)
+            <div class="col">
+                <div class="template-card h-100">
+                    <div class="preview-wrapper">
+                        <iframe
+                            src="{{ route('templateso.content', ['id' => $template->id]) }}"
+                            class="preview-iframe"
+                            loading="lazy"
+                            title="Prévisualisation {{ $template->name }}"
+                        ></iframe>
+                    </div>
+                    <div class="card-body">
+                        --}}{{--<h5 class="template-name">
+                            <i class="fas fa-file-alt"></i>
+                            {{ $template->name }}
+                        </h5>--}}{{--
+                        <div class="d-flex gap-2 mt-3">
+                            <button
+                                type="button"
+                                class="btn btn-preview flex-grow-1"
+                                data-bs-toggle="modal"
+                                data-bs-target="#previewModal"
+                                data-template-url="{{ route('templateso.content', ['id' => $template->id]) }}"
+                            >
+                                <i class="fas fa-search me-2"></i>Prévisualiser
+                            </button>
+
+                            <a href="{{ route('templateso.edit', ['id' => $template->id]) }}"
+                               class="btn btn-edit flex-grow-1">
+                                <i class="fas fa-edit me-2"></i>Modifier
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>--}}
+
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach($templates as $template)

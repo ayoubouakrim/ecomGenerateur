@@ -17,11 +17,12 @@ use Illuminate\Validation\Rule;
 class TemplatesController extends Controller
 {
 
-   /* public function drafts()
+    public function drafts()
     {
-        $userTemplates = TempTemplate::where('user_id', auth()->id())->get();
-        return view('templateso.index', compact('userTemplates'));
-    }*/
+//        $userTemplates = TempTemplate::where('user_id', auth()->id())->get();
+        $tempTemplates = TempTemplate::all();
+        return view('templateso.index', compact('tempTemplates'));
+    }
 
     protected $templateService;
 

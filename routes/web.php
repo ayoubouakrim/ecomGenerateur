@@ -45,6 +45,7 @@ Route::get('/template/edit/{id}', [TemplatesController::class, 'edit'])->name('t
 Route::get('/template-content/{id}', [TemplatesController::class, 'getTemplateContent'])->name('templateso.content');
 
 Route::get('/templateso', [TemplatesController::class, 'index'])->name('templateso.index');
+//Route::get('/drafts', [TemplatesController::class, 'drafts'])->name('templateso.drafts');
 Route::post('/templateso/choose', [TemplatesController::class, 'choose'])->name('templateso.choose');
 
 
