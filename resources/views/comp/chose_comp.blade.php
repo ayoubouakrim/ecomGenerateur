@@ -310,7 +310,8 @@
                                 <div class="component-form">
                                     <form method="POST" action=" {{ route('save.content') }} "
                                         data-type="{{ $types->where('name', 'Navbars')->first()->id }}"
-                                        data-style="{{ $component->id }}">
+                                        data-style="{{ $component->id }}"
+                                        enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" name="component_id" value="{{ $component->id }}">
                                         <div class="form-group">

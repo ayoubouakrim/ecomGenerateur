@@ -19,7 +19,7 @@ class GenerationController extends Controller
     {
         $siteName = Session::get('siteName', 'Default Site Name');
 
-        $userInput = UserInput::where('id', 16)->first();
+        $userInput = UserInput::where('id', 28)->first();
 
         if (!$userInput) {
             throw new \Exception("UserInput with siteName {$siteName} not found.");

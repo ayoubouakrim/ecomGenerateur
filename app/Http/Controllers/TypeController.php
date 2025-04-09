@@ -30,7 +30,14 @@ class TypeController extends Controller
 
 
         //return UserInput::where('siteName', $siteName)->first()->id;
-        return 16; // For testing purposes, return a static ID
+        return 28; // For testing purposes, return a static ID
+    }
+
+    public function getTypeId($component_id) {
+        $component = Component::where('id', $component_id)->first();
+        
+        return $component->type_id; 
+        
     }
 
     public function saveContent(Request $request)
@@ -41,15 +48,24 @@ class TypeController extends Controller
 
             $user_input_id = $this->getUserInputId();
             $component_id = $request->component_id;
+            $type_id = $this->getTypeId($component_id);
+            
+            if ($component_id == 11) {
 
-            $cloudinaryHeroImage = $request->file('hero_img')->storeOnCloudinary('hero');
-            $hero_url = $cloudinaryHeroImage->getSecurePath();
-            $public_hero_id = $cloudinaryHeroImage->getPublicId();
+              $cloudinaryHeroImage = $request->file('hero_img')->storeOnCloudinary('hero');
+              $hero_url = $cloudinaryHeroImage->getSecurePath();
+              $public_hero_id = $cloudinaryHeroImage->getPublicId();
+
+            }
+            
 
             // Get all request data
             $requestData = $request->all();
 
-            $requestData['hero_img'] = $hero_url;
+            if ($component_id == 11) {
+
+                $requestData['hero_img'] = $hero_url;
+            }
             unset($requestData['component_id'], $requestData['_token']);
 
             $json_data = json_encode($requestData);

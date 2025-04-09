@@ -25,7 +25,7 @@ class InputUserController extends Controller
         $color1 = $request->color1;
         $color2 = $request->color2;
         $color3 = $request->color3;
-        $template_id = 1;
+        $template_id = 6;
 
         $cloudinaryLogoImage = $request->file('logoUrl')->storeOnCloudinary('logos');
         $logo_url = $cloudinaryLogoImage->getSecurePath();
