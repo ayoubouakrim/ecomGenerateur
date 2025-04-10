@@ -281,8 +281,21 @@ toggleBtn.addEventListener('click', () => {
         return element;
     }
 
+
+
+
+//     add
+
+// Ajouter l'écouteur d'événement pour Enter
+document.getElementById('aiInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !aiState.isProcessing) {
+        document.getElementById('sendButton').click();
+    }
+});
+// Ajouter en haut du script
+// const aiState = { isProcessing: false };
 // Interface IA : Toggle et auto-description du template via le backend
-    document.getElementById('aiButton').addEventListener('click', () => {
+    /*document.getElementById('aiButton').addEventListener('click', () => {
         const aiChatEl = document.getElementById('aiChat');
         if (aiChatEl.style.display === 'block') {
             aiChatEl.style.display = 'none';
@@ -292,7 +305,12 @@ toggleBtn.addEventListener('click', () => {
                 autoDescribeTemplate();
             }
         }
-    });
+    });*/
+// Modifier le toggle
+document.getElementById('aiButton').addEventListener('click', () => {
+    const aiChatEl = document.getElementById('aiChat');
+    aiChatEl.classList.toggle('active'); // Utilisation de classe
+});
 
 
 // Pour le chat IA

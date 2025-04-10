@@ -1,142 +1,207 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Éditeur Universel Pro</title>
 
     <script>
         window.saveDraftUrl = "{{ route('templateso.saveDraft') }}";
         window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        window.templateId = "{{ $templateId }}"; // Ajoute ce qui manque
+        window.templateId = "{{ $templateId }}";
     </script>
 
-    {{--    <script src="{{ asset('js/templateso/edit.js') }}"></script>--}}
     @vite('resources/js/templateso/edit.js')
     @vite('resources/css/edit.css')
 
-    <title>Éditeur Universel</title>
+    <!-- Design System -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Animation library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <!-- Progress bar for deployment -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
+
+
 </head>
+
+<body class="editor-body">
 @include('layout.nav')
 
-<body>
+<!-- Main Editor Layout -->
 <div class="editor-container">
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div>
-            <div class="logo-title"><img src="logo.svg" alt="Logo" style="height: 32px;" class="me-2"> <h4 class="m-0">
-                    Éditeur</h4></div>
-            <div id="dynamicSettings"><p class="fst-italic small text-muted">Sélectionnez un élément pour l’éditer.</p>
+    <!-- Modern Sidebar -->
+    <aside class="editor-sidebar">
+        <div class="sidebar-header">
+            <div class="logo-wrapper">
+                <svg class="logo-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12,3L2,12H5V20H19V12H22L12,3M12,7.7L16,11.2V18H14V14H10V18H8V11.2L12,7.7Z"/>
+                </svg>
+                <h3 class="logo-text">Éditeur Pro</h3>
             </div>
-            <div class="mt-4 border-top pt-3">
-                <button class="btn btn-success w-100" id="saveDraft" data-template-id="{{ $templateId }}"><i
-                        class="bi bi-cloud-arrow-up me-2"></i>Sauvegarder
-                </button>
-                <button class="btn btn-outline-light w-100" id="downloadBtn"><i class="bi bi-download me-2"></i>Télécharger
-                </button>
-                <button class="btn btn-info w-100 deploy-button" id="deployBtn"><span class="button-content"> <i
-                            class="bi bi-rocket-takeoff me-2"></i>Héberger </span> <span class="button-loader d-none"> <div
-                            class="spinner-wave"> <div class="spinner-wave-dot"></div> <div
-                                class="spinner-wave-dot"></div> <div class="spinner-wave-dot"></div> <div
-                                class="spinner-wave-dot"></div> </div> </span></button>
-            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="mdi mdi-chevron-double-left"></i>
+            </button>
         </div>
-        <div class="text-end">
-            <div class="toggle-btn" id="sidebarToggle"><i class="bi bi-chevron-left"></i></div>
-        </div>
-    </div>
 
-    <!-- Preview -->
-    <div class="preview-wrapper">
-        <iframe src="{{ $templateUrl }}"
-                class="w-100 h-100 border-0"
-                id="templatePreview"></iframe>
-    </div>
-    <!-- Interface IA -->
-    <div class="ai-assistant">
-        <button class="ai-button" id="aiButton">
-            <i class="bi bi-robot"></i>
-        </button>
-        <div class="ai-chat" id="aiChat">
-            <div class="chat-messages" id="chatMessages"></div>
-
-            <!-- Nouveau loader moderne -->
-            <div class="ai-thinking" id="aiThinking" style="display: none;">
-                <div class="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+        <div class="sidebar-content">
+            <div class="element-picker">
+                <h5 class="section-title">Éléments</h5>
+                <div class="elements-grid">
+                    <button class="element-card" data-type="text">
+                        <i class="mdi mdi-text"></i>
+                        <span>Texte</span>
+                    </button>
+                    <button class="element-card" data-type="image">
+                        <i class="mdi mdi-image"></i>
+                        <span>Image</span>
+                    </button>
+                    <button class="element-card" data-type="button">
+                        <i class="mdi mdi-button-pointer"></i>
+                        <span>Bouton</span>
+                    </button>
+                    <button class="element-card" data-type="form">
+                        <i class="mdi mdi-form-textbox"></i>
+                        <span>Formulaire</span>
+                    </button>
                 </div>
-                <p class="thinking-text">L'IA génère votre réponse...</p>
             </div>
 
-            <div class="chat-input">
-                <input type="text" id="aiInput" class="form-control" placeholder="Décrivez vos modifications...">
-                <button class="btn btn-primary ms-2" id="sendButton">
-                    <i class="bi bi-send"></i>
-                </button>
+            <div class="property-panel" id="dynamicSettings">
+                <h5 class="section-title">Propriétés</h5>
+                <div class="empty-state">
+                    <i class="mdi mdi-cursor-default-click-outline"></i>
+                    <p>Sélectionnez un élément pour l'éditer</p>
+                </div>
             </div>
         </div>
 
+        <div class="sidebar-footer">
+            <button class="action-btn primary" id="saveDraft" data-template-id="{{ $templateId }}">
+                <i class="mdi mdi-content-save"></i>
+                <span>Sauvegarder</span>
+            </button>
+            <button class="action-btn secondary" id="downloadBtn">
+                <i class="mdi mdi-download"></i>
+                <span>Télécharger</span>
+            </button>
+            <button class="action-btn accent" id="deployBtn">
+                <i class="mdi mdi-rocket"></i>
+                <span>Héberger</span>
+                <div class="spinner-wave deploy-spinner">
+                    <div class="spinner-wave-dot"></div>
+                    <div class="spinner-wave-dot"></div>
+                    <div class="spinner-wave-dot"></div>
+                </div>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="editor-main">
+        <div class="preview-container">
+            <iframe src="{{ $templateUrl }}" class="preview-frame" id="templatePreview"></iframe>
+        </div>
+    </main>
+
+    <!-- Floating Action Buttons -->
+    <div class="fab-container">
+        <button class="fab-button primary" id="aiButton">
+            <i class="mdi mdi-robot"></i>
+        </button>
+    </div>
+
+    <!-- AI Chat Panel -->
+    <div class="ai-panel" id="aiChat">
+        <div class="ai-header">
+            <h5>Assistant IA</h5>
+            <button class="close-ai">
+                <i class="mdi mdi-close"></i>
+            </button>
+        </div>
+        <div class="ai-messages" id="chatMessages"></div>
+        <div class="ai-input-container">
+            <input type="text" id="aiInput" placeholder="Comment puis-je vous aider ?">
+            <button class="ai-send" id="sendButton">
+                <i class="mdi mdi-send"></i>
+            </button>
+        </div>
+        <div class="ai-loading" id="aiThinking">
+            <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Fullscreen Deployment Loader -->
-<div class="deployment-loader" id="deploymentLoader">
-    <div class="loader-content">
-        <div class="orbit-spinner">
-            <div class="orbit"></div>
-            <div class="orbit"></div>
-            <div class="orbit"></div>
-        </div>
-        <h3 class="loader-title">Déploiement en cours</h3>
-        <p class="loader-subtitle">Votre site est en train d'être hébergé...</p>
-        <div class="progress-container">
-            <div class="progress-bar" id="deployProgress"></div>
-        </div>
-        <div class="loader-stats">
-            <div class="stat-item">
-                <i class="bi bi-speedometer2"></i>
-                <span id="serverSetup">Configuration du serveur...</span>
+<!-- Deployment Modals -->
+<div class="deployment-overlay" id="deploymentLoader">
+    <div class="deployment-modal">
+        <div class="deployment-animation">
+            <svg class="deployment-icon" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M12,3L2,12H5V20H19V12H22L12,3M12,7.7L16,11.2V18H14V14H10V18H8V11.2L12,7.7Z"/>
+            </svg>
+            <div class="progress-ring">
+                <svg class="ring-svg" viewBox="0 0 36 36">
+                    <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                    <path class="ring-fill" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                </svg>
             </div>
-            <div class="stat-item">
-                <i class="bi bi-database"></i>
-                <span id="dbSetup">Préparation de la base de données...</span>
-            </div>
-            <div class="stat-item">
-                <i class="bi bi-shield-lock"></i>
-                <span id="securitySetup">Mise en place de la sécurité...</span>
+        </div>
+        <div class="deployment-info">
+            <h3>Déploiement en cours</h3>
+            <p>Votre site est en train d'être publié...</p>
+            <div class="deployment-steps">
+                <div class="step active" id="serverSetup">
+                    <div class="step-icon">
+                        <i class="mdi mdi-server"></i>
+                    </div>
+                    <div class="step-text">
+                        <p>Configuration du serveur</p>
+                    </div>
+                </div>
+                <div class="step" id="dbSetup">
+                    <div class="step-icon">
+                        <i class="mdi mdi-database"></i>
+                    </div>
+                    <div class="step-text">
+                        <p>Préparation de la base de données</p>
+                    </div>
+                </div>
+                <div class="step" id="securitySetup">
+                    <div class="step-icon">
+                        <i class="mdi mdi-shield-lock"></i>
+                    </div>
+                    <div class="step-text">
+                        <p>Mise en place de la sécurité</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Popup de déploiement -->
-<div class="deploy-popup" id="deployPopup">
-    <div class="deploy-popup-content">
-        <h3>Site hébergé avec succès !</h3>
+<div class="success-modal" id="deployPopup">
+    <div class="success-content">
+        <div class="success-icon">
+            <i class="mdi mdi-check-circle"></i>
+        </div>
+        <h3>Déploiement réussi !</h3>
         <p>Votre site est maintenant en ligne :</p>
         <a id="deployLink" target="_blank" rel="noopener noreferrer">Chargement du lien...</a>
-        <div class="deploy-popup-buttons">
-            <button class="copy-btn" id="copyLinkBtn">
-                <i class="bi bi-clipboard me-2"></i>Copier le lien
+        <div class="success-actions">
+            <button class="success-btn" id="copyLinkBtn">
+                <i class="mdi mdi-content-copy"></i> Copier le lien
             </button>
-            <button class="close-btn" id="closePopupBtn">
+            <button class="success-btn outline" id="closePopupBtn">
                 Fermer
             </button>
         </div>
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Progress bar library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
 </body>
 </html>
-
-
