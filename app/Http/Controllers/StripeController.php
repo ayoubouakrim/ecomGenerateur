@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Session;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 
@@ -44,6 +46,14 @@ class StripeController extends Controller
 
     public function success() {
 
-        return view('inputuser');
+        $user_id = Session::get('user_id');
+
+        $user = User::find($user_id);
+        if ($user) {
+            $user->subscribed = true;
+            $user->save();
+        }
+
+        return redirect()->route('gretting')->with('success', 'Merci pour votre paiement !');
     }
 }

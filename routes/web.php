@@ -97,8 +97,6 @@ Route::post('/session', [StripeController::class, 'session'])->name('stripe.sess
 Route::get('/success', [StripeController::class, 'success'])->name('stripe.success');
 
 
-Route::get('/generate', function () {
-    return view('generate');
-})->name('generate');
+Route::get('/generate', [GenerationController::class, 'show'])->name('generate');
 
 Route::get('/greeting', [GreetingController::class, 'getSites'])->name('gretting');

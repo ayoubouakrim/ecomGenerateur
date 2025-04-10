@@ -1012,7 +1012,7 @@
                                 </span>
                             </div>
                             <span class="buy-button">
-                                <form action="/session" method="POST">
+                                <form action="{{route('login.show')}}" method="POST">
 
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="plan" value="monthly">

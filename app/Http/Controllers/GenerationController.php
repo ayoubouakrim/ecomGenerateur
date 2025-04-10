@@ -41,6 +41,7 @@ class GenerationController extends Controller
                 'component.name as component_name',
                 'component.htmlStructure',
                 'component.cssStyle',
+                'component.img_path as img_path',
                 'component.type_id',
                 'component_content.content as component_content'
             )
