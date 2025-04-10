@@ -11,7 +11,7 @@
     --warning: #f8961e;
     --danger: #ef233c;
     --sidebar-width: 300px;
-    --sidebar-collapsed: 80px;
+    --sidebar-collapsed: 300px;
     --transition-speed: 0.3s;
 }
 
@@ -26,12 +26,22 @@
     overflow: hidden;
 }
 
+/*
 .editor-container {
     display: grid;
     grid-template-columns: var(--sidebar-width) 1fr;
     height: calc(100vh - 60px);
     transition: grid-template-columns var(--transition-speed) ease;
 }
+*/
+
+.editor-container {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    height: calc(100vh - 60px);
+    transition: grid-template-columns var(--transition-speed) ease;
+}
+
 
 /* Modern Sidebar */
 .editor-sidebar {
@@ -175,14 +185,21 @@
     font-size: 0.9rem;
 }
 
+/*.sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}*/
 .sidebar-footer {
     padding: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    margin-top: auto;
 }
-
 .action-btn {
     display: flex;
     align-items: center;
@@ -665,9 +682,9 @@
 }
 
 /* Collapsed State */
-.editor-container.collapsed {
+/*.editor-container.collapsed {
     grid-template-columns: var(--sidebar-collapsed) 1fr;
-}
+}*/
 
 .editor-container.collapsed .logo-text,
 .editor-container.collapsed .section-title,
@@ -761,10 +778,57 @@
 }
 
 
-/* Remplacer les styles inline par des classes */
-/*.ai-panel {
+
+/* Ajoutez ces règles pour le sidebar collapsed */
+.editor-sidebar.collapsed {
+    width: var(--sidebar-collapsed);
+    overflow: hidden;
+}
+
+.editor-sidebar.collapsed .logo-text,
+.editor-sidebar.collapsed .element-card span,
+.editor-sidebar.collapsed .section-title,
+.editor-sidebar.collapsed .empty-state p,
+.editor-sidebar.collapsed .action-btn span {
     display: none;
 }
-.ai-panel.active {
-    display: block;
-}*/
+
+.editor-sidebar.collapsed .sidebar-content {
+    padding: 1rem 0.5rem;
+}
+
+.editor-sidebar.collapsed .elements-grid {
+    grid-template-columns: 1fr;
+}
+
+.editor-sidebar.collapsed .element-card {
+    padding: 0.75rem 0.25rem;
+}
+
+.editor-sidebar.collapsed .sidebar-footer {
+    padding: 1rem 0.5rem;
+}
+
+.editor-sidebar.collapsed .action-btn {
+    padding: 0.75rem;
+    justify-content: center;
+}
+
+.editor-sidebar.collapsed .action-btn i {
+    margin-right: 0;
+}
+
+/* Correction pour le container principal */
+.editor-container.collapsed {
+    grid-template-columns: var(--sidebar-collapsed) 1fr;
+}
+
+/* Assurez-vous que le footer reste visible */
+.sidebar-footer {
+    margin-top: auto;
+    padding-bottom: 1rem;
+}
+
+.editor-sidebar.collapsed .sidebar-toggle i {
+    transform: rotate(180deg);
+}

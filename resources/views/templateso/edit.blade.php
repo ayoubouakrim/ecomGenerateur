@@ -30,7 +30,7 @@
 <!-- Main Editor Layout -->
 <div class="editor-container">
     <!-- Modern Sidebar -->
-    <aside class="editor-sidebar">
+    <aside class="editor-sidebar collapsed">
         <div class="sidebar-header">
             <div class="logo-wrapper">
                 <svg class="logo-icon" viewBox="0 0 24 24">
@@ -47,7 +47,7 @@
             <div class="element-picker">
                 <h5 class="section-title">Éléments</h5>
                 <div class="elements-grid">
-                    <button class="element-card" data-type="text">
+                   {{-- <button class="element-card" data-type="text">
                         <i class="mdi mdi-text"></i>
                         <span>Texte</span>
                     </button>
@@ -58,11 +58,11 @@
                     <button class="element-card" data-type="button">
                         <i class="mdi mdi-button-pointer"></i>
                         <span>Bouton</span>
-                    </button>
-                    <button class="element-card" data-type="form">
+                    </button>--}}
+                   {{-- <button class="element-card" data-type="form">
                         <i class="mdi mdi-form-textbox"></i>
                         <span>Formulaire</span>
-                    </button>
+                    </button>--}}
                 </div>
             </div>
 

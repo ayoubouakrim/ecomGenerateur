@@ -1,12 +1,27 @@
-const sidebar = document.getElementById('sidebar');
+const sidebar = document.getElementById('.editor-sidebar');
 const toggleBtn = document.getElementById('sidebarToggle');
 const editorContainer = document.querySelector('.editor-container');
+/*
 toggleBtn.addEventListener('click', () => {
     sidebar.classList.toggle('collapsed');
     // Mise à jour dynamique de la variable CSS
     if (sidebar.classList.contains('collapsed')) { document.documentElement.style.setProperty('--sidebar-width', '80px'); } else { document.documentElement.style.setProperty('--sidebar-width', '280px'); } // Bascule l'icône si besoin
     const icon = toggleBtn.querySelector('i'); icon.classList.toggle('bi-chevron-left'); icon.classList.toggle('bi-chevron-right'); });
+*/
+toggleBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('collapsed');
+    editorContainer.classList.toggle('collapsed'); // Ajouté pour le container principal
 
+    // Mise à jour de l'icône
+    const icon = toggleBtn.querySelector('i');
+    if (sidebar.classList.contains('collapsed')) {
+        icon.classList.remove('mdi-chevron-double-left');
+        icon.classList.add('mdi-chevron-double-right');
+    } else {
+        icon.classList.remove('mdi-chevron-double-right');
+        icon.classList.add('mdi-chevron-double-left');
+    }
+});
 // État global de l'éditeur
     const state = {
         originalContent: null,
