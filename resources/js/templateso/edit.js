@@ -449,6 +449,11 @@ document.getElementById('aiButton').addEventListener('click', () => {
     const aiChatEl = document.getElementById('aiChat');
     aiChatEl.classList.toggle('active');
 });
+// Ajout de l'écouteur pour le bouton de fermeture
+document.querySelector('.close-ai').addEventListener('click', () => {
+    const aiChatEl = document.getElementById('aiChat');
+    aiChatEl.classList.remove('active');
+});
 
 document.getElementById('aiInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter' && !aiState.isProcessing) {
@@ -470,13 +475,14 @@ document.getElementById('sendButton').addEventListener('click', async () => {
 
     try {
         addMessage(message, 'user');
+        input.value = ''; // Vide l'input après l'envoi
         const currentHtml = await getModifiedContent();
 
         const minWaitTime = 1500;
         const startTime = Date.now();
 
         const messages = [
-            {role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et CSS."},
+            {role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et CSS et Js."},
             {role: "user", content: `Modifie ce template HTML selon ces instructions: ${message}\n\nHTML Actuel:\n${currentHtml}`}
         ];
 

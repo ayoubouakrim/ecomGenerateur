@@ -24,11 +24,11 @@ class OpenAiController extends Controller
 
         // Configuration Azure OpenAI (adaptée à votre modèle)
         $azureEndpoint = 'https://models.inference.ai.azure.com/chat/completions';
-        $model = 'gpt-4o-mini';
-//        $model = 'gpt-4o';
+//        $model = 'gpt-4o-mini';
+        $model = 'gpt-4o';
         $temperature = 1.0;
-        $top_p = 1.0;
-        $max_tokens = 16000;
+        $top_p = 0.9;
+        $max_tokens = 4000;
 
         // Préparez la charge utile pour l'API
         $payload = [
@@ -37,6 +37,7 @@ class OpenAiController extends Controller
             'temperature' => $temperature,
             'top_p' => $top_p,
             'max_tokens' => $max_tokens,
+            'presence_penalty' => 0.3,
         ];
 //dd($payload);
 
