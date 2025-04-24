@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Session;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 
@@ -20,7 +22,7 @@ class StripeController extends Controller
         $paymentAmount = $request->get('price');
 
         $session = \Stripe\Checkout\Session::create([
-            
+
             'line_items' => [[
                 'price_data' => [
                     'currency' => 'usd',
@@ -37,13 +39,21 @@ class StripeController extends Controller
         ]);
 
         return redirect()->away($session->url);
-        
 
-        
+
+
     }
 
     public function success() {
 
-        return view('inputuser');
+        $user_id = Session::get('user_id');
+
+        $user = User::find($user_id);
+        if ($user) {
+            $user->subscribed = true;
+            $user->save();
+        }
+
+        return redirect()->route('gretting')->with('success', 'Merci pour votre paiement !');
     }
 }

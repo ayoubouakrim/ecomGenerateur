@@ -118,6 +118,35 @@
                 <i class="mdi mdi-close"></i>
             </button>
         </div>
+        <div class="ai-messages" id="chatMessages">
+            <!-- Message d'accueil initial -->
+            <div class="message ai-message welcome-message">
+                Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider avec votre template aujourd'hui ?
+            </div>
+        </div>
+        <div class="ai-input-container">
+            <input type="text" id="aiInput" placeholder="Comment puis-je vous aider ?">
+            <button class="ai-send" id="sendButton">
+                <i class="mdi mdi-send"></i>
+            </button>
+        </div>
+        <div class="ai-loading" id="aiThinking">
+            <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="loading-text">L'IA réfléchit...</div>
+        </div>
+    </div>
+{{--
+    <div class="ai-panel" id="aiChat">
+        <div class="ai-header">
+            <h5>Assistant IA</h5>
+            <button class="close-ai">
+                <i class="mdi mdi-close"></i>
+            </button>
+        </div>
         <div class="ai-messages" id="chatMessages"></div>
         <div class="ai-input-container">
             <input type="text" id="aiInput" placeholder="Comment puis-je vous aider ?">
@@ -133,6 +162,7 @@
             </div>
         </div>
     </div>
+--}}
 </div>
 
 <!-- Deployment Modals -->
