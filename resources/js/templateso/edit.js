@@ -604,6 +604,34 @@ function showDeploymentLoader() {
 
     const progressBar = document.getElementById('deployProgress');
     let progress = 0;
+    // 50 000 ms / 100 pas = 500 ms entre chaque incrément
+    const interval = setInterval(() => {
+        progress += 1;
+        progressBar.style.width = `${progress}%`;
+
+        if (progress === 20) {
+            document.getElementById('serverSetup').textContent = "Serveur configuré ✓";
+        }
+        if (progress === 50) {
+            document.getElementById('dbSetup').textContent = "Base de données prête ✓";
+        }
+        if (progress === 80) {
+            document.getElementById('securitySetup').textContent = "Sécurité activée ✓";
+        }
+
+        if (progress >= 100) {
+            clearInterval(interval);
+        }
+    }, 800); // ← 500 ms pour atteindre 100 % en ~50 s
+}
+
+/*
+function showDeploymentLoader() {
+    const loader = document.getElementById('deploymentLoader');
+    loader.classList.add('active');
+
+    const progressBar = document.getElementById('deployProgress');
+    let progress = 0;
     const interval = setInterval(() => {
         progress += 1;
         progressBar.style.width = `${progress}%`;
@@ -623,12 +651,14 @@ function showDeploymentLoader() {
         }
     }, 300);
 }
+*/
 
 function hideDeploymentLoader() {
     const loader = document.getElementById('deploymentLoader');
     loader.classList.remove('active');
 }
 
+/*
 document.getElementById('deployBtn').addEventListener('click', async () => {
     showDeploymentLoader();
     document.getElementById('deployBtn').disabled = true;
@@ -663,6 +693,49 @@ document.getElementById('deployBtn').addEventListener('click', async () => {
                 document.getElementById('deployBtn').disabled = false;
             }
         }, 500);
+
+    } catch (error) {
+        hideDeploymentLoader();
+        document.getElementById('deployBtn').disabled = false;
+        console.error('Erreur initiale :', error);
+    }
+});
+*/
+document.getElementById('deployBtn').addEventListener('click', async () => {
+    showDeploymentLoader();
+    document.getElementById('deployBtn').disabled = true;
+
+    try {
+        // On passe à 50 secondes (50 000 ms)
+        const minWaitTime = 80000;
+
+        setTimeout(async () => {
+            try {
+                const modifiedContent = await getModifiedContent();
+
+                const response = await fetch('/deploy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({content: modifiedContent})
+                });
+
+                if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
+
+                const data = await response.json();
+                hideDeploymentLoader();
+                showDeployPopup(data.siteUrl);
+
+            } catch (error) {
+                console.error('Erreur de déploiement :', error);
+                hideDeploymentLoader();
+                alert("Erreur lors du déploiement. Veuillez réessayer.");
+            } finally {
+                document.getElementById('deployBtn').disabled = false;
+            }
+        }, minWaitTime); // ← on utilise minWaitTime ici
 
     } catch (error) {
         hideDeploymentLoader();

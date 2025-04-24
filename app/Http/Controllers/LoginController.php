@@ -35,7 +35,6 @@ class LoginController extends Controller
             Session::put('user_first_name', $user->first_name);
             Session::put('user_last_name', $user->last_name);
             Session::put('subscription', $user->subscribed);
-
             return to_route('gretting')->with('success', 'Bienvenue sur cette page ' . $user->name . ' .');
         } else {
             return back()->withErrors([
