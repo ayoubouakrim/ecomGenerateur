@@ -54,6 +54,9 @@ class StripeController extends Controller
             $user->save();
         }
 
+        Session::remove('subscription');
+        Session::put('subscription', true);
+
         return redirect()->route('gretting')->with('success', 'Merci pour votre paiement !');
     }
 }

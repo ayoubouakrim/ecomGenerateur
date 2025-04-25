@@ -1763,12 +1763,7 @@
                         <li class="pricing-feature disabled"><i class="fas fa-times"></i> Priority support</li>
                     </ul>
                     <div class="pricing-action">
-                        <form action="/session" method="POST">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <input type="hidden" name="plan" value="basic_monthly">
-                            <input type="hidden" name="price" value="12">
-                            <button class="pricing-btn secondary" type="submit">Buy</button>
-                        </form>
+                        <button class="pricing-btn primary" type="submit" onclick="window.location.href='{{ route('login') }}'">Buy</button>
                     </div>
                 </div>
 
@@ -1789,12 +1784,7 @@
                         <li class="pricing-feature"><i class="fas fa-check"></i> Email support</li>
                     </ul>
                     <div class="pricing-action">
-                        <form action="/session" method="POST">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <input type="hidden" name="plan" value="professional_monthly">
-                            <input type="hidden" name="price" value="29">
-                            <button class="pricing-btn primary" type="submit">Buy</button>
-                        </form>
+                        <button class="pricing-btn primary" type="submit" onclick="window.location.href='{{ route('login') }}'">Buy</button>
                     </div>
                 </div>
 
@@ -1815,12 +1805,7 @@
                         <li class="pricing-feature"><i class="fas fa-check"></i> 24/7 priority support</li>
                     </ul>
                     <div class="pricing-action">
-                        <form action="/session" method="POST">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <input type="hidden" name="plan" value="business_monthly">
-                            <input type="hidden" name="price" value="79">
-                            <button class="pricing-btn secondary" type="submit">Buy</button>
-                        </form>
+                        <button class="pricing-btn primary" type="submit" onclick="window.location.href='{{ route('login') }}'">Buy</button>
                     </div>
                 </div>
             </div>
