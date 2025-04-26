@@ -669,7 +669,7 @@
                                     <h5 class="component-title">{{ $component->name }}</h5>
                                     <button class="btn-select" onclick="selectCard(this)"
                                         data-type="{{ $types->where('name', 'Navbars')->first()->id }}"
-                                        data-style="{{ $component->id }}">
+                                        data-style="{{ $component->id }}" @if($component->id == 12 && !$subscription) disabled @endif>
                                         Select
                                     </button>
                                 </div>
@@ -713,7 +713,7 @@
                                     <h5 class="component-title">{{ $component->name }}</h5>
                                     <button class="btn-select" onclick="selectCard(this)"
                                         data-type="{{ $types->where('name', 'Hero Sections')->first()->id }}"
-                                        data-style="{{ $component->id }}">
+                                        data-style="{{ $component->id }}" @if($component->id == 11 && !$subscription) disabled @endif>
                                         Select
                                     </button>
                                 </div>

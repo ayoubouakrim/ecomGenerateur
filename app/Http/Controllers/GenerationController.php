@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TempTemplate;
 use App\Models\Type;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -19,7 +20,8 @@ class GenerationController extends Controller
     {
         $siteName = Session::get('siteName', 'Default Site Name');
 
-        $userInput = UserInput::where('id', 30)->first();
+        $userInput = UserInput::where('siteName', $siteName)->first();
+        //$userInput = UserInput::where('id', 33)->first();
 
         if (!$userInput) {
             throw new \Exception("UserInput with siteName {$siteName} not found.");
@@ -181,6 +183,9 @@ class GenerationController extends Controller
             // Generate complete HTML
             $htmlOutput = $this->generateFullHtmlDocument($renderedComponents, $userInput);
 
+            // Store the generated HTML in the database
+            $this->storeData($htmlOutput);
+
             // Generate filename
             $filename = $this->generateDownloadFilename();
 
@@ -294,6 +299,18 @@ HTML;
             '.html';
     }
 
+    public function storeData($content)
+    {
+        $userId = Session::get('user_id', 3);
+        $originalId = 6;
+
+        TempTemplate::create([
+            'user_id' => $userId,
+            'original_id' => $originalId,
+            'content' => $content
+        ]);
+    }
+
 
 
 
@@ -304,7 +321,7 @@ HTML;
     {
         $userInput = $this->getUserInputId();
         $components = $this->getComponentsByUserInputId($userInput->id);
-        
+
         return view('generate', [
             'components' => $components,
             'userInput' => $userInput,

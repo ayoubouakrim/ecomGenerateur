@@ -26,6 +26,7 @@ class InputUserController extends Controller
         $color2 = $request->color2;
         $color3 = $request->color3;
         $template_id = 6;
+        $user_id = Session::get('user_id', 3);
 
         $cloudinaryLogoImage = $request->file('logoUrl')->storeOnCloudinary('logos');
         $logo_url = $cloudinaryLogoImage->getSecurePath();
@@ -48,6 +49,7 @@ class InputUserController extends Controller
             'color2' => $color2,
             'color3' => $color3,
             'template_id' => $template_id,
+            'user_id' => $user_id,
         ]);
         return to_route('comp.chose_comp');
     }

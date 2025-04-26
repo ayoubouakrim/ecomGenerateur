@@ -1619,6 +1619,65 @@
                 bottom: -3px;
             }
         }
+
+
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close-modal:hover,
+        .close-modal:focus {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
@@ -1637,7 +1696,7 @@
             </li>
         </ul>
         <div class="nav-actions">
-            <a href="{{ route('login.show') }}" class="nav-link" >Sign In</a>
+            <a href="{{ route('login.show') }}" class="nav-link">Sign In</a>
             <a href="{{ route('register') }}" class="btn btn-primary">Get Started</a>
         </div>
         <div class="hamburger">
@@ -1661,10 +1720,24 @@
                         <i class="fas fa-bolt"></i>
                         Start Building Now
                     </a>
-                    <a href="#" class="btn btn-outline">
+                    <!-- Trigger Button -->
+                    <button class="btn btn-outline" id="show-video-btn">
                         <i class="fas fa-play"></i>
                         See How It Works
-                    </a>
+                    </button>
+
+                    <!-- Modal Structure -->
+                    <div id="video-modal" class="modal">
+                        <div class="modal-content">
+                            <span class="close-modal">&times;</span>
+                            <div class="video-container">
+                                <video id="demo-video" controls>
+                                    <source src="/assets/how_it_work_video/how_it_work.mp4" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1763,7 +1836,8 @@
                         <li class="pricing-feature disabled"><i class="fas fa-times"></i> Priority support</li>
                     </ul>
                     <div class="pricing-action">
-                        <button class="pricing-btn primary" type="submit" onclick="window.location.href='{{ route('login') }}'">Buy</button>
+                        <button class="pricing-btn primary" type="submit"
+                            onclick="window.location.href='{{ route('login') }}'">Buy</button>
                     </div>
                 </div>
 
@@ -1784,7 +1858,8 @@
                         <li class="pricing-feature"><i class="fas fa-check"></i> Email support</li>
                     </ul>
                     <div class="pricing-action">
-                        <button class="pricing-btn primary" type="submit" onclick="window.location.href='{{ route('login') }}'">Buy</button>
+                        <button class="pricing-btn primary" type="submit"
+                            onclick="window.location.href='{{ route('login') }}'">Buy</button>
                     </div>
                 </div>
 
@@ -1805,7 +1880,8 @@
                         <li class="pricing-feature"><i class="fas fa-check"></i> 24/7 priority support</li>
                     </ul>
                     <div class="pricing-action">
-                        <button class="pricing-btn primary" type="submit" onclick="window.location.href='{{ route('login') }}'">Buy</button>
+                        <button class="pricing-btn primary" type="submit"
+                            onclick="window.location.href='{{ route('login') }}'">Buy</button>
                     </div>
                 </div>
             </div>
@@ -2233,7 +2309,28 @@
             </div>
         </div>
     </footer>
+    
     <script>
+        document.getElementById('show-video-btn').addEventListener('click', function() {
+            document.getElementById('video-modal').style.display = 'flex'; // Show modal
+            document.getElementById('demo-video').play(); // Play the video
+        });
+
+        document.querySelector('.close-modal').addEventListener('click', function() {
+            document.getElementById('video-modal').style.display = 'none'; // Hide modal
+            document.getElementById('demo-video').pause(); // Pause video
+            document.getElementById('demo-video').currentTime = 0; // Reset video
+        });
+
+        // Close modal if clicked outside
+        window.addEventListener('click', function(e) {
+            if (e.target === document.getElementById('video-modal')) {
+                document.getElementById('video-modal').style.display = 'none'; // Hide modal
+                document.getElementById('demo-video').pause(); // Pause video
+                document.getElementById('demo-video').currentTime = 0; // Reset video
+            }
+        });
+
         // JavaScript for toggle menu functionality
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
@@ -2274,6 +2371,10 @@
                 });
             }
         });
+
+
+        
     </script>
 </body>
+
 </html>

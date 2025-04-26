@@ -12,15 +12,17 @@ use App\Models\UserInput;
 
 class TypeController extends Controller
 {
+
     public function index()
     {
-
+        $subscription = Session::get('subscription', false);
         $allComponents = Component::all();
         $types = Type::all();
 
         return view('comp.chose_comp', compact(
             'allComponents',
-            'types'
+            'types',
+            'subscription'
         ));
     }
 
@@ -29,8 +31,8 @@ class TypeController extends Controller
         $siteName = Session::get('siteName', 'Default Site Name');
 
 
-        //return UserInput::where('siteName', $siteName)->first()->id;
-        return 30; // For testing purposes, return a static ID
+        return UserInput::where('siteName', $siteName)->first()->id;
+        //return 30; // For testing purposes, return a static ID
     }
 
     public function getTypeId($component_id) {
