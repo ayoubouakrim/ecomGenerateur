@@ -9,9 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #FFA500;
-            --primary-light: #FFB833;
-            --primary-lighter: #FFE0B2;
+            --primary-color: #3f37c9;
+            --primary-light: #6366f1;
+            --primary-lighter: #3b82f6;
             --gray-light: #F5F5F5;
             --gray-medium: #E0E0E0;
             --gray-dark: #616161;
