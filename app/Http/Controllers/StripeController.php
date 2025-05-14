@@ -22,7 +22,7 @@ class StripeController extends Controller
         $paymentAmount = $request->get('price');
 
         $session = \Stripe\Checkout\Session::create([
-            
+
             'line_items' => [[
                 'price_data' => [
                     'currency' => 'usd',
@@ -39,12 +39,28 @@ class StripeController extends Controller
         ]);
 
         return redirect()->away($session->url);
-        
 
-        
+
+
     }
 
     public function success() {
+
+        $user_id = Session::get('user_id');
+
+        $user = User::find($user_id);
+        if ($user) {
+            $user->subscribed = true;
+            $user->save();
+        }
+        Session::remove('subscription');
+        Session::put('subscription', true);
+
+        return redirect()->route('gretting')->with('success', 'Merci pour votre paiement !');
+    }
+
+    //
+   /* public function success() {
 
         $user_id = Session::get('user_id');
 
@@ -58,5 +74,5 @@ class StripeController extends Controller
         Session::put('subscription', true);
 
         return redirect()->route('gretting')->with('success', 'Merci pour votre paiement !');
-    }
+    }*/
 }

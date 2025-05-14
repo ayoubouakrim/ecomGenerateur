@@ -1,3 +1,14 @@
+/******************************
+ * VARIABLES ET CONFIGURATION
+ ******************************/
+.locked-frame {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    min-height: 100%;
+    width: 100%;
+    padding: 2rem;
+}
+
 :root {
     --primary: #4361ee;
     --primary-light: #3f37c9;
@@ -11,11 +22,13 @@
     --warning: #f8961e;
     --danger: #ef233c;
     --sidebar-width: 300px;
-    --sidebar-collapsed: 80px;
+    --sidebar-collapsed: 300px; /* Modifié de 300px à 80px */
     --transition-speed: 0.3s;
 }
 
-/* Base Styles */
+/******************************
+ * STYLES DE BASE
+ ******************************/
 .editor-body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background-color: var(--dark);
@@ -26,6 +39,9 @@
     overflow: hidden;
 }
 
+/******************************
+ * STRUCTURE PRINCIPALE
+ ******************************/
 .editor-container {
     display: grid;
     grid-template-columns: var(--sidebar-width) 1fr;
@@ -33,7 +49,13 @@
     transition: grid-template-columns var(--transition-speed) ease;
 }
 
-/* Modern Sidebar */
+.editor-container.collapsed {
+    grid-template-columns: var(--sidebar-collapsed) 1fr;
+}
+
+/******************************
+ * SIDEBAR PRINCIPALE
+ ******************************/
 .editor-sidebar {
     background: var(--darker);
     color: var(--light);
@@ -47,6 +69,15 @@
     z-index: 10;
 }
 
+/* État replié */
+.editor-sidebar.collapsed {
+    width: var(--sidebar-collapsed);
+    overflow: hidden;
+}
+
+/******************************
+ * EN-TÊTE SIDEBAR
+ ******************************/
 .sidebar-header {
     padding: 1.5rem;
     display: flex;
@@ -96,11 +127,19 @@
     background: rgba(255, 255, 255, 0.2);
 }
 
+/******************************
+ * CONTENU SIDEBAR
+ ******************************/
 .sidebar-content {
     flex: 1;
     padding: 1.5rem;
     overflow-y: auto;
     scrollbar-width: thin;
+}
+
+/* État replié */
+.editor-sidebar.collapsed .sidebar-content {
+    padding: 1rem 0.5rem;
 }
 
 .section-title {
@@ -112,11 +151,24 @@
     font-weight: 600;
 }
 
+/* État replié */
+.editor-sidebar.collapsed .section-title {
+    display: none;
+}
+
+/******************************
+ * ÉLÉMENTS DE LA SIDEBAR
+ ******************************/
 .elements-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
     margin-bottom: 2rem;
+}
+
+/* État replié */
+.editor-sidebar.collapsed .elements-grid {
+    grid-template-columns: 1fr;
 }
 
 .element-card {
@@ -133,6 +185,11 @@
     color: var(--light);
 }
 
+/* État replié */
+.editor-sidebar.collapsed .element-card {
+    padding: 0.75rem 0.25rem;
+}
+
 .element-card i {
     font-size: 1.25rem;
     color: var(--primary);
@@ -142,11 +199,19 @@
     font-size: 0.75rem;
 }
 
+/* État replié */
+.editor-sidebar.collapsed .element-card span {
+    display: none;
+}
+
 .element-card:hover {
     background: rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
 }
 
+/******************************
+ * PANEL DE PROPRIÉTÉS
+ ******************************/
 .property-panel {
     background: rgba(255, 255, 255, 0.03);
     border-radius: 12px;
@@ -175,12 +240,28 @@
     font-size: 0.9rem;
 }
 
+/* État replié */
+.editor-sidebar.collapsed .empty-state,
+.editor-sidebar.collapsed .empty-state p {
+    display: none;
+}
+
+/******************************
+ * PIED DE PAGE SIDEBAR
+ ******************************/
 .sidebar-footer {
     padding: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    margin-top: auto;
+    padding-bottom: 1rem;
+}
+
+/* État replié */
+.editor-sidebar.collapsed .sidebar-footer {
+    padding: 1rem 0.5rem;
 }
 
 .action-btn {
@@ -195,6 +276,20 @@
     cursor: pointer;
     transition: all 0.2s ease;
     width: 100%;
+}
+
+/* État replié */
+.editor-sidebar.collapsed .action-btn {
+    padding: 0.75rem;
+    justify-content: center;
+}
+
+.editor-sidebar.collapsed .action-btn span {
+    display: none;
+}
+
+.editor-sidebar.collapsed .action-btn i {
+    margin-right: 0;
 }
 
 .action-btn i {
@@ -234,7 +329,9 @@
     margin-left: auto;
 }
 
-/* Main Content */
+/******************************
+ * CONTENU PRINCIPAL
+ ******************************/
 .editor-main {
     background: #0f0f1a;
     overflow: hidden;
@@ -257,7 +354,9 @@
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* FAB & AI Panel */
+/******************************
+ * BOUTONS FLOATING ACTION
+ ******************************/
 .fab-container {
     position: fixed;
     bottom: 2rem;
@@ -292,6 +391,259 @@
     box-shadow: 0 6px 16px rgba(247, 37, 133, 0.4);
 }
 
+/******************************
+ * PANEL IA AMÉLIORÉ
+ ******************************/
+.ai-panel {
+    position: fixed;
+    bottom: 8rem;
+    right: 2rem;
+    width: 380px;
+    max-height: 65vh;
+    background: var(--darker);
+    border-radius: 18px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(20px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 1000;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.ai-panel.active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    display: flex;
+}
+
+.ai-header {
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.ai-header h5 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.close-ai {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: var(--light);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-ai:hover {
+    background: var(--danger);
+    transform: rotate(90deg);
+}
+
+.ai-messages {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Styles des messages */
+.message {
+    margin: 0;
+    padding: 0.85rem 1.1rem;
+    border-radius: 14px;
+    max-width: 85%;
+    position: relative;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: messageAppear 0.35s ease-out forwards;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+@keyframes messageAppear {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.user-message {
+    background: var(--primary);
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+    box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+}
+
+.ai-message {
+    background: rgba(255, 255, 255, 0.08);
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-message {
+    background: rgba(67, 97, 238, 0.15);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 14px 14px 14px;
+}
+
+.error-message {
+    background: rgba(239, 35, 60, 0.15);
+    border-left: 3px solid var(--danger);
+    color: var(--danger);
+}
+
+/* Input area */
+.ai-input-container {
+    display: flex;
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.ai-input-container input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 0.8rem 1.2rem;
+    color: var(--light);
+    outline: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.ai-input-container input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+}
+
+.ai-send {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    width: 46px;
+    margin-left: 0.6rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ai-send:hover {
+    background: var(--primary-light);
+    transform: translateY(-1px);
+}
+
+.ai-send:active {
+    transform: translateY(0);
+}
+
+/* Loading state */
+.ai-loading {
+    padding: 1rem;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.typing-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.typing-indicator span {
+    width: 9px;
+    height: 9px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: inline-block;
+    animation: wave 1.6s infinite ease-in-out;
+}
+
+.loading-text {
+    color: var(--gray);
+    font-size: 0.9rem;
+    animation: pulse 2s infinite;
+}
+
+/* Animations */
+@keyframes wave {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-6px); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Styles pour code et préformatté */
+.ai-message pre {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.8rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    margin: 0.5rem 0;
+    border-left: 3px solid var(--primary);
+}
+
+/* Scrollbar personnalisée */
+.ai-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.ai-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.ai-messages::-webkit-scrollbar-thumb {
+    background-color: var(--primary);
+    border-radius: 3px;
+}
+
+/*!******************************
+ * PANEL IA
+ ******************************!
 .ai-panel {
     position: fixed;
     bottom: 8rem;
@@ -301,7 +653,6 @@
     background: var(--darker);
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    /*display: flex;*/
     display: none;
     flex-direction: column;
     overflow: hidden;
@@ -318,7 +669,6 @@
     opacity: 1;
     visibility: visible;
     display: block;
-
 }
 
 .ai-header {
@@ -423,9 +773,11 @@
     30% {
         transform: translateY(-5px);
     }
-}
+}*/
 
-/* Deployment Modals */
+/******************************
+ * MODALS DE DÉPLOIEMENT
+ ******************************/
 .deployment-overlay {
     position: fixed;
     top: 0;
@@ -664,37 +1016,9 @@
     background: rgba(255, 255, 255, 0.05);
 }
 
-/* Collapsed State */
-.editor-container.collapsed {
-    grid-template-columns: var(--sidebar-collapsed) 1fr;
-}
-
-.editor-container.collapsed .logo-text,
-.editor-container.collapsed .section-title,
-.editor-container.collapsed .element-card span,
-.editor-container.collapsed .empty-state,
-.editor-container.collapsed .action-btn span {
-    display: none;
-}
-
-.editor-container.collapsed .sidebar-toggle i {
-    transform: rotate(180deg);
-}
-
-.editor-container.collapsed .elements-grid {
-    grid-template-columns: 1fr;
-}
-
-.editor-container.collapsed .element-card {
-    padding: 0.5rem;
-}
-
-.editor-container.collapsed .action-btn {
-    padding: 0.75rem;
-    justify-content: center;
-}
-
-/* Animations */
+/******************************
+ * ANIMATIONS
+ ******************************/
 @keyframes bounceIn {
     0% {
         transform: scale(0.5);
@@ -709,7 +1033,9 @@
     }
 }
 
-/* Responsive */
+/******************************
+ * RESPONSIVE DESIGN
+ ******************************/
 @media (max-width: 992px) {
     .editor-container {
         grid-template-columns: 1fr;
@@ -737,7 +1063,9 @@
     }
 }
 
-/* Dark/Light Theme Toggle */
+/******************************
+ * THÈMES
+ ******************************/
 [data-theme="light"] {
     --dark: #f8f9fa;
     --darker: #e9ecef;
@@ -759,12 +1087,3 @@
 [data-theme="light"] .preview-container {
     background: #e9ecef;
 }
-
-
-/* Remplacer les styles inline par des classes */
-/*.ai-panel {
-    display: none;
-}
-.ai-panel.active {
-    display: block;
-}*/

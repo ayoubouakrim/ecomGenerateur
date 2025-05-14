@@ -30,7 +30,7 @@
 <!-- Main Editor Layout -->
 <div class="editor-container">
     <!-- Modern Sidebar -->
-    <aside class="editor-sidebar">
+    <aside class="editor-sidebar collapsed">
         <div class="sidebar-header">
             <div class="logo-wrapper">
                 <svg class="logo-icon" viewBox="0 0 24 24">
@@ -47,7 +47,7 @@
             <div class="element-picker">
                 <h5 class="section-title">Éléments</h5>
                 <div class="elements-grid">
-                    <button class="element-card" data-type="text">
+                   {{-- <button class="element-card" data-type="text">
                         <i class="mdi mdi-text"></i>
                         <span>Texte</span>
                     </button>
@@ -58,11 +58,11 @@
                     <button class="element-card" data-type="button">
                         <i class="mdi mdi-button-pointer"></i>
                         <span>Bouton</span>
-                    </button>
-                    <button class="element-card" data-type="form">
+                    </button>--}}
+                   {{-- <button class="element-card" data-type="form">
                         <i class="mdi mdi-form-textbox"></i>
                         <span>Formulaire</span>
-                    </button>
+                    </button>--}}
                 </div>
             </div>
 
@@ -75,7 +75,8 @@
             </div>
         </div>
 
-        <div class="sidebar-footer">
+      {{--  <div class="sidebar-footer">
+            <form action="/session" method="POST">
             <button class="action-btn primary" id="saveDraft" data-template-id="{{ $templateId }}">
                 <i class="mdi mdi-content-save"></i>
                 <span>Sauvegarder</span>
@@ -93,17 +94,131 @@
                     <div class="spinner-wave-dot"></div>
                 </div>
             </button>
+            </form>
+        </div>--}}
+        <div class="sidebar-footer">
+            @if(auth()->check() && auth()->user()->subscribed)
+                <form action="/session" method="POST">
+                    @csrf
+                    <button class="action-btn primary" id="saveDraft" data-template-id="{{ $templateId }}">
+                        <i class="mdi mdi-content-save"></i>
+                        <span>Sauvegarder</span>
+                    </button>
+                    <button type="button" class="action-btn secondary" id="downloadBtn">
+                        <i class="mdi mdi-download"></i>
+                        <span>Télécharger</span>
+                    </button>
+                    <button type="button" class="action-btn accent" id="deployBtn">
+                        <i class="mdi mdi-rocket"></i>
+                        <span>Héberger</span>
+                        <div class="spinner-wave deploy-spinner">
+                            <div class="spinner-wave-dot"></div>
+                            <div class="spinner-wave-dot"></div>
+                            <div class="spinner-wave-dot"></div>
+                        </div>
+                    </button>
+                </form>
+            @else
+                <div class="alert alert-warning">
+                    ⚠️ Vous devez vous abonner pour utiliser ces fonctionnalités.
+                </div>
+                <form action="{{ route('stripe.session') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="plan" value="Premium">
+                    <input type="hidden" name="price" value="1000">  en cents
+                    <button class="action-btn accent">
+                        <i class="mdi mdi-credit-card"></i>
+                        <span>S'abonner</span>
+                    </button>
+                </form>
+            @endif
         </div>
+
     </aside>
 
     <!-- Main Content Area -->
     <main class="editor-main">
         <div class="preview-container">
+{{--
             <iframe src="{{ $templateUrl }}" class="preview-frame" id="templatePreview"></iframe>
+--}}
+            @if(auth()->check() && auth()->user()->subscribed)
+                <iframe src="{{ $templateUrl }}" class="preview-frame" id="templatePreview"></iframe>
+            @else
+                <div class="preview-frame locked-frame d-flex justify-content-center align-items-center text-center">
+                    <div>
+                        <h4>Accès restreint</h4>
+                        <p>Vous devez être abonné pour modifier ce template.</p>
+                        <form action="{{ route('stripe.session') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="plan" value="Premium">
+                            <input type="hidden" name="price" value="1000">
+                            <button class="btn btn-primary mt-2">
+                                <i class="mdi mdi-credit-card"></i> S’abonner
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endif
+
         </div>
     </main>
 
-    <!-- Floating Action Buttons -->
+    @if(auth()->check() && auth()->user()->subscribed)
+        <!-- Floating Action Buttons -->
+        <div class="fab-container">
+            <button class="fab-button primary" id="aiButton">
+                <i class="mdi mdi-robot"></i>
+            </button>
+        </div>
+
+        <!-- AI Chat Panel -->
+        <div class="ai-panel" id="aiChat">
+            <div class="ai-header">
+                <h5>Assistant IA</h5>
+                <button class="close-ai">
+                    <i class="mdi mdi-close"></i>
+                </button>
+            </div>
+            <div class="ai-messages" id="chatMessages">
+                <!-- Message d'accueil initial -->
+                <div class="message ai-message welcome-message">
+                    Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider avec votre template aujourd'hui ?
+                </div>
+            </div>
+            <div class="ai-input-container">
+                <input type="text" id="aiInput" placeholder="Comment puis-je vous aider ?">
+                <button class="ai-send" id="sendButton">
+                    <i class="mdi mdi-send"></i>
+                </button>
+            </div>
+            <div class="ai-loading" id="aiThinking">
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="loading-text">L'IA réfléchit...</div>
+            </div>
+        </div>
+    @else
+        <div class="ai-panel locked-frame d-flex justify-content-center align-items-center text-center">
+            <div>
+                <h4>Assistant IA réservé</h4>
+                <p>Abonnez-vous pour accéder à l’assistant intelligent.</p>
+                <form action="{{ route('stripe.session') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="plan" value="Premium">
+                    <input type="hidden" name="price" value="1000">
+                    <button class="btn btn-warning mt-2">
+                        <i class="mdi mdi-robot"></i> S’abonner pour l’IA
+                    </button>
+                </form>
+            </div>
+        </div>
+    @endif
+
+    {{--<!-- Floating Action Buttons -->
     <div class="fab-container">
         <button class="fab-button primary" id="aiButton">
             <i class="mdi mdi-robot"></i>
@@ -111,6 +226,35 @@
     </div>
 
     <!-- AI Chat Panel -->
+    <div class="ai-panel" id="aiChat">
+        <div class="ai-header">
+            <h5>Assistant IA</h5>
+            <button class="close-ai">
+                <i class="mdi mdi-close"></i>
+            </button>
+        </div>
+        <div class="ai-messages" id="chatMessages">
+            <!-- Message d'accueil initial -->
+            <div class="message ai-message welcome-message">
+                Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider avec votre template aujourd'hui ?
+            </div>
+        </div>
+        <div class="ai-input-container">
+            <input type="text" id="aiInput" placeholder="Comment puis-je vous aider ?">
+            <button class="ai-send" id="sendButton">
+                <i class="mdi mdi-send"></i>
+            </button>
+        </div>
+        <div class="ai-loading" id="aiThinking">
+            <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="loading-text">L'IA réfléchit...</div>
+        </div>
+    </div>--}}
+{{--
     <div class="ai-panel" id="aiChat">
         <div class="ai-header">
             <h5>Assistant IA</h5>
@@ -133,6 +277,7 @@
             </div>
         </div>
     </div>
+--}}
 </div>
 
 <!-- Deployment Modals -->

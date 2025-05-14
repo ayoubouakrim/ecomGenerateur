@@ -2309,7 +2309,7 @@
             </div>
         </div>
     </footer>
-    
+
     <script>
         document.getElementById('show-video-btn').addEventListener('click', function() {
             document.getElementById('video-modal').style.display = 'flex'; // Show modal
@@ -2373,7 +2373,7 @@
         });
 
 
-        
+
     </script>
 </body>
 
