@@ -8,26 +8,29 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2563eb;
-            --secondary-color: #e0f2fe;
+            --primary-color: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary-color: #dbeafe;
             --text-color: #1f2937;
             --light-text: #6b7280;
-            --border-radius: 12px;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --border-radius: 16px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             --card-bg: #ffffff;
+            --hover-lift: translateY(-2px);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         
         body {
-            background-color: #f3f4f6;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
             color: var(--text-color);
             line-height: 1.6;
+            min-height: 100vh;
         }
         
         .container {
@@ -37,19 +40,52 @@
         
         .form-section {
             flex: 1;
-            padding: 2rem;
+            padding: 3rem 2rem;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
         }
         
         .image-section {
             flex: 1;
-            background-color: var(--primary-color);
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .image-section::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -250px;
+            right: -250px;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .image-section::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            bottom: -150px;
+            left: -150px;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
         
         .form-container {
@@ -59,14 +95,29 @@
         }
         
         .form-header {
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
+            animation: slideDown 0.6s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .form-header h1 {
             font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .form-header p {
@@ -75,30 +126,55 @@
         }
         
         .card {
-            background-color: var(--card-bg);
+            background: var(--card-bg);
             border-radius: var(--border-radius);
-            padding: 1.5rem;
+            padding: 2rem;
             margin-bottom: 1.5rem;
             box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+        
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card:hover {
+            transform: var(--hover-lift);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
         
         .step-indicator {
             display: flex;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
         
         .step-circle {
-            width: 24px;
-            height: 24px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            background-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 0.8rem;
+            font-weight: 600;
             margin-right: 0.75rem;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
         
         .step-title {
@@ -127,9 +203,9 @@
         
         .input-field {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
             background-color: white;
             font-size: 0.9rem;
             transition: all 0.3s ease;
@@ -138,7 +214,8 @@
         .input-field:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
         }
         
         textarea.input-field {
@@ -148,8 +225,8 @@
         
         .color-pickers {
             display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
         
         .color-picker-item {
@@ -168,15 +245,21 @@
         }
         
         .color-circle {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             cursor: pointer;
-            border: 2px solid white;
+            border: 3px solid white;
             position: relative;
-            box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .color-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
         }
         
         .color-circle input[type="color"] {
@@ -189,8 +272,8 @@
         
         .file-buttons {
             display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
         
         .file-button {
@@ -198,63 +281,130 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 1.5rem 1rem;
-            background-color: #f9fafb;
-            border: 1px dashed #e5e7eb;
-            border-radius: 8px;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .file-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         
         .file-button:hover {
             border-color: var(--primary-color);
+            transform: var(--hover-lift);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .file-button:hover::before {
+            opacity: 1;
         }
         
         .file-icon {
-            width: 48px;
-            height: 48px;
-            background-color: #f3f4f6;
-            border-radius: 8px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 1rem;
             color: var(--primary-color);
             font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .file-button:hover .file-icon {
+            transform: scale(1.1);
         }
         
         .file-button span {
             font-size: 0.9rem;
             font-weight: 500;
+            position: relative;
+            z-index: 1;
         }
         
         .file-format {
             font-size: 0.75rem;
             color: var(--light-text);
             margin-top: 0.25rem;
+            position: relative;
+            z-index: 1;
         }
         
         .submit-button {
             width: 100%;
-            padding: 0.875rem;
-            background-color: var(--primary-color);
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: white;
             border: none;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
         }
         
         .submit-button:hover {
-            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+        }
+        
+        .submit-button:hover::before {
+            left: 100%;
         }
         
         .website-illustration {
             max-width: 100%;
             height: auto;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.2));
+            animation: illustrationFloat 4s ease-in-out infinite;
+        }
+        
+        @keyframes illustrationFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        img[id$="Preview"] {
+            max-width: 100px;
+            margin-top: 0.75rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 2px solid white;
         }
         
         @media (max-width: 1024px) {
@@ -264,6 +414,10 @@
             
             .image-section {
                 display: none;
+            }
+            
+            .form-section {
+                padding: 2rem 1.5rem;
             }
         }
     </style>
@@ -417,7 +571,11 @@
     </div>
 
     <script>
-        // Color previews
+        // Color previews with initial values
+        document.getElementById('colorPreview1').style.backgroundColor = '#2563eb';
+        document.getElementById('colorPreview2').style.backgroundColor = '#e0f2fe';
+        document.getElementById('colorPreview3').style.backgroundColor = '#1f2937';
+        
         document.getElementById('color1').addEventListener('input', e => {
             document.getElementById('colorPreview1').style.backgroundColor = e.target.value;
         });
