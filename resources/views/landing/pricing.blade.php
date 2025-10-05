@@ -26,7 +26,7 @@
         /* Pricing Section */
         .pricing {
             position: relative;
-            padding: 7rem 0;
+            padding: 1rem 0 3rem 0;
             background: linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%);
             overflow: hidden;
         }
