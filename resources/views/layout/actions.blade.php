@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Dashboard - Light Theme</title>
     <style>
         * {
             margin: 0;
@@ -14,139 +14,164 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             min-height: 100vh;
+            background-color: #f8fafc; /* Light slate background */
+            color: #1e293b;
         }
 
-        /* Full Width Header Bar */
-        .header-bar {
-            background: #1e293b;
-            padding: 2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        /* === Dashboard Header === */
+        .dashboard-header-bar {
+            background: white;
+            padding: 2.25rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
-        .header-wrapper {
+        .dashboard-header-wrapper {
             max-width: 1400px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            gap: 2rem;
+            align-items: flex-start;
+            gap: 2.5rem;
         }
 
-        .header-info h1 {
-            font-size: 2.5rem;
+        .dashboard-header-info h1 {
+            font-size: 2.4rem;
             font-weight: 800;
-            color: #f1f5f9;
-            margin-bottom: 0.5rem;
+            color: #0f172a;
+            margin-bottom: 0.6rem;
+            line-height: 1.25;
+        }
+
+        .dashboard-header-info .dashboard-highlight {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dashboard-header-info p {
+            color: #475569;
+            font-size: 1.05rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .dashboard-header-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.8rem;
+        }
+
+        .dashboard-stat-box {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.1rem 1.6rem;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            min-width: 110px;
+        }
+
+        .dashboard-stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #3b82f6;
             line-height: 1.2;
         }
 
-        .header-info .highlight {
-            color: #60a5fa;
-        }
-
-        .header-info p {
-            color: #94a3b8;
-            font-size: 1rem;
-        }
-
-        .header-stats {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .stat-box {
-            text-align: center;
-            background: rgba(59, 130, 246, 0.1);
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #60a5fa;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: #94a3b8;
+        .dashboard-stat-label {
+            font-size: 0.8rem;
+            color: #64748b;
             text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 0.25rem;
         }
 
-        /* Main Content Area */
-        .main-content {
+        /* === Main Content === */
+        .dashboard-main-content {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 3rem 2rem;
+            padding: 3.5rem 2rem 4rem;
         }
 
-        .section-title {
-            color: #000000;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
+        .dashboard-section-title {
+            color: #0f172a;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
             text-align: center;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.2px;
+            position: relative;
         }
 
-        /* Horizontal Cards Layout */
-        .cards-wrapper {
+        .dashboard-section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, #3b82f6, #ec4899);
+            margin: 0.75rem auto 0;
+            border-radius: 2px;
+        }
+
+        /* === Cards Wrapper === */
+        .dashboard-cards-wrapper {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2.5rem;
         }
 
-        .project-card {
-            background: #1e293b;
-            border-radius: 16px;
+        .dashboard-project-card {
+            background: white;
+            border-radius: 18px;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
             display: flex;
             flex-direction: row;
-            min-height: 300px;
+            min-height: 320px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        .project-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(59, 130, 246, 0.4);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        .dashboard-project-card:hover {
+            transform: translateY(-6px);
+            border-color: #cbd5e1;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
         }
 
         /* Image Side */
-        .card-image-side {
-            flex: 0 0 45%;
+        .dashboard-card-image-side {
+            flex: 0 0 46%;
             position: relative;
             overflow: hidden;
         }
 
-        .card-image-side.scratch {
-            background: linear-gradient(135deg, rgba(67, 97, 238, 0.9), rgba(58, 12, 163, 0.9));
+        .dashboard-card-image-side.scratch {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
         }
 
-        .card-image-side.template {
-            background: linear-gradient(135deg, rgba(247, 37, 133, 0.9), rgba(114, 9, 183, 0.9));
+        .dashboard-card-image-side.template {
+            background: linear-gradient(135deg, #ec4899, #be185d);
         }
 
-        .card-bg-image {
+        .dashboard-card-bg-image {
             position: absolute;
             inset: 0;
             background-size: cover;
             background-position: center;
-            opacity: 0.2;
+            opacity: 0.15;
         }
 
-        .card-image-side.scratch .card-bg-image {
+        .dashboard-card-image-side.scratch .dashboard-card-bg-image {
             background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/74452/website-code.png");
         }
 
-        .card-image-side.template .card-bg-image {
+        .dashboard-card-image-side.template .dashboard-card-bg-image {
             background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/74452/website-post-its.png");
         }
 
-        .card-icon-large {
+        .dashboard-card-icon-large {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -154,248 +179,280 @@
             z-index: 2;
         }
 
-        .card-icon-large svg {
+        .dashboard-card-icon-large svg {
             width: 100px;
             height: 100px;
             stroke: white;
-            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25));
         }
 
-        .card-tag {
+        .dashboard-card-tag {
             position: absolute;
-            top: 1rem;
-            left: 1rem;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
+            top: 1.25rem;
+            left: 1.25rem;
+            background: white;
+            padding: 0.55rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.7px;
             z-index: 3;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .card-image-side.scratch .card-tag {
-            color: #4361ee;
+        .dashboard-card-image-side.scratch .dashboard-card-tag {
+            color: #3b82f6;
         }
 
-        .card-image-side.template .card-tag {
-            color: #f72585;
+        .dashboard-card-image-side.template .dashboard-card-tag {
+            color: #ec4899;
         }
 
         /* Content Side */
-        .card-content-side {
+        .dashboard-card-content-side {
             flex: 1;
-            padding: 2rem;
+            padding: 2.25rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        .content-top h3 {
-            font-size: 1.75rem;
+        .dashboard-content-top h3 {
+            font-size: 1.85rem;
             font-weight: 700;
-            color: #f1f5f9;
-            margin-bottom: 1rem;
+            color: #0f172a;
+            margin-bottom: 1.1rem;
         }
 
-        .content-top p {
-            color: #94a3b8;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
+        .dashboard-content-top p {
+            color: #475569;
+            line-height: 1.65;
+            margin-bottom: 1.6rem;
+            font-size: 1.02rem;
         }
 
-        .content-features {
+        .dashboard-content-features {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
+            gap: 0.85rem;
+            margin-bottom: 1.75rem;
         }
 
-        .feature-item {
+        .dashboard-feature-item {
             display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: #cbd5e1;
-            font-size: 0.9rem;
+            align-items: flex-start;
+            gap: 0.9rem;
+            color: #334155;
+            font-size: 0.95rem;
         }
 
-        .feature-icon {
-            width: 24px;
-            height: 24px;
+        .dashboard-feature-icon {
+            width: 26px;
+            height: 26px;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: white;
             flex-shrink: 0;
+            margin-top: 2px;
         }
 
-        .project-card:nth-child(1) .feature-icon {
-            background: #4361ee;
+        .dashboard-project-card:nth-child(1) .dashboard-feature-icon {
+            background: #3b82f6;
         }
 
-        .project-card:nth-child(2) .feature-icon {
-            background: #f72585;
+        .dashboard-project-card:nth-child(2) .dashboard-feature-icon {
+            background: #ec4899;
         }
 
-        .action-button {
+        .dashboard-action-button {
             width: 100%;
-            padding: 1rem;
+            padding: 1.1rem;
             border: none;
-            border-radius: 10px;
-            font-size: 1rem;
+            border-radius: 12px;
+            font-size: 1.05rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
+            gap: 0.85rem;
             color: white;
+            letter-spacing: 0.3px;
         }
 
-        .project-card:nth-child(1) .action-button {
-            background: #4361ee;
+        .dashboard-project-card:nth-child(1) .dashboard-action-button {
+            background: #3b82f6;
         }
 
-        .project-card:nth-child(2) .action-button {
-            background: #f72585;
+        .dashboard-project-card:nth-child(2) .dashboard-action-button {
+            background: #ec4899;
         }
 
-        .action-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        .dashboard-action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
         }
 
-        .action-button svg {
-            width: 20px;
-            height: 20px;
+        .dashboard-action-button:active {
+            transform: translateY(-1px);
+        }
+
+        .dashboard-action-button svg {
+            width: 22px;
+            height: 22px;
             stroke: white;
         }
 
-        /* Responsive */
+        /* === Responsive === */
         @media (max-width: 1200px) {
-            .cards-wrapper {
+            .dashboard-cards-wrapper {
                 grid-template-columns: 1fr;
-                max-width: 700px;
+                max-width: 720px;
                 margin: 0 auto;
             }
 
-            .header-wrapper {
+            .dashboard-header-wrapper {
                 flex-direction: column;
+                align-items: center;
                 text-align: center;
             }
 
-            .header-stats {
+            .dashboard-header-stats {
                 width: 100%;
                 justify-content: center;
+                margin-top: 1.5rem;
             }
         }
 
         @media (max-width: 768px) {
-            .header-bar {
-                padding: 1.5rem 1rem;
+            .dashboard-header-bar {
+                padding: 1.75rem 1.25rem;
             }
 
-            .header-info h1 {
-                font-size: 1.75rem;
+            .dashboard-header-info h1 {
+                font-size: 1.9rem;
             }
 
-            .header-stats {
+            .dashboard-header-info p {
+                font-size: 1rem;
+            }
+
+            .dashboard-header-stats {
                 flex-direction: column;
-                gap: 1rem;
+                gap: 1.2rem;
+            }
+
+            .dashboard-stat-box {
                 width: 100%;
+                max-width: 200px;
             }
 
-            .stat-box {
-                width: 100%;
+            .dashboard-main-content {
+                padding: 2.5rem 1.25rem 3rem;
             }
 
-            .main-content {
-                padding: 2rem 1rem;
-            }
-
-            .project-card {
+            .dashboard-project-card {
                 flex-direction: column;
                 min-height: auto;
             }
 
-            .card-image-side {
-                flex: 0 0 200px;
+            .dashboard-card-image-side {
+                flex: 0 0 220px;
             }
 
-            .card-icon-large svg {
-                width: 70px;
-                height: 70px;
+            .dashboard-card-icon-large svg {
+                width: 75px;
+                height: 75px;
             }
 
-            .card-content-side {
-                padding: 1.5rem;
+            .dashboard-card-content-side {
+                padding: 1.75rem;
+            }
+
+            .dashboard-content-top h3 {
+                font-size: 1.65rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-header-info h1 {
+                font-size: 1.6rem;
+            }
+
+            .dashboard-stat-value {
+                font-size: 1.75rem;
+            }
+
+            .dashboard-card-image-side {
+                flex: 0 0 190px;
             }
         }
     </style>
 </head>
 <body>
     <!-- Header Bar -->
-    <header class="header-bar">
-        <div class="header-wrapper">
-            <div class="header-info">
-                <h1>Welcome to <span class="highlight">Your Website Builder</span></h1>
+    <header class="dashboard-header-bar">
+        <div class="dashboard-header-wrapper">
+            <div class="dashboard-header-info">
+                <h1>Welcome to <span class="dashboard-highlight">Your Website Builder</span></h1>
                 <p>Create beautiful websites in minutes. Choose your preferred way to get started below.</p>
             </div>
-            <div class="header-stats">
-                <div class="stat-box">
-                    <div class="stat-value">24</div>
-                    <div class="stat-label">Projects</div>
+            <div class="dashboard-header-stats">
+                <div class="dashboard-stat-box">
+                    <div class="dashboard-stat-value">24</div>
+                    <div class="dashboard-stat-label">Projects</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-value">8</div>
-                    <div class="stat-label">Templates</div>
+                <div class="dashboard-stat-box">
+                    <div class="dashboard-stat-value">8</div>
+                    <div class="dashboard-stat-label">Templates</div>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="main-content">
-        <h2 class="section-title">Choose Your Starting Point</h2>
+    <main class="dashboard-main-content">
+        <h2 class="dashboard-section-title">Choose Your Starting Point</h2>
         
-        <div class="cards-wrapper">
+        <div class="dashboard-cards-wrapper">
             <!-- Build from Scratch Card -->
-            <div class="project-card">
-                <div class="card-image-side scratch">
-                    <div class="card-bg-image"></div>
-                    <span class="card-tag">Most Flexible</span>
-                    <div class="card-icon-large">
+            <div class="dashboard-project-card">
+                <div class="dashboard-card-image-side scratch">
+                    <div class="dashboard-card-bg-image"></div>
+                    <span class="dashboard-card-tag">Most Flexible</span>
+                    <div class="dashboard-card-icon-large">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 20h9"></path>
                             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                         </svg>
                     </div>
                 </div>
-                <div class="card-content-side">
-                    <div class="content-top">
+                <div class="dashboard-card-content-side">
+                    <div class="dashboard-content-top">
                         <h3>Build from Scratch</h3>
                         <p>Start with a blank canvas and create your website exactly how you want it, with complete creative freedom.</p>
-                        <ul class="content-features">
-                            <li class="feature-item">
-                                <div class="feature-icon">✓</div>
+                        <ul class="dashboard-content-features">
+                            <li class="dashboard-feature-item">
+                                <div class="dashboard-feature-icon">✓</div>
                                 <span>Drag & drop components library</span>
                             </li>
-                            <li class="feature-item">
-                                <div class="feature-icon">✓</div>
+                            <li class="dashboard-feature-item">
+                                <div class="dashboard-feature-icon">✓</div>
                                 <span>Complete customization control</span>
                             </li>
-                            <li class="feature-item">
-                                <div class="feature-icon">✓</div>
+                            <li class="dashboard-feature-item">
+                                <div class="dashboard-feature-icon">✓</div>
                                 <span>No coding skills required</span>
                             </li>
                         </ul>
                     </div>
-                    <button class="action-button" onclick="window.location.href='#'">
+                    <button class="dashboard-action-button" onclick="window.location.href='#'">
                         <span>Start Building</span>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -406,11 +463,11 @@
             </div>
 
             <!-- Template Card -->
-            <div class="project-card">
-                <div class="card-image-side template">
-                    <div class="card-bg-image"></div>
-                    <span class="card-tag">Fastest Way</span>
-                    <div class="card-icon-large">
+            <div class="dashboard-project-card">
+                <div class="dashboard-card-image-side template">
+                    <div class="dashboard-card-bg-image"></div>
+                    <span class="dashboard-card-tag">Fastest Way</span>
+                    <div class="dashboard-card-icon-large">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="3" y1="9" x2="21" y2="9"></line>
@@ -418,26 +475,26 @@
                         </svg>
                     </div>
                 </div>
-                <div class="card-content-side">
-                    <div class="content-top">
+                <div class="dashboard-card-content-side">
+                    <div class="dashboard-content-top">
                         <h3>Edit Template</h3>
                         <p>Choose from our professionally designed templates and customize them to match your brand and needs.</p>
-                        <ul class="content-features">
-                            <li class="feature-item">
-                                <div class="feature-icon">✓</div>
+                        <ul class="dashboard-content-features">
+                            <li class="dashboard-feature-item">
+                                <div class="dashboard-feature-icon">✓</div>
                                 <span>500+ premium ready templates</span>
                             </li>
-                            <li class="feature-item">
-                                <div class="feature-icon">✓</div>
+                            <li class="dashboard-feature-item">
+                                <div class="dashboard-feature-icon">✓</div>
                                 <span>Industry-specific designs</span>
                             </li>
-                            <li class="feature-item">
-                                <div class="feature-icon">✓</div>
+                            <li class="dashboard-feature-item">
+                                <div class="dashboard-feature-icon">✓</div>
                                 <span>One-click customization</span>
                             </li>
                         </ul>
                     </div>
-                    <button class="action-button" onclick="window.location.href='#'">
+                    <button class="dashboard-action-button" onclick="window.location.href='#'">
                         <span>Browse Templates</span>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
