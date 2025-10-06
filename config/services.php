@@ -33,6 +33,9 @@ return [
     'openai' => [
         'key' => getenv('GITHUB_TOKEN') ?: env('GITHUB_TOKEN'),
     ],
+    'openrouter' => [
+        'key' => env('OPENROUTER_API_KEY'),
+    ],
     'github' => [
         'token'  => env('GITHUB_API_TOKEN'),
         'owner'  => env('GITHUB_OWNER'),

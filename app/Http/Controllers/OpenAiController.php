@@ -1,62 +1,67 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class OpenAiController extends Controller
 {
-    /**
-     * Traite la requête vers l'API Azure OpenAI de manière sécurisée.
-     */
     public function processChat(Request $request)
     {
+        set_time_limit(300); // 3 minutes
+        ini_set('max_execution_time', 180);
 
-        // Valider la requête, on attend un tableau "messages"
-        $data = $request->validate([
-            'messages' => 'required|array',
-        ]);
+        try {
+            $data = $request->validate([
+                'messages' => 'required|array',
+            ]);
 
-        // Récupérer la clé API depuis la config (.env)
-        $apiKey = config('services.openai.key');
+            // Use OpenRouter instead of Azure
+            $apiKey = config('services.openrouter.key');
+            
+            if (empty($apiKey)) {
+                return response()->json([
+                    'error' => 'API key missing',
+                    'message' => 'Add OPENROUTER_API_KEY to .env'
+                ], 500);
+            }
 
-        // Configuration Azure OpenAI (adaptée à votre modèle)
-        $azureEndpoint = 'https://models.inference.ai.azure.com/chat/completions';
-//        $model = 'gpt-4o-mini';
-//        $model = 'gpt-4o';
-        $model = 'DeepSeek-V3-0324';
-        $temperature = 1.0;
-        $top_p = 0.9;
-        $max_tokens = 4000;
+            $endpoint = 'https://openrouter.ai/api/v1/chat/completions';
+            $model = 'deepseek/deepseek-chat-v3.1:free'; 
 
-        // Préparez la charge utile pour l'API
-        $payload = [
-            'model' => $model,
-            'messages' => $data['messages'],
-            'temperature' => $temperature,
-            'top_p' => $top_p,
-            'max_tokens' => $max_tokens,
-            'presence_penalty' => 0.3,
-        ];
-//dd($payload);
+            $payload = [
+                'model' => $model,
+                'messages' => $data['messages'],
+                'temperature' => 1.0,
+                'top_p' => 0.9,
+                'max_tokens' => 4000,
+            ];
 
-        // Appel à l'API Azure OpenAI
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-        'Authorization' => 'Bearer '.$apiKey,
-        ])->post($azureEndpoint, $payload);
+            $response = Http::timeout(300)->withHeaders([
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $apiKey,
+                'HTTP-Referer' => config('app.url', 'http://localhost'),
+                'X-Title' => config('app.name', 'Laravel'),
+            ])->post($endpoint, $payload);
 
-        if ($response->failed()) {
+            if ($response->failed()) {
+                Log::error('OpenRouter failed', ['response' => $response->body()]);
+                return response()->json([
+                    'error' => 'API call failed',
+                    'details' => $response->json()
+                ], $response->status());
+            }
+
+            return response()->json($response->json());
+
+        } catch (\Exception $e) {
+            Log::error('Chat error: ' . $e->getMessage());
             return response()->json([
-                'error' => 'La requête à l’API Azure OpenAI a échoué.',
-                'details' => $response->json(),
-            ], $response->status());
+                'error' => 'Server error',
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json($response->json());
     }
 }
-
-

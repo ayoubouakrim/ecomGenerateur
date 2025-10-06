@@ -475,20 +475,31 @@ document.getElementById('sendButton').addEventListener('click', async () => {
 
     try {
         addMessage(message, 'user');
-        input.value = ''; // Vide l'input après l'envoi
+        input.value = '';
         const currentHtml = await getModifiedContent();
 
         const minWaitTime = 1500;
         const startTime = Date.now();
 
         const messages = [
-            {role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et CSS et Js."},
+            {role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et CSS et Js. And you return only the code  not explanations."},
             {role: "user", content: `Modifie ce template HTML selon ces instructions: ${message}\n\nHTML Actuel:\n${currentHtml}`}
         ];
 
+        // ✅ Get CSRF token from meta tag
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 300000); // 120 seconds
+
         const response = await fetch('/chat', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,  // ✅ Add CSRF token
+                'Accept': 'application/json'
+            },
             body: JSON.stringify({messages})
         });
 
@@ -497,12 +508,30 @@ document.getElementById('sendButton').addEventListener('click', async () => {
             await new Promise(resolve => setTimeout(resolve, minWaitTime - elapsed));
         }
 
+        // Check if response is actually JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const errorText = await response.text();
+            console.error('Server returned HTML:', errorText.substring(0, 500));
+            throw new Error('Server error - check Laravel logs');
+        }
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP ${response.status}`);
+        }
+
         const data = await response.json();
-        applyAiModifications(data.choices[0].message.content);
+        
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+            applyAiModifications(data.choices[0].message.content);
+        } else {
+            throw new Error('Invalid API response');
+        }
 
     } catch (error) {
         console.error('Erreur API:', error);
-        addMessage("Désolé, une erreur s'est produite. Veuillez réessayer.", 'ai');
+        addMessage(`Erreur: ${error.message}. Vérifiez que l'API OpenRouter est configurée.`, 'ai');
     } finally {
         aiState.isProcessing = false;
         input.disabled = false;
