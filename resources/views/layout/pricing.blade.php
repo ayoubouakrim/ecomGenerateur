@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -126,7 +127,7 @@
             border-radius: 50%;
         }
 
-        .toggle-switch input:checked + .toggle-slider:before {
+        .toggle-switch input:checked+.toggle-slider:before {
             transform: translateX(22px);
         }
 
@@ -321,6 +322,7 @@
         }
     </style>
 </head>
+
 <body>
     <section class="pricing-section" id="pricing">
         <div class="pricing-container">
@@ -359,9 +361,15 @@
                         <li class="pricing-feature disabled"><i class="fas fa-times"></i> Priority support</li>
                     </ul>
                     <div class="pricing-action">
-                        <button class="pricing-btn secondary">
-                            <i class="fas fa-shopping-cart"></i> Buy
-                        </button>
+                        <form action="/session" method="POST">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="plan" value="basic_monthly">
+                            <input type="hidden" name="price" value="12">
+                            <button class="pricing-btn secondary">
+                                <i class="fas fa-shopping-cart"></i> Buy
+                            </button>
+                        </form>
+
                     </div>
                 </div>
 
@@ -382,9 +390,14 @@
                         <li class="pricing-feature"><i class="fas fa-check"></i> Email support</li>
                     </ul>
                     <div class="pricing-action">
-                        <button class="pricing-btn primary">
-                            <i class="fas fa-shopping-cart"></i> Buy
-                        </button>
+                        <form action="/session" method="POST">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="plan" value="professional_monthly">
+                            <input type="hidden" name="price" value="29">
+                            <button class="pricing-btn primary">
+                                <i class="fas fa-shopping-cart"></i> Buy
+                            </button>
+                        </form>
                     </div>
                 </div>
 
@@ -405,13 +418,19 @@
                         <li class="pricing-feature"><i class="fas fa-check"></i> 24/7 priority support</li>
                     </ul>
                     <div class="pricing-action">
-                        <button class="pricing-btn secondary">
-                            <i class="fas fa-shopping-cart"></i> Buy
-                        </button>
+                        <form action="/session" method="POST">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="plan" value="business_monthly">
+                            <input type="hidden" name="price" value="79">
+                            <button class="pricing-btn secondary">
+                                <i class="fas fa-shopping-cart"></i> Buy
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 </body>
+
 </html>
