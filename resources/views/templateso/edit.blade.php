@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,212 +15,662 @@
     @vite('resources/js/templateso/edit.js')
     @vite('resources/css/edit.css')
 
-    <!-- Design System -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        /* Header Bar */
+        .editor-header-bar {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .editor-header-wrapper {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .editor-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .editor-header-center {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .editor-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .editor-logo svg {
+            width: 32px;
+            height: 32px;
+            fill: #3b82f6;
+        }
+
+        .editor-logo h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .editor-highlight {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .editor-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f1f5f9;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: #475569;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .editor-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .editor-btn.primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .editor-btn.primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .editor-btn.secondary {
+            background: white;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .editor-btn.secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .editor-btn.accent {
+            background: #ec4899;
+            color: white;
+        }
+
+        .editor-btn.accent:hover {
+            background: #db2777;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+        }
+
+        .preview-mode-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .preview-mode-btn:hover,
+        .preview-mode-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .preview-mode-btn i {
+            font-size: 1rem;
+        }
+
+        /* Main Container */
+        .editor-container {
+            display: flex;
+            height: calc(100vh - 82px);
+            max-width: 100%;
+            margin: 0 auto;
+            gap: 0;
+            padding: 0;
+        }
+
+        /* Sidebar */
+        .editor-sidebar {
+            width: 25%;
+            background: white;
+            border-radius: 0;
+            border: none;
+            border-right: 1px solid #e2e8f0;
+            box-shadow: none;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .sidebar-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+
+        .elements-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .element-card {
+            padding: 1rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .element-card:hover {
+            background: #f1f5f9;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        .element-card i {
+            font-size: 1.5rem;
+            color: #3b82f6;
+        }
+
+        .element-card span {
+            font-size: 0.85rem;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .property-panel {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #94a3b8;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .sidebar-footer .alert {
+            font-size: 0.85rem;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Preview Area */
+        .editor-main {
+            width: 75%;
+            background: white;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-container {
+            flex: 1;
+            position: relative;
+            overflow: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+        }
+
+        .preview-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive preview modes */
+        .preview-frame.tablet-mode {
+            width: 768px;
+            height: 100%;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-frame.mobile-mode {
+            width: 375px;
+            height: 100%;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .locked-frame {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding: 3rem;
+        }
+
+        .locked-frame h4 {
+            font-size: 1.5rem;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .locked-frame p {
+            color: #64748b;
+            font-size: 1.05rem;
+        }
+
+        /* AI Panel */
+        .fab-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 999;
+        }
+
+        .fab-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .fab-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.5);
+        }
+
+        .fab-button i {
+            font-size: 1.75rem;
+        }
+
+        .ai-panel {
+            position: fixed;
+            right: 2rem;
+            bottom: 6rem;
+            width: 400px;
+            height: 500px;
+            background: white;
+            border-radius: 18px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .ai-panel.active {
+            display: flex;
+        }
+
+        .ai-header {
+            padding: 1.25rem 1.5rem;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-header h5 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .close-ai {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-ai:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .ai-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            max-width: 85%;
+        }
+
+        .ai-message {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #1e293b;
+        }
+
+        .user-message {
+            background: #3b82f6;
+            color: white;
+            margin-left: auto;
+        }
+
+        .ai-input-container {
+            padding: 1rem 1.5rem;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .ai-input-container input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+
+        .ai-send {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: #3b82f6;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ai-send:hover {
+            background: #2563eb;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .editor-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .editor-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .editor-main {
+                width: 100%;
+                min-height: 600px;
+            }
+
+            .ai-panel {
+                width: calc(100% - 4rem);
+                max-width: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .editor-header-wrapper {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .editor-header-left,
+            .editor-header-center {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .editor-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .editor-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .editor-container {
+                padding: 0;
+                gap: 0;
+            }
+        }
+    </style>
 </head>
 
-<body class="editor-body">
-@include('layout.nav')
+<body>
+    @include('layout.nav')
 
-<!-- Main Editor Layout -->
-<div class="editor-container">
-    <!-- Modern Sidebar -->
-    <aside class="editor-sidebar collapsed">
-        <div class="sidebar-header">
-            <div class="logo-wrapper">
-                <svg class="logo-icon" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12,3L2,12H5V20H19V12H22L12,3M12,7.7L16,11.2V18H14V14H10V18H8V11.2L12,7.7Z"/>
-                </svg>
-                <h3 class="logo-text">Éditeur Pro</h3>
+    <!-- Header Bar -->
+    <header class="editor-header-bar">
+        <div class="editor-header-wrapper">
+            <div class="editor-header-left">
+                <div class="editor-logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12,3L2,12H5V20H19V12H22L12,3M12,7.7L16,11.2V18H14V14H10V18H8V11.2L12,7.7Z"/>
+                    </svg>
+                    <h1><span class="editor-highlight">Éditeur</span> Pro</h1>
+                </div>
+                <div class="editor-status">
+                    <span class="status-dot"></span>
+                    <span>Auto-save activé</span>
+                </div>
             </div>
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <i class="mdi mdi-chevron-double-left"></i>
-            </button>
+            
+            <div class="editor-header-center">
+                <button class="preview-mode-btn active" data-mode="desktop">
+                    <i class="mdi mdi-monitor"></i> Desktop
+                </button>
+                <button class="preview-mode-btn" data-mode="tablet">
+                    <i class="mdi mdi-tablet"></i> Tablet
+                </button>
+                <button class="preview-mode-btn" data-mode="mobile">
+                    <i class="mdi mdi-cellphone"></i> Mobile
+                </button>
+            </div>
         </div>
+    </header>
 
-        <div class="sidebar-content">
-            <div class="element-picker">
+    <!-- Main Editor Container -->
+    <div class="editor-container">
+        <!-- Sidebar -->
+        <aside class="editor-sidebar">
+            <div class="sidebar-section">
                 <h5 class="section-title">Éléments</h5>
                 <div class="elements-grid">
-                   {{-- <button class="element-card" data-type="text">
-                        <i class="mdi mdi-text"></i>
-                        <span>Texte</span>
-                    </button>
-                    <button class="element-card" data-type="image">
-                        <i class="mdi mdi-image"></i>
-                        <span>Image</span>
-                    </button>
-                    <button class="element-card" data-type="button">
-                        <i class="mdi mdi-button-pointer"></i>
-                        <span>Bouton</span>
-                    </button>--}}
-                   {{-- <button class="element-card" data-type="form">
-                        <i class="mdi mdi-form-textbox"></i>
-                        <span>Formulaire</span>
-                    </button>--}}
+                    <!-- Add your element cards here if needed -->
                 </div>
             </div>
 
-            <div class="property-panel" id="dynamicSettings">
+            <div class="sidebar-section property-panel" id="dynamicSettings">
                 <h5 class="section-title">Propriétés</h5>
                 <div class="empty-state">
                     <i class="mdi mdi-cursor-default-click-outline"></i>
                     <p>Sélectionnez un élément pour l'éditer</p>
                 </div>
             </div>
-        </div>
 
-      {{--  <div class="sidebar-footer">
-            <form action="/session" method="POST">
-            <button class="action-btn primary" id="saveDraft" data-template-id="{{ $templateId }}">
-                <i class="mdi mdi-content-save"></i>
-                <span>Sauvegarder</span>
-            </button>
-            <button class="action-btn secondary" id="downloadBtn">
-                <i class="mdi mdi-download"></i>
-                <span>Télécharger</span>
-            </button>
-            <button class="action-btn accent" id="deployBtn">
-                <i class="mdi mdi-rocket"></i>
-                <span>Héberger</span>
-                <div class="spinner-wave deploy-spinner">
-                    <div class="spinner-wave-dot"></div>
-                    <div class="spinner-wave-dot"></div>
-                    <div class="spinner-wave-dot"></div>
-                </div>
-            </button>
-            </form>
-        </div>--}}
-        <div class="sidebar-footer">
-            @if(auth()->check() && auth()->user()->subscribed)
-                <form action="/session" method="POST">
-                    @csrf
-                    <button class="action-btn primary" id="saveDraft" data-template-id="{{ $templateId }}">
-                        <i class="mdi mdi-content-save"></i>
-                        <span>Sauvegarder</span>
-                    </button>
-                    <button type="button" class="action-btn secondary" id="downloadBtn">
-                        <i class="mdi mdi-download"></i>
-                        <span>Télécharger</span>
-                    </button>
-                    <button type="button" class="action-btn accent" id="deployBtn">
-                        <i class="mdi mdi-rocket"></i>
-                        <span>Héberger</span>
-                        <div class="spinner-wave deploy-spinner">
-                            <div class="spinner-wave-dot"></div>
-                            <div class="spinner-wave-dot"></div>
-                            <div class="spinner-wave-dot"></div>
-                        </div>
-                    </button>
-                </form>
-            @else
-                <div class="alert alert-warning">
-                    ⚠️ Vous devez vous abonner pour utiliser ces fonctionnalités.
-                </div>
-                <form action="{{ route('stripe.session') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="plan" value="Premium">
-                    <input type="hidden" name="price" value="1000">  en cents
-                    <button class="action-btn accent">
-                        <i class="mdi mdi-credit-card"></i>
-                        <span>S'abonner</span>
-                    </button>
-                </form>
-            @endif
-        </div>
+            <div class="sidebar-footer">
+                @if(auth()->check() && auth()->user()->subscribed)
+                    <form action="/session" method="POST">
+                        @csrf
+                        <button type="submit" class="editor-btn primary" id="saveDraft" data-template-id="{{ $templateId }}" style="width: 100%; margin-bottom: 0.75rem;">
+                            <i class="mdi mdi-content-save"></i>
+                            <span>Sauvegarder</span>
+                        </button>
+                        <button type="button" class="editor-btn secondary" id="downloadBtn" style="width: 100%; margin-bottom: 0.75rem;">
+                            <i class="mdi mdi-download"></i>
+                            <span>Télécharger</span>
+                        </button>
+                        <button type="button" class="editor-btn accent" id="deployBtn" style="width: 100%;">
+                            <i class="mdi mdi-rocket"></i>
+                            <span>Héberger</span>
+                        </button>
+                    </form>
+                @else
+                    <div class="alert alert-warning">
+                        ⚠️ Vous devez vous abonner pour utiliser ces fonctionnalités.
+                    </div>
+                    <form action="{{ route('stripe.session') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="plan" value="Premium">
+                        <input type="hidden" name="price" value="1000">
+                        <button class="editor-btn accent" style="width: 100%;">
+                            <i class="mdi mdi-credit-card"></i>
+                            <span>S'abonner</span>
+                        </button>
+                    </form>
+                @endif
+            </div>
+        </aside>
 
-    </aside>
-
-    <!-- Main Content Area -->
-    <main class="editor-main">
-        <div class="preview-container">
-{{--
-            <iframe src="{{ $templateUrl }}" class="preview-frame" id="templatePreview"></iframe>
---}}
-            @if(auth()->check() && auth()->user()->subscribed)
-                <iframe src="{{ $templateUrl }}" class="preview-frame" id="templatePreview"></iframe>
-            @else
-                <div class="preview-frame locked-frame d-flex justify-content-center align-items-center text-center">
-                    <div>
+        <!-- Main Preview Area -->
+        <main class="editor-main">
+            <div class="preview-container">
+                @if(auth()->check() && auth()->user()->subscribed)
+                    <iframe src="{{ $templateUrl }}" class="preview-frame" id="templatePreview"></iframe>
+                @else
+                    <div class="locked-frame">
                         <h4>Accès restreint</h4>
                         <p>Vous devez être abonné pour modifier ce template.</p>
                         <form action="{{ route('stripe.session') }}" method="POST">
                             @csrf
                             <input type="hidden" name="plan" value="Premium">
                             <input type="hidden" name="price" value="1000">
-                            <button class="btn btn-primary mt-2">
-                                <i class="mdi mdi-credit-card"></i> S’abonner
+                            <button class="editor-btn accent">
+                                <i class="mdi mdi-credit-card"></i> S'abonner maintenant
                             </button>
                         </form>
                     </div>
-                </div>
-            @endif
-
-        </div>
-    </main>
+                @endif
+            </div>
+        </main>
+    </div>
 
     @if(auth()->check() && auth()->user()->subscribed)
-        <!-- Floating Action Buttons -->
-        <div class="fab-container">
-            <button class="fab-button primary" id="aiButton">
-                <i class="mdi mdi-robot"></i>
-            </button>
-        </div>
-
-        <!-- AI Chat Panel -->
-        <div class="ai-panel" id="aiChat">
-            <div class="ai-header">
-                <h5>Assistant IA</h5>
-                <button class="close-ai">
-                    <i class="mdi mdi-close"></i>
-                </button>
-            </div>
-            <div class="ai-messages" id="chatMessages">
-                <!-- Message d'accueil initial -->
-                <div class="message ai-message welcome-message">
-                    Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider avec votre template aujourd'hui ?
-                </div>
-            </div>
-            <div class="ai-input-container">
-                <input type="text" id="aiInput" placeholder="Comment puis-je vous aider ?">
-                <button class="ai-send" id="sendButton">
-                    <i class="mdi mdi-send"></i>
-                </button>
-            </div>
-            <div class="ai-loading" id="aiThinking">
-                <div class="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-                <div class="loading-text">L'IA réfléchit...</div>
-            </div>
-        </div>
-    @else
-        <div class="ai-panel locked-frame d-flex justify-content-center align-items-center text-center">
-            <div>
-                <h4>Assistant IA réservé</h4>
-                <p>Abonnez-vous pour accéder à l’assistant intelligent.</p>
-                <form action="{{ route('stripe.session') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="plan" value="Premium">
-                    <input type="hidden" name="price" value="1000">
-                    <button class="btn btn-warning mt-2">
-                        <i class="mdi mdi-robot"></i> S’abonner pour l’IA
-                    </button>
-                </form>
-            </div>
-        </div>
-    @endif
-
-    {{--<!-- Floating Action Buttons -->
+    <!-- FAB Button -->
     <div class="fab-container">
-        <button class="fab-button primary" id="aiButton">
+        <button class="fab-button" id="aiButton">
             <i class="mdi mdi-robot"></i>
         </button>
     </div>
@@ -234,8 +684,7 @@
             </button>
         </div>
         <div class="ai-messages" id="chatMessages">
-            <!-- Message d'accueil initial -->
-            <div class="message ai-message welcome-message">
+            <div class="message ai-message">
                 Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider avec votre template aujourd'hui ?
             </div>
         </div>
@@ -245,108 +694,218 @@
                 <i class="mdi mdi-send"></i>
             </button>
         </div>
-        <div class="ai-loading" id="aiThinking">
-            <div class="typing-indicator">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div class="loading-text">L'IA réfléchit...</div>
-        </div>
-    </div>--}}
-{{--
-    <div class="ai-panel" id="aiChat">
-        <div class="ai-header">
-            <h5>Assistant IA</h5>
-            <button class="close-ai">
-                <i class="mdi mdi-close"></i>
-            </button>
-        </div>
-        <div class="ai-messages" id="chatMessages"></div>
-        <div class="ai-input-container">
-            <input type="text" id="aiInput" placeholder="Comment puis-je vous aider ?">
-            <button class="ai-send" id="sendButton">
-                <i class="mdi mdi-send"></i>
-            </button>
-        </div>
-        <div class="ai-loading" id="aiThinking">
-            <div class="typing-indicator">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
     </div>
---}}
-</div>
+    @endif
 
-<!-- Deployment Modals -->
-<div class="deployment-overlay" id="deploymentLoader">
-    <div class="deployment-modal">
-        <div class="deployment-animation">
-            <svg class="deployment-icon" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M12,3L2,12H5V20H19V12H22L12,3M12,7.7L16,11.2V18H14V14H10V18H8V11.2L12,7.7Z"/>
-            </svg>
-            <div class="progress-ring">
-                <svg class="ring-svg" viewBox="0 0 36 36">
-                    <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                    <path class="ring-fill" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                </svg>
-            </div>
-        </div>
-        <div class="deployment-info">
-            <h3>Déploiement en cours</h3>
-            <p>Votre site est en train d'être publié...</p>
-            <div class="deployment-steps">
-                <div class="step active" id="serverSetup">
-                    <div class="step-icon">
-                        <i class="mdi mdi-server"></i>
-                    </div>
-                    <div class="step-text">
-                        <p>Configuration du serveur</p>
-                    </div>
-                </div>
-                <div class="step" id="dbSetup">
-                    <div class="step-icon">
-                        <i class="mdi mdi-database"></i>
-                    </div>
-                    <div class="step-text">
-                        <p>Préparation de la base de données</p>
-                    </div>
-                </div>
-                <div class="step" id="securitySetup">
-                    <div class="step-icon">
-                        <i class="mdi mdi-shield-lock"></i>
-                    </div>
-                    <div class="step-text">
-                        <p>Mise en place de la sécurité</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+    
+    <script>
+        // Responsive Preview Mode Toggle
+        const previewModeButtons = document.querySelectorAll('.preview-mode-btn');
+        const previewFrame = document.getElementById('templatePreview');
 
-<div class="success-modal" id="deployPopup">
-    <div class="success-content">
-        <div class="success-icon">
-            <i class="mdi mdi-check-circle"></i>
-        </div>
-        <h3>Déploiement réussi !</h3>
-        <p>Votre site est maintenant en ligne :</p>
-        <a id="deployLink" target="_blank" rel="noopener noreferrer">Chargement du lien...</a>
-        <div class="success-actions">
-            <button class="success-btn" id="copyLinkBtn">
-                <i class="mdi mdi-content-copy"></i> Copier le lien
-            </button>
-            <button class="success-btn outline" id="closePopupBtn">
-                Fermer
-            </button>
-        </div>
-    </div>
-</div>
+        previewModeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                previewModeButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Remove all mode classes
+                if (previewFrame) {
+                    previewFrame.classList.remove('tablet-mode', 'mobile-mode');
+                    
+                    // Add appropriate mode class based on data-mode attribute
+                    const mode = this.getAttribute('data-mode');
+                    if (mode === 'tablet') {
+                        previewFrame.classList.add('tablet-mode');
+                    } else if (mode === 'mobile') {
+                        previewFrame.classList.add('mobile-mode');
+                    }
+                }
+            });
+        });
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
-</body>
-</html>
+        // AI Panel Toggle
+        const aiButton = document.getElementById('aiButton');
+        const aiChat = document.getElementById('aiChat');
+        const closeAi = document.querySelector('.close-ai');
+
+        if (aiButton) {
+            aiButton.addEventListener('click', () => {
+                aiChat.classList.toggle('active');
+            });
+        }
+
+        if (closeAi) {
+            closeAi.addEventListener('click', () => {
+                aiChat.classList.remove('active');
+            });
+        }
+
+        // Make iframe content editable and track selection
+        const iframe = document.getElementById('templatePreview');
+        
+        if (iframe) {
+            iframe.addEventListener('load', function() {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                // Make all text elements editable
+                iframeDoc.body.setAttribute('contenteditable', 'true');
+                
+                // Track clicks on elements inside iframe
+                iframeDoc.body.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    
+                    const clickedElement = e.target;
+                    const dynamicSettings = document.getElementById('dynamicSettings');
+                    
+                    // Remove previous highlights
+                    iframeDoc.querySelectorAll('.editor-selected').forEach(el => {
+                        el.classList.remove('editor-selected');
+                    });
+                    
+                    // Highlight selected element
+                    clickedElement.classList.add('editor-selected');
+                    
+                    // Build property panel
+                    let html = '<h5 class="section-title">Propriétés de l\'élément</h5>';
+                    html += '<div style="padding: 1rem;">';
+                    
+                    // Element type
+                    html += `<div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem; font-weight: 600;">Type d'élément</label>
+                        <input type="text" value="${clickedElement.tagName}" readonly style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc;">
+                    </div>`;
+                    
+                    // Text content (if applicable)
+                    if (clickedElement.innerText && clickedElement.innerText.trim()) {
+                        html += `<div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem; font-weight: 600;">Contenu texte</label>
+                            <textarea id="elementText" style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 8px; resize: vertical; min-height: 80px;">${clickedElement.innerText}</textarea>
+                        </div>`;
+                    }
+                    
+                    // Color
+                    const computedStyle = iframeDoc.defaultView.getComputedStyle(clickedElement);
+                    html += `<div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem; font-weight: 600;">Couleur du texte</label>
+                        <input type="color" id="elementColor" value="${rgbToHex(computedStyle.color)}" style="width: 100%; height: 40px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">
+                    </div>`;
+                    
+                    // Font size
+                    html += `<div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem; font-weight: 600;">Taille de police</label>
+                        <input type="range" id="fontSize" min="8" max="72" value="${parseInt(computedStyle.fontSize)}" style="width: 100%;">
+                        <span id="fontSizeValue" style="font-size: 0.85rem; color: #475569;">${parseInt(computedStyle.fontSize)}px</span>
+                    </div>`;
+                    
+                    // Background color
+                    html += `<div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem; font-weight: 600;">Couleur de fond</label>
+                        <input type="color" id="bgColor" value="${rgbToHex(computedStyle.backgroundColor)}" style="width: 100%; height: 40px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">
+                    </div>`;
+                    
+                    html += '</div>';
+                    
+                    dynamicSettings.innerHTML = html;
+                    
+                    // Add event listeners for real-time updates
+                    const textArea = document.getElementById('elementText');
+                    if (textArea) {
+                        textArea.addEventListener('input', function() {
+                            clickedElement.innerText = this.value;
+                        });
+                    }
+                    
+                    const colorInput = document.getElementById('elementColor');
+                    if (colorInput) {
+                        colorInput.addEventListener('input', function() {
+                            clickedElement.style.color = this.value;
+                        });
+                    }
+                    
+                    const fontSizeInput = document.getElementById('fontSize');
+                    const fontSizeValue = document.getElementById('fontSizeValue');
+                    if (fontSizeInput) {
+                        fontSizeInput.addEventListener('input', function() {
+                            clickedElement.style.fontSize = this.value + 'px';
+                            fontSizeValue.textContent = this.value + 'px';
+                        });
+                    }
+                    
+                    const bgColorInput = document.getElementById('bgColor');
+                    if (bgColorInput) {
+                        bgColorInput.addEventListener('input', function() {
+                            clickedElement.style.backgroundColor = this.value;
+                        });
+                    }
+                });
+                
+                // Add selection highlight styles to iframe
+                const style = iframeDoc.createElement('style');
+                style.textContent = `
+                    .editor-selected {
+                        outline: 2px solid #3b82f6 !important;
+                        outline-offset: 2px;
+                    }
+                `;
+                iframeDoc.head.appendChild(style);
+            });
+        }
+        
+        // Helper function to convert rgb to hex
+        function rgbToHex(rgb) {
+            if (rgb.startsWith('#')) return rgb;
+            const values = rgb.match(/\d+/g);
+            if (!values) return '#000000';
+            return '#' + values.slice(0, 3).map(x => {
+                const hex = parseInt(x).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+        }
+
+        // Download Button Functionality
+        const downloadBtn = document.getElementById('downloadBtn');
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', function() {
+                const iframe = document.getElementById('templatePreview');
+                if (!iframe) {
+                    alert('Erreur: Impossible de trouver le template');
+                    return;
+                }
+
+                try {
+                    // Get the iframe content
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    const htmlContent = '<!DOCTYPE html>\n' + iframeDoc.documentElement.outerHTML;
+
+                    // Create a Blob with the HTML content
+                    const blob = new Blob([htmlContent], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+
+                    // Create a temporary download link
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'template.html';
+                    document.body.appendChild(a);
+                    a.click();
+
+                    // Cleanup
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    // Show success message
+                    NProgress.start();
+                    setTimeout(() => {
+                        NProgress.done();
+                    }, 500);
+                } catch (error) {
+                    console.error('Erreur lors du téléchargement:', error);
+                    alert('Erreur lors du téléchargement du template');
+                }
+            });
+        }
+    </script>
