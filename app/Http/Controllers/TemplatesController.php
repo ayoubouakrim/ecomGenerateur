@@ -19,9 +19,9 @@ class TemplatesController extends Controller
 
     public function drafts()
     {
-//        $userTemplates = TempTemplate::where('user_id', auth()->id())->get();
+        //        $userTemplates = TempTemplate::where('user_id', auth()->id())->get();
         $tempTemplates = TempTemplate::all();
-//        dd($tempTemplates);
+        //        dd($tempTemplates);
         return view('templateso.index', compact('tempTemplates'));
     }
 
@@ -43,8 +43,8 @@ class TemplatesController extends Controller
                 'content' => $template->filepath // Le contenu HTML stocké dans la BD
             ];
         });*/
-//        dd($templates);
-        return view('templateso.index', compact(['templates','tempTemplates']));
+        //        dd($templates);
+        return view('templateso.index', compact(['templates', 'tempTemplates']));
     }
     public function getTemplateContent($id)
     {
@@ -70,7 +70,7 @@ class TemplatesController extends Controller
     }
 
 
-  /*  public function edit($id)
+    /*  public function edit($id)
     {
         $template = Template::findOrFail($id);
         $templateUrl = route('templateso.content', ['id' => $template->id]);
@@ -103,7 +103,7 @@ class TemplatesController extends Controller
 
         // Enregistrer le template sélectionné
         $userInput->template_id = $templateName;
-//        $userInput->save();
+        //        $userInput->save();
         // Rediriger vers la prévisualisation du bon template
         return redirect()->route('templateso.preview', ['templateName' => $templateName])
             ->with('success', 'Template choisi avec succès!');
@@ -138,33 +138,24 @@ class TemplatesController extends Controller
         );
 
         return view('templateso.edit', [
-            'templateUrl' => route('templateso.tempContent', $tempTemplate->id),
+            'templateUrl' => route('templateso.tempContent', $id),
             'templateId' => $id
         ]);
     }
-    /*public function edittemp($id)
-    {
-        $template = TempTemplate::findOrFail($id);
 
-
-        return view('templateso.edit', [
-            'templateUrl' => route('templateso.tempContent', $tempTemplate->id),
-            'templateId' => $id
-        ]);
-    }*/
 
     // Afficher le contenu du template temporaire
     public function tempContent($id)
     {
-        $tempTemplate = TempTemplate::findOrFail($id);
-        return response($tempTemplate->content)->header('Content-Type', 'text/html');
+        $tempTemplate = Template::findOrFail($id);
+        return response($tempTemplate->filePath)->header('Content-Type', 'text/html');
     }
 
     public function saveDraft(Request $request)
     {
         $hello = "test";
         dd($hello);
-/*
+        /*
         // Validation renforcée
         $validated = $request->validate([
             'content' => 'required|string',
@@ -291,7 +282,4 @@ class TemplatesController extends Controller
             'content' => $template->filePath
         ]);
     }
-
-
-
 }
