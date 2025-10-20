@@ -188,7 +188,7 @@
             display: flex;
         }
 
-        /* Template Cards - Back to Original Style */
+        /* Template Cards */
         .template-card {
             background: white;
             border-radius: 16px;
@@ -199,6 +199,7 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .template-card::before {
@@ -222,6 +223,7 @@
             border-color: #3b82f6;
         }
 
+        /* Image Preview Wrapper */
         .preview-wrapper {
             height: 220px;
             overflow: hidden;
@@ -231,15 +233,39 @@
         }
 
         .preview-thumbnail {
-            display: none;
-        }
-
-        .preview-iframe {
             width: 100%;
             height: 100%;
-            border: 0;
-            pointer-events: none;
-            background: white;
+            object-fit: cover;
+            object-position: center;
+            transition: transform 0.3s ease;
+        }
+
+        .template-card:hover .preview-thumbnail {
+            transform: scale(1.05);
+        }
+
+        /* Placeholder for missing images */
+        .preview-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+            background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+        }
+
+        .preview-placeholder i {
+            font-size: 3rem;
+            color: #60a5fa;
+            opacity: 0.5;
+        }
+
+        .preview-placeholder span {
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
         }
 
         .card-body {
@@ -270,7 +296,7 @@
             margin-top: auto;
         }
 
-        /* Original Buttons Style */
+        /* Buttons */
         .btn-preview {
             flex: 1;
             background: white;
@@ -362,7 +388,7 @@
             font-size: 0.875rem;
         }
 
-        /* Drafts Section - Collapsible */
+        /* Drafts Section */
         .drafts-section {
             margin-top: 3rem;
         }
@@ -529,12 +555,19 @@
                     <div class="template-item">
                         <div class="template-card">
                             <div class="preview-wrapper">
-                                <iframe
-                                    src="{{ route('templateso.content', ['id' => $template->id]) }}"
-                                    class="preview-iframe"
-                                    loading="lazy"
-                                    title="Prévisualisation {{ $template->name }}"
-                                ></iframe>
+                                @if(isset($template->preview_image) && $template->preview_image)
+                                    <img 
+                                        src="{{ $template->preview_image }}" 
+                                        alt="Prévisualisation {{ $template->name }}"
+                                        class="preview-thumbnail"
+                                        loading="lazy"
+                                    >
+                                @else
+                                    <div class="preview-placeholder">
+                                        <i class="fas fa-image"></i>
+                                        <span>Aucun aperçu disponible</span>
+                                    </div>
+                                @endif
                             </div>
                             <div class="card-body">
                                 <h5 class="template-name">
@@ -581,11 +614,19 @@
                     <div class="template-item">
                         <div class="template-card">
                             <div class="preview-wrapper">
-                                <iframe
-                                    src="{{ route('templateso.contenttempTemplates', ['id' => $tempTemplate->id]) }}"
-                                    class="preview-iframe"
-                                    loading="lazy"
-                                ></iframe>
+                                @if(isset($tempTemplate->preview_image) && $tempTemplate->preview_image)
+                                    <img 
+                                        src="{{ $tempTemplate->preview_image }}" 
+                                        alt="Prévisualisation Brouillon"
+                                        class="preview-thumbnail"
+                                        loading="lazy"
+                                    >
+                                @else
+                                    <div class="preview-placeholder">
+                                        <i class="fas fa-image"></i>
+                                        <span>Aucun aperçu disponible</span>
+                                    </div>
+                                @endif
                             </div>
                             <div class="card-body">
                                 <div class="template-actions">
@@ -612,9 +653,6 @@
                 @endforeach
             </div>
         </div>
-
-        
-        
     </main>
 </div>
 
