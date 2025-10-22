@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -112,8 +113,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
 
         .editor-actions {
@@ -567,7 +575,7 @@
             <div class="editor-header-left">
                 <div class="editor-logo">
                     <svg viewBox="0 0 24 24">
-                        <path d="M12,3L2,12H5V20H19V12H22L12,3M12,7.7L16,11.2V18H14V14H10V18H8V11.2L12,7.7Z"/>
+                        <path d="M12,3L2,12H5V20H19V12H22L12,3M12,7.7L16,11.2V18H14V14H10V18H8V11.2L12,7.7Z" />
                     </svg>
                     <h1><span class="editor-highlight">Éditeur</span> Pro</h1>
                 </div>
@@ -576,7 +584,7 @@
                     <span>Auto-save activé</span>
                 </div>
             </div>
-            
+
             <div class="editor-header-center">
                 <button class="preview-mode-btn active" data-mode="desktop">
                     <i class="mdi mdi-monitor"></i> Desktop
@@ -611,14 +619,16 @@
             </div>
 
             <div class="sidebar-footer">
-                @if(auth()->check() && auth()->user()->subscribed)
+                @if (auth()->check() && auth()->user()->subscribed)
                     <form action="/session" method="POST">
                         @csrf
-                        <button type="submit" class="editor-btn primary" id="saveDraft" data-template-id="{{ $templateId }}" style="width: 100%; margin-bottom: 0.75rem;">
+                        <button type="submit" class="editor-btn primary" id="saveDraft"
+                            data-template-id="{{ $templateId }}" style="width: 100%; margin-bottom: 0.75rem;">
                             <i class="mdi mdi-content-save"></i>
                             <span>Sauvegarder</span>
                         </button>
-                        <button type="button" class="editor-btn secondary" id="downloadBtn" style="width: 100%; margin-bottom: 0.75rem;">
+                        <button type="button" class="editor-btn secondary" id="downloadBtn"
+                            style="width: 100%; margin-bottom: 0.75rem;">
                             <i class="mdi mdi-download"></i>
                             <span>Télécharger</span>
                         </button>
@@ -647,7 +657,7 @@
         <!-- Main Preview Area -->
         <main class="editor-main">
             <div class="preview-container">
-                @if(auth()->check() && auth()->user()->subscribed)
+                @if (auth()->check() && auth()->user()->subscribed)
                     <iframe src="{{ $templateUrl }}" class="preview-frame" id="templatePreview"></iframe>
                 @else
                     <div class="locked-frame">
@@ -667,245 +677,290 @@
         </main>
     </div>
 
-    @if(auth()->check() && auth()->user()->subscribed)
-    <!-- FAB Button -->
-    <div class="fab-container">
-        <button class="fab-button" id="aiButton">
-            <i class="mdi mdi-robot"></i>
-        </button>
-    </div>
-
-    <!-- AI Chat Panel -->
-    <div class="ai-panel" id="aiChat">
-        <div class="ai-header">
-            <h5>Assistant IA</h5>
-            <button class="close-ai">
-                <i class="mdi mdi-close"></i>
+    @if (auth()->check() && auth()->user()->subscribed)
+        <!-- FAB Button -->
+        <div class="fab-container">
+            <button class="fab-button" id="aiButton">
+                <i class="mdi mdi-robot"></i>
             </button>
         </div>
-        <div class="ai-messages" id="chatMessages">
-            <div class="message ai-message">
-                Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider avec votre template aujourd'hui ?
+
+        <!-- AI Chat Panel -->
+        <div class="ai-panel" id="aiChat">
+            <div class="ai-header">
+                <h5>Assistant IA</h5>
+                <button class="close-ai">
+                    <i class="mdi mdi-close"></i>
+                </button>
+            </div>
+            <div class="ai-messages" id="chatMessages">
+                <div class="message ai-message">
+                    Bonjour ! Je suis votre assistant IA. Comment puis-je vous aider avec votre template aujourd'hui ?
+                </div>
+            </div>
+            <div class="ai-input-container">
+                <input type="text" id="aiInput" placeholder="Comment puis-je vous aider ?">
+                <button class="ai-send" id="sendButton">
+                    <i class="mdi mdi-send"></i>
+                </button>
             </div>
         </div>
-        <div class="ai-input-container">
-            <input type="text" id="aiInput" placeholder="Comment puis-je vous aider ?">
-            <button class="ai-send" id="sendButton">
-                <i class="mdi mdi-send"></i>
-            </button>
+    @endif
+    <!-- Deployment Loader (Add before </body>) -->
+    <div id="deploymentLoader"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 3rem; border-radius: 16px; max-width: 500px; text-align: center;">
+            <i class="mdi mdi-rocket-launch" style="font-size: 4rem; color: #3b82f6; margin-bottom: 1rem;"></i>
+            <h3 style="margin-bottom: 1rem;">Déploiement en cours...</h3>
+            <div
+                style="background: #f1f5f9; border-radius: 8px; height: 8px; margin-bottom: 1.5rem; overflow: hidden;">
+                <div id="deployProgress"
+                    style="width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); transition: width 0.3s ease;">
+                </div>
+            </div>
+            <div style="text-align: left; font-size: 0.9rem; color: #64748b;">
+                <p id="serverSetup">⏳ Configuration du serveur...</p>
+                <p id="dbSetup">⏳ Préparation de la base de données...</p>
+                <p id="securitySetup">⏳ Activation de la sécurité...</p>
+            </div>
         </div>
     </div>
-    @endif
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
-    
-    <script>
-        // Responsive Preview Mode Toggle
-        const previewModeButtons = document.querySelectorAll('.preview-mode-btn');
-        const previewFrame = document.getElementById('templatePreview');
+    <!-- Deployment Success Popup -->
+    <div id="deployPopup"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2.5rem; border-radius: 16px; max-width: 500px; text-align: center;">
+            <i class="mdi mdi-check-circle" style="font-size: 4rem; color: #22c55e; margin-bottom: 1rem;"></i>
+            <h3 style="margin-bottom: 1rem;">Déploiement réussi! 🎉</h3>
+            <p style="color: #64748b; margin-bottom: 1.5rem;">Votre site est maintenant en ligne:</p>
+            <div
+                style="background: #f1f5f9; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; word-break: break-all;">
+                <a id="deployLink" href="#" target="_blank"
+                    style="color: #3b82f6; text-decoration: none; font-weight: 600;"></a>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button id="copyLinkBtn" class="editor-btn secondary" style="flex: 1;">
+                    <i class="mdi mdi-content-copy"></i> Copier le lien
+                </button>
+                <button id="closePopupBtn" class="editor-btn primary" style="flex: 1;">
+                    <i class="mdi mdi-close"></i> Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
 
-        previewModeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Remove active class from all buttons
-                previewModeButtons.forEach(btn => btn.classList.remove('active'));
-                
-                // Add active class to clicked button
-                this.classList.add('active');
-                
-                // Remove all mode classes
-                if (previewFrame) {
-                    previewFrame.classList.remove('tablet-mode', 'mobile-mode');
-                    
-                    // Add appropriate mode class based on data-mode attribute
-                    const mode = this.getAttribute('data-mode');
-                    if (mode === 'tablet') {
-                        previewFrame.classList.add('tablet-mode');
-                    } else if (mode === 'mobile') {
-                        previewFrame.classList.add('mobile-mode');
-                    }
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+
+<script>
+    // Responsive Preview Mode Toggle
+    const previewModeButtons = document.querySelectorAll('.preview-mode-btn');
+    const previewFrame = document.getElementById('templatePreview');
+
+    previewModeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            previewModeButtons.forEach(btn => btn.classList.remove('active'));
+
+            // Add active class to clicked button
+            this.classList.add('active');
+
+            // Remove all mode classes
+            if (previewFrame) {
+                previewFrame.classList.remove('tablet-mode', 'mobile-mode');
+
+                // Add appropriate mode class based on data-mode attribute
+                const mode = this.getAttribute('data-mode');
+                if (mode === 'tablet') {
+                    previewFrame.classList.add('tablet-mode');
+                } else if (mode === 'mobile') {
+                    previewFrame.classList.add('mobile-mode');
                 }
-            });
+            }
         });
+    });
 
-        // AI Panel Toggle
-        const aiButton = document.getElementById('aiButton');
-        const aiChat = document.getElementById('aiChat');
-        const closeAi = document.querySelector('.close-ai');
+    // AI Panel Toggle
+    const aiButton = document.getElementById('aiButton');
+    const aiChat = document.getElementById('aiChat');
+    const closeAi = document.querySelector('.close-ai');
 
-        if (aiButton) {
-            aiButton.addEventListener('click', () => {
-                aiChat.classList.toggle('active');
-            });
-        }
+    if (aiButton) {
+        aiButton.addEventListener('click', () => {
+            aiChat.classList.toggle('active');
+        });
+    }
 
-        if (closeAi) {
-            closeAi.addEventListener('click', () => {
-                aiChat.classList.remove('active');
-            });
-        }
+    if (closeAi) {
+        closeAi.addEventListener('click', () => {
+            aiChat.classList.remove('active');
+        });
+    }
 
-        // Make iframe content editable and track selection
-        const iframe = document.getElementById('templatePreview');
-        
-        if (iframe) {
-            iframe.addEventListener('load', function() {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                
-                // Make all text elements editable
-                iframeDoc.body.setAttribute('contenteditable', 'true');
-                
-                // Track clicks on elements inside iframe
-                iframeDoc.body.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    
-                    const clickedElement = e.target;
-                    const dynamicSettings = document.getElementById('dynamicSettings');
-                    
-                    // Remove previous highlights
-                    iframeDoc.querySelectorAll('.editor-selected').forEach(el => {
-                        el.classList.remove('editor-selected');
-                    });
-                    
-                    // Highlight selected element
-                    clickedElement.classList.add('editor-selected');
-                    
-                    // Build property panel
-                    let html = '<h5 class="section-title">Propriétés de l\'élément</h5>';
-                    html += '<div style="padding: 1rem;">';
-                    
-                    // Element type
-                    html += `<div style="margin-bottom: 1rem;">
+    // Make iframe content editable and track selection
+    const iframe = document.getElementById('templatePreview');
+
+    if (iframe) {
+        iframe.addEventListener('load', function() {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+            // Make all text elements editable
+            iframeDoc.body.setAttribute('contenteditable', 'true');
+
+            // Track clicks on elements inside iframe
+            iframeDoc.body.addEventListener('click', function(e) {
+                e.stopPropagation();
+
+                const clickedElement = e.target;
+                const dynamicSettings = document.getElementById('dynamicSettings');
+
+                // Remove previous highlights
+                iframeDoc.querySelectorAll('.editor-selected').forEach(el => {
+                    el.classList.remove('editor-selected');
+                });
+
+                // Highlight selected element
+                clickedElement.classList.add('editor-selected');
+
+                // Build property panel
+                let html = '<h5 class="section-title">Propriétés de l\'élément</h5>';
+                html += '<div style="padding: 1rem;">';
+
+                // Element type
+                html += `<div style="margin-bottom: 1rem;">
                         <label style="display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem; font-weight: 600;">Type d'élément</label>
                         <input type="text" value="${clickedElement.tagName}" readonly style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc;">
                     </div>`;
-                    
-                    // Text content (if applicable)
-                    if (clickedElement.innerText && clickedElement.innerText.trim()) {
-                        html += `<div style="margin-bottom: 1rem;">
+
+                // Text content (if applicable)
+                if (clickedElement.innerText && clickedElement.innerText.trim()) {
+                    html += `<div style="margin-bottom: 1rem;">
                             <label style="display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem; font-weight: 600;">Contenu texte</label>
                             <textarea id="elementText" style="width: 100%; padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 8px; resize: vertical; min-height: 80px;">${clickedElement.innerText}</textarea>
                         </div>`;
-                    }
-                    
-                    // Color
-                    const computedStyle = iframeDoc.defaultView.getComputedStyle(clickedElement);
-                    html += `<div style="margin-bottom: 1rem;">
+                }
+
+                // Color
+                const computedStyle = iframeDoc.defaultView.getComputedStyle(clickedElement);
+                html += `<div style="margin-bottom: 1rem;">
                         <label style="display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem; font-weight: 600;">Couleur du texte</label>
                         <input type="color" id="elementColor" value="${rgbToHex(computedStyle.color)}" style="width: 100%; height: 40px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">
                     </div>`;
-                    
-                    // Font size
-                    html += `<div style="margin-bottom: 1rem;">
+
+                // Font size
+                html += `<div style="margin-bottom: 1rem;">
                         <label style="display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem; font-weight: 600;">Taille de police</label>
                         <input type="range" id="fontSize" min="8" max="72" value="${parseInt(computedStyle.fontSize)}" style="width: 100%;">
                         <span id="fontSizeValue" style="font-size: 0.85rem; color: #475569;">${parseInt(computedStyle.fontSize)}px</span>
                     </div>`;
-                    
-                    // Background color
-                    html += `<div style="margin-bottom: 1rem;">
+
+                // Background color
+                html += `<div style="margin-bottom: 1rem;">
                         <label style="display: block; font-size: 0.85rem; color: #64748b; margin-bottom: 0.5rem; font-weight: 600;">Couleur de fond</label>
                         <input type="color" id="bgColor" value="${rgbToHex(computedStyle.backgroundColor)}" style="width: 100%; height: 40px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer;">
                     </div>`;
-                    
-                    html += '</div>';
-                    
-                    dynamicSettings.innerHTML = html;
-                    
-                    // Add event listeners for real-time updates
-                    const textArea = document.getElementById('elementText');
-                    if (textArea) {
-                        textArea.addEventListener('input', function() {
-                            clickedElement.innerText = this.value;
-                        });
-                    }
-                    
-                    const colorInput = document.getElementById('elementColor');
-                    if (colorInput) {
-                        colorInput.addEventListener('input', function() {
-                            clickedElement.style.color = this.value;
-                        });
-                    }
-                    
-                    const fontSizeInput = document.getElementById('fontSize');
-                    const fontSizeValue = document.getElementById('fontSizeValue');
-                    if (fontSizeInput) {
-                        fontSizeInput.addEventListener('input', function() {
-                            clickedElement.style.fontSize = this.value + 'px';
-                            fontSizeValue.textContent = this.value + 'px';
-                        });
-                    }
-                    
-                    const bgColorInput = document.getElementById('bgColor');
-                    if (bgColorInput) {
-                        bgColorInput.addEventListener('input', function() {
-                            clickedElement.style.backgroundColor = this.value;
-                        });
-                    }
-                });
-                
-                // Add selection highlight styles to iframe
-                const style = iframeDoc.createElement('style');
-                style.textContent = `
+
+                html += '</div>';
+
+                dynamicSettings.innerHTML = html;
+
+                // Add event listeners for real-time updates
+                const textArea = document.getElementById('elementText');
+                if (textArea) {
+                    textArea.addEventListener('input', function() {
+                        clickedElement.innerText = this.value;
+                    });
+                }
+
+                const colorInput = document.getElementById('elementColor');
+                if (colorInput) {
+                    colorInput.addEventListener('input', function() {
+                        clickedElement.style.color = this.value;
+                    });
+                }
+
+                const fontSizeInput = document.getElementById('fontSize');
+                const fontSizeValue = document.getElementById('fontSizeValue');
+                if (fontSizeInput) {
+                    fontSizeInput.addEventListener('input', function() {
+                        clickedElement.style.fontSize = this.value + 'px';
+                        fontSizeValue.textContent = this.value + 'px';
+                    });
+                }
+
+                const bgColorInput = document.getElementById('bgColor');
+                if (bgColorInput) {
+                    bgColorInput.addEventListener('input', function() {
+                        clickedElement.style.backgroundColor = this.value;
+                    });
+                }
+            });
+
+            // Add selection highlight styles to iframe
+            const style = iframeDoc.createElement('style');
+            style.textContent = `
                     .editor-selected {
                         outline: 2px solid #3b82f6 !important;
                         outline-offset: 2px;
                     }
                 `;
-                iframeDoc.head.appendChild(style);
-            });
-        }
-        
-        // Helper function to convert rgb to hex
-        function rgbToHex(rgb) {
-            if (rgb.startsWith('#')) return rgb;
-            const values = rgb.match(/\d+/g);
-            if (!values) return '#000000';
-            return '#' + values.slice(0, 3).map(x => {
-                const hex = parseInt(x).toString(16);
-                return hex.length === 1 ? '0' + hex : hex;
-            }).join('');
-        }
+            iframeDoc.head.appendChild(style);
+        });
+    }
 
-        // Download Button Functionality
-        const downloadBtn = document.getElementById('downloadBtn');
-        if (downloadBtn) {
-            downloadBtn.addEventListener('click', function() {
-                const iframe = document.getElementById('templatePreview');
-                if (!iframe) {
-                    alert('Erreur: Impossible de trouver le template');
-                    return;
-                }
+    // Helper function to convert rgb to hex
+    function rgbToHex(rgb) {
+        if (rgb.startsWith('#')) return rgb;
+        const values = rgb.match(/\d+/g);
+        if (!values) return '#000000';
+        return '#' + values.slice(0, 3).map(x => {
+            const hex = parseInt(x).toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        }).join('');
+    }
 
-                try {
-                    // Get the iframe content
-                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                    const htmlContent = '<!DOCTYPE html>\n' + iframeDoc.documentElement.outerHTML;
+    // Download Button Functionality
+    const downloadBtn = document.getElementById('downloadBtn');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', function() {
+            const iframe = document.getElementById('templatePreview');
+            if (!iframe) {
+                alert('Erreur: Impossible de trouver le template');
+                return;
+            }
 
-                    // Create a Blob with the HTML content
-                    const blob = new Blob([htmlContent], { type: 'text/html' });
-                    const url = URL.createObjectURL(blob);
+            try {
+                // Get the iframe content
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const htmlContent = '<!DOCTYPE html>\n' + iframeDoc.documentElement.outerHTML;
 
-                    // Create a temporary download link
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'template.html';
-                    document.body.appendChild(a);
-                    a.click();
+                // Create a Blob with the HTML content
+                const blob = new Blob([htmlContent], {
+                    type: 'text/html'
+                });
+                const url = URL.createObjectURL(blob);
 
-                    // Cleanup
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
+                // Create a temporary download link
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'template.html';
+                document.body.appendChild(a);
+                a.click();
 
-                    // Show success message
-                    NProgress.start();
-                    setTimeout(() => {
-                        NProgress.done();
-                    }, 500);
-                } catch (error) {
-                    console.error('Erreur lors du téléchargement:', error);
-                    alert('Erreur lors du téléchargement du template');
-                }
-            });
-        }
-    </script>
+                // Cleanup
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                // Show success message
+                NProgress.start();
+                setTimeout(() => {
+                    NProgress.done();
+                }, 500);
+            } catch (error) {
+                console.error('Erreur lors du téléchargement:', error);
+                alert('Erreur lors du téléchargement du template');
+            }
+        });
+    }
+</script>

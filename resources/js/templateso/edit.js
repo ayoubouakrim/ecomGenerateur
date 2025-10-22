@@ -148,7 +148,7 @@ function attachEventListeners(element) {
                 element.style[prop] = value;
             }
 
-            state.modifications.set(element, {...(state.modifications.get(element) || {}), [prop]: value});
+            state.modifications.set(element, { ...(state.modifications.get(element) || {}), [prop]: value });
         });
     });
 }
@@ -165,7 +165,7 @@ async function getModifiedContent() {
 
 document.getElementById('downloadBtn').addEventListener('click', async () => {
     const modifiedContent = await getModifiedContent();
-    const blob = new Blob([modifiedContent], {type: 'text/html'});
+    const blob = new Blob([modifiedContent], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -204,7 +204,7 @@ function setupDragAndDrop() {
     iframeDoc.body.addEventListener('drop', (e) => {
         e.preventDefault();
         const type = e.dataTransfer.getData('type');
-        const {clientX, clientY} = e;
+        const { clientX, clientY } = e;
         const newElement = createElementByType(type);
 
         if (newElement) {
@@ -482,8 +482,8 @@ document.getElementById('sendButton').addEventListener('click', async () => {
         const startTime = Date.now();
 
         const messages = [
-            {role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et CSS et Js. And you return only the code  not explanations."},
-            {role: "user", content: `Modifie ce template HTML selon ces instructions: ${message}\n\nHTML Actuel:\n${currentHtml}`}
+            { role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et CSS et Js. And you return only the code  not explanations." },
+            { role: "user", content: `Modifie ce template HTML selon ces instructions: ${message}\n\nHTML Actuel:\n${currentHtml}` }
         ];
 
         // ✅ Get CSRF token from meta tag
@@ -500,7 +500,7 @@ document.getElementById('sendButton').addEventListener('click', async () => {
                 'X-CSRF-TOKEN': csrfToken,  // ✅ Add CSRF token
                 'Accept': 'application/json'
             },
-            body: JSON.stringify({messages})
+            body: JSON.stringify({ messages })
         });
 
         const elapsed = Date.now() - startTime;
@@ -522,7 +522,7 @@ document.getElementById('sendButton').addEventListener('click', async () => {
         }
 
         const data = await response.json();
-        
+
         if (data.choices && data.choices[0] && data.choices[0].message) {
             applyAiModifications(data.choices[0].message.content);
         } else {
@@ -560,14 +560,14 @@ async function autoDescribeTemplate() {
         addMessage("Chargement de la description...", 'ai');
 
         const messages = [
-            {role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et CSS."},
-            {role: "user", content: prompt}
+            { role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et CSS." },
+            { role: "user", content: prompt }
         ];
 
         const response = await fetch('/chat', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({messages})
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages })
         });
 
         if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
@@ -609,30 +609,162 @@ function extractHtmlFromResponse(response) {
  * FONCTIONS DE DÉPLOIEMENT
  ******************************/
 
+/******************************
+ * FONCTIONS DE DÉPLOIEMENT
+ ******************************/
+
 function showDeployPopup(url) {
     const popup = document.getElementById('deployPopup');
     const deployLink = document.getElementById('deployLink');
-    const copyLinkBtn = document.getElementById('copyLinkBtn');
-    const closePopupBtn = document.getElementById('closePopupBtn');
+    
+    if (!popup || !deployLink) {
+        console.error('Popup elements not found');
+        alert('Site déployé: ' + url);
+        return;
+    }
 
     deployLink.href = url;
     deployLink.textContent = url;
+    popup.style.display = 'flex';
 
-    copyLinkBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(url).then(() => {
-            alert('Lien copié dans le presse-papiers !');
-        }).catch(() => {
-            alert('Impossible de copier le lien.');
+    // Copy link button
+    const copyBtn = document.getElementById('copyLinkBtn');
+    if (copyBtn) {
+        // Remove old listeners
+        const newCopyBtn = copyBtn.cloneNode(true);
+        copyBtn.parentNode.replaceChild(newCopyBtn, copyBtn);
+        
+        newCopyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Lien copié dans le presse-papiers !');
+            }).catch(() => {
+                alert('Impossible de copier le lien.');
+            });
         });
-    });
+    }
 
-    closePopupBtn.addEventListener('click', () => {
-        popup.classList.remove('active');
-    });
-
-    popup.classList.add('active');
+    // Close button
+    const closeBtn = document.getElementById('closePopupBtn');
+    if (closeBtn) {
+        // Remove old listeners
+        const newCloseBtn = closeBtn.cloneNode(true);
+        closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+        
+        newCloseBtn.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+    }
 }
 
+// Deploy button handler
+const deployBtn = document.getElementById('deployBtn');
+if (deployBtn) {
+    deployBtn.addEventListener('click', async () => {
+        const loader = document.getElementById('deploymentLoader');
+        const progressBar = document.getElementById('deployProgress');
+        const deployButton = document.getElementById('deployBtn');
+        
+        console.log('Deploy button clicked');
+        
+        // Show loader
+        if (loader) {
+            loader.style.display = 'flex';
+        }
+        
+        if (deployButton) {
+            deployButton.disabled = true;
+        }
+
+        try {
+            const minWaitTime = 80000; // 80 seconds
+
+            // Start progress animation
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 1;
+                if (progressBar) {
+                    progressBar.style.width = `${progress}%`;
+                }
+
+                if (progress === 20) {
+                    const el = document.getElementById('serverSetup');
+                    if (el) el.textContent = "✓ Serveur configuré";
+                }
+                if (progress === 50) {
+                    const el = document.getElementById('dbSetup');
+                    if (el) el.textContent = "✓ Base de données prête";
+                }
+                if (progress === 80) {
+                    const el = document.getElementById('securitySetup');
+                    if (el) el.textContent = "✓ Sécurité activée";
+                }
+
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }, 800);
+
+            setTimeout(async () => {
+                try {
+                    console.log('Starting deployment...');
+                    const modifiedContent = await getModifiedContent();
+
+                    const response = await fetch('/deploy', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({ content: modifiedContent })
+                    });
+
+                    console.log('Response status:', response.status);
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error('Deploy error:', errorData);
+                        throw new Error(`Erreur HTTP ${response.status}: ${errorData.error || 'Unknown error'}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('Deployment successful:', data);
+                    
+                    // Hide loader
+                    if (loader) {
+                        loader.style.display = 'none';
+                    }
+                    clearInterval(progressInterval);
+                    
+                    // Show success popup
+                    showDeployPopup(data.siteUrl);
+
+                } catch (error) {
+                    console.error('Erreur de déploiement:', error);
+                    if (loader) {
+                        loader.style.display = 'none';
+                    }
+                    clearInterval(progressInterval);
+                    alert("Erreur lors du déploiement: " + error.message);
+                } finally {
+                    if (deployButton) {
+                        deployButton.disabled = false;
+                    }
+                }
+            }, minWaitTime);
+
+        } catch (error) {
+            if (loader) {
+                loader.style.display = 'none';
+            }
+            if (deployButton) {
+                deployButton.disabled = false;
+            }
+            console.error('Erreur initiale:', error);
+            alert("Erreur: " + error.message);
+        }
+    });
+}
+/*
 function showDeploymentLoader() {
     const loader = document.getElementById('deploymentLoader');
     loader.classList.add('active');
@@ -659,8 +791,12 @@ function showDeploymentLoader() {
         }
     }, 800); // ← 500 ms pour atteindre 100 % en ~50 s
 }
+function hideDeploymentLoader() {
+    const loader = document.getElementById('deploymentLoader');
+    loader.classList.remove('active');
+}
 
-/*
+
 function showDeploymentLoader() {
     const loader = document.getElementById('deploymentLoader');
     loader.classList.add('active');
@@ -688,10 +824,7 @@ function showDeploymentLoader() {
 }
 */
 
-function hideDeploymentLoader() {
-    const loader = document.getElementById('deploymentLoader');
-    loader.classList.remove('active');
-}
+
 
 /*
 document.getElementById('deployBtn').addEventListener('click', async () => {
@@ -736,6 +869,8 @@ document.getElementById('deployBtn').addEventListener('click', async () => {
     }
 });
 */
+
+
 document.getElementById('deployBtn').addEventListener('click', async () => {
     showDeploymentLoader();
     document.getElementById('deployBtn').disabled = true;
@@ -754,7 +889,7 @@ document.getElementById('deployBtn').addEventListener('click', async () => {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
-                    body: JSON.stringify({content: modifiedContent})
+                    body: JSON.stringify({ content: modifiedContent })
                 });
 
                 if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
