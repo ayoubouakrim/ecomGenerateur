@@ -601,7 +601,7 @@
 
     <!-- Main Editor Container -->
     <div class="editor-container">
-        <!-- Sidebar -->
+        <!-- Sidebar with new changes -->
         <aside class="editor-sidebar">
             <div class="sidebar-section">
                 <h5 class="section-title">Éléments</h5>
