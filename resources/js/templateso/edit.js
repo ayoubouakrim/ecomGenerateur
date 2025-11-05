@@ -3,8 +3,8 @@
  ******************************/
 
 // Sélection des éléments DOM
-const sidebar = document.querySelector('.editor-sidebar'); // Correction: querySelector au lieu de getElementById
-const toggleBtn = document.getElementById('sidebarToggle');
+const sidebar = document.querySelector('.editor-sidebar');
+const toggleBtn = document.getElementById('sidebarToggle'); // This element doesn't exist!
 const editorContainer = document.querySelector('.editor-container');
 
 // États globaux
@@ -28,30 +28,49 @@ const templateId = window.templateId;
  * GESTION DE LA SIDEBAR
  ******************************/
 
-toggleBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('collapsed');
-    editorContainer.classList.toggle('collapsed');
+// FIX: Only add event listener if the element exists
+if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        editorContainer.classList.toggle('collapsed');
 
-    // Mise à jour de l'icône
-    const icon = toggleBtn.querySelector('i');
-    if (sidebar.classList.contains('collapsed')) {
-        icon.classList.remove('mdi-chevron-double-left');
-        icon.classList.add('mdi-chevron-double-right');
-    } else {
-        icon.classList.remove('mdi-chevron-double-right');
-        icon.classList.add('mdi-chevron-double-left');
-    }
-});
+        const icon = toggleBtn.querySelector('i');
+        if (sidebar.classList.contains('collapsed')) {
+            icon.classList.remove('mdi-chevron-double-left');
+            icon.classList.add('mdi-chevron-double-right');
+        } else {
+            icon.classList.remove('mdi-chevron-double-right');
+            icon.classList.add('mdi-chevron-double-left');
+        }
+    });
+}
 
 /******************************
  * INITIALISATION DE L'ÉDITEUR
  ******************************/
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const response = await fetch("{{ route('templateso.original', ['id' => $templateId]) }}");
-    state.originalContent = await response.text();
-    enableElementPicker();
-    setupDragAndDrop();
+    console.log('=== Editor Initializing ===');
+    
+    // Initialize editor features
+    try {
+        const templatePreview = document.getElementById('templatePreview');
+        if (templatePreview) {
+            enableElementPicker();
+            setupDragAndDrop();
+            console.log('✅ Editor features initialized');
+        }
+    } catch (error) {
+        console.error('Error initializing editor:', error);
+    }
+    
+    // Initialize AI chat
+    initializeAIChat();
+    
+    // Initialize deployment
+    initializeDeployment();
+    
+    console.log('=== Editor Ready ===');
 });
 
 /******************************
@@ -60,25 +79,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function enableElementPicker() {
     const iframe = document.getElementById('templatePreview');
-    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    if (!iframe) return;
+    
+    iframe.addEventListener('load', function() {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        if (!iframeDoc) return;
 
-    iframeDoc.body.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const element = e.target;
+        iframeDoc.body.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const element = e.target;
 
-        if (state.selectedElement) {
-            state.selectedElement.classList.remove('element-highlight');
-        }
+            if (state.selectedElement) {
+                state.selectedElement.classList.remove('element-highlight');
+            }
 
-        state.selectedElement = element;
-        element.classList.add('element-highlight');
-        showElementSettings(element);
+            state.selectedElement = element;
+            element.classList.add('element-highlight');
+            showElementSettings(element);
+        });
     });
 }
 
 function showElementSettings(element) {
     const settingsPanel = document.getElementById('dynamicSettings');
+    if (!settingsPanel) return;
+    
     element.dataset.elementType = element.tagName;
 
     const commonProperties = {
@@ -92,17 +118,27 @@ function showElementSettings(element) {
 
     const formGroups = Object.entries(commonProperties).map(([prop, label]) => {
         let value = '';
-        if (prop === 'textContent' || prop === 'href') {
+        if (prop === 'textContent') {
+            // Get only the direct text content, not from child elements
+            value = Array.from(element.childNodes)
+                .filter(node => node.nodeType === Node.TEXT_NODE)
+                .map(node => node.textContent.trim())
+                .join(' ') || '';
+        } else if (prop === 'href') {
             value = element[prop] || '';
         } else if (prop === 'src') {
             value = element.getAttribute('src') || '';
+        } else if (prop === 'color' || prop === 'backgroundColor') {
+            // Get computed style and convert rgb to hex
+            const computedValue = window.getComputedStyle(element)[prop];
+            value = rgbToHex(computedValue) || '#000000';
         } else {
             value = window.getComputedStyle(element)[prop] || '';
         }
 
         return `
             <div class="dynamic-form-group">
-                <label class="form-label">${label}</label>
+                <label class="form-label" style="color: black;">${label}</label>
                 ${getInputForProperty(prop, value)}
             </div>
         `;
@@ -110,6 +146,25 @@ function showElementSettings(element) {
 
     settingsPanel.innerHTML = formGroups.join('');
     attachEventListeners(element);
+}
+/* this fonction is for colors */
+function rgbToHex(rgb) {
+    // Handle rgba or rgb format
+    if (!rgb || rgb === 'transparent') return '#000000';
+    
+    // If already hex, return it
+    if (rgb.startsWith('#')) return rgb;
+    
+    // Extract rgb values
+    const match = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (!match) return '#000000';
+    
+    const r = parseInt(match[1]);
+    const g = parseInt(match[2]);
+    const b = parseInt(match[3]);
+    
+    // Convert to hex
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
 
 function getInputForProperty(prop, value) {
@@ -148,7 +203,7 @@ function attachEventListeners(element) {
                 element.style[prop] = value;
             }
 
-            state.modifications.set(element, {...(state.modifications.get(element) || {}), [prop]: value});
+            state.modifications.set(element, { ...(state.modifications.get(element) || {}), [prop]: value });
         });
     });
 }
@@ -159,39 +214,58 @@ function attachEventListeners(element) {
 
 async function getModifiedContent() {
     const iframe = document.getElementById('templatePreview');
+    if (!iframe) throw new Error('Preview iframe not found');
+    
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
     const serializer = new XMLSerializer();
-    return serializer.serializeToString(iframe.contentDocument);
+    return '<!DOCTYPE html>\n' + serializer.serializeToString(iframeDoc.documentElement);
 }
 
-document.getElementById('downloadBtn').addEventListener('click', async () => {
-    const modifiedContent = await getModifiedContent();
-    const blob = new Blob([modifiedContent], {type: 'text/html'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `template-modifie-${Date.now()}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-});
-
-document.getElementById('saveDraft').addEventListener('click', async () => {
-    const modifiedContent = await getModifiedContent();
-    console.log('Envoi avec ID:', templateId, 'Type:', typeof templateId);
-
-    await fetch(saveDraftUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken
-        },
-        body: JSON.stringify({
-            content: modifiedContent
-        })
+// Download button
+const downloadBtn = document.getElementById('downloadBtn');
+if (downloadBtn) {
+    downloadBtn.addEventListener('click', async () => {
+        try {
+            const modifiedContent = await getModifiedContent();
+            const blob = new Blob([modifiedContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `template-modifie-${Date.now()}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Download error:', error);
+            alert('Erreur lors du téléchargement');
+        }
     });
+}
 
-    alert('Brouillon sauvegardé !');
-});
+// Save draft button
+const saveDraftBtn = document.getElementById('saveDraft');
+if (saveDraftBtn) {
+    saveDraftBtn.addEventListener('click', async () => {
+        try {
+            const modifiedContent = await getModifiedContent();
+            
+            await fetch(saveDraftUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({ content: modifiedContent })
+            });
+
+            alert('Brouillon sauvegardé !');
+        } catch (error) {
+            console.error('Save error:', error);
+            alert('Erreur lors de la sauvegarde');
+        }
+    });
+}
 
 /******************************
  * DRAG AND DROP
@@ -199,12 +273,15 @@ document.getElementById('saveDraft').addEventListener('click', async () => {
 
 function setupDragAndDrop() {
     const iframe = document.getElementById('templatePreview');
+    if (!iframe) return;
+    
     const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    if (!iframeDoc) return;
 
     iframeDoc.body.addEventListener('drop', (e) => {
         e.preventDefault();
         const type = e.dataTransfer.getData('type');
-        const {clientX, clientY} = e;
+        const { clientX, clientY } = e;
         const newElement = createElementByType(type);
 
         if (newElement) {
@@ -243,20 +320,6 @@ function createTextElement() {
     element.style.padding = '10px';
     element.style.border = '1px dashed #4F46E5';
     element.style.backgroundColor = '#F3F4F6';
-
-    const removeButton = document.createElement('button');
-    removeButton.textContent = '×';
-    removeButton.style.position = 'absolute';
-    removeButton.style.top = '-10px';
-    removeButton.style.right = '-10px';
-    removeButton.style.background = 'red';
-    removeButton.style.color = 'white';
-    removeButton.style.border = 'none';
-    removeButton.style.borderRadius = '50%';
-    removeButton.style.cursor = 'pointer';
-    removeButton.addEventListener('click', () => element.remove());
-
-    element.appendChild(removeButton);
     return element;
 }
 
@@ -279,189 +342,42 @@ function createSectionElement() {
 }
 
 /******************************
- * FONCTIONNALITÉS IA
+ * AI CHAT INITIALIZATION
  ******************************/
 
-/*// ==================== NOUVELLE VERSION AMÉLIORÉE ====================
-document.getElementById('sendButton').addEventListener('click', async () => {
-    if (aiState.isProcessing) return;
-
-    const input = document.getElementById('aiInput');
-    const message = input.value.trim();
-    if (!message) return;
-
-    // Sauvegarde du message pour le réafficher si erreur
-    const originalMessage = message;
-    input.value = ''; // On vide immédiatement le champ
-
-    // Activation de l'état de chargement
-    aiState.isProcessing = true;
-    toggleLoadingState(true);
-
-    try {
-        // Ajout du message utilisateur avec animation
-        addMessage(originalMessage, 'user');
-
-        // Préparation de la requête avec timeout minimum
-        const [currentHtml, startTime] = await Promise.all([
-            getModifiedContent(),
-            new Promise(resolve => resolve(Date.now()))
-        ]);
-
-        const messages = [
-            {
-                role: "system",
-                content: "Vous êtes un assistant expert en création de sites web. " +
-                    "Répondez de manière concise et technique. " +
-                    "Proposez toujours des solutions optimisées pour le SEO et les performances."
-            },
-            {
-                role: "user",
-                content: `Demande: ${originalMessage}\n\nHTML Actuel:\n${currentHtml}`
-            }
-        ];
-
-        // Envoi avec gestion du timeout minimum
-        const minWaitTime = 1000;
-        const response = await Promise.all([
-            fetch('/chat', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({messages})
-            }),
-            new Promise(resolve => setTimeout(resolve, minWaitTime))
-        ]).then(([response]) => response);
-
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        // Traitement de la réponse
-        if (data.choices && data.choices[0].message) {
-            const aiResponse = data.choices[0].message.content;
-
-            // Délai supplémentaire pour l'animation de typing
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            // Affichage progressif de la réponse
-            displayTypingResponse(aiResponse);
-        } else {
-            throw new Error('Réponse AI invalide');
-        }
-
-    } catch (error) {
-        console.error('Erreur:', error);
-        input.value = originalMessage; // Restaure le message en cas d'erreur
-
-        addMessage(
-            "Désolé, je rencontre des difficultés techniques. " +
-            "Veuillez reformuler votre demande ou réessayer plus tard.",
-            'ai',
-            'error'
-        );
-    } finally {
-        // Désactivation de l'état de chargement
-        aiState.isProcessing = false;
-        toggleLoadingState(false);
-        input.focus();
-    }
-});
-
-// Fonctions utilitaires améliorées
-function toggleLoadingState(show) {
-    const input = document.getElementById('aiInput');
+function initializeAIChat() {
+    const aiButton = document.getElementById('aiButton');
+    const aiChat = document.getElementById('aiChat');
+    const closeAi = document.querySelector('.close-ai');
     const sendButton = document.getElementById('sendButton');
-    const loadingIndicator = document.getElementById('aiThinking');
+    const aiInput = document.getElementById('aiInput');
 
-    if (show) {
-        input.disabled = true;
-        sendButton.disabled = true;
-        sendButton.innerHTML = '<i class="mdi mdi-loading mdi-spin"></i>';
-        loadingIndicator.style.display = 'flex';
-    } else {
-        input.disabled = false;
-        sendButton.disabled = false;
-        sendButton.innerHTML = '<i class="mdi mdi-send"></i>';
-        loadingIndicator.style.display = 'none';
+    if (aiButton && aiChat) {
+        aiButton.addEventListener('click', () => {
+            aiChat.classList.toggle('active');
+        });
+    }
+
+    if (closeAi && aiChat) {
+        closeAi.addEventListener('click', () => {
+            aiChat.classList.remove('active');
+        });
+    }
+
+    if (aiInput) {
+        aiInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !aiState.isProcessing && sendButton) {
+                sendButton.click();
+            }
+        });
+    }
+
+    if (sendButton) {
+        sendButton.addEventListener('click', handleAIMessage);
     }
 }
 
-function displayTypingResponse(text) {
-    const messagesDiv = document.getElementById('chatMessages');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message ai-message typing';
-
-    messagesDiv.appendChild(messageDiv);
-    messageDiv.scrollIntoView({ behavior: 'smooth' });
-
-    // Affichage progressif caractère par caractère
-    let i = 0;
-    const typingInterval = setInterval(() => {
-        if (i < text.length) {
-            messageDiv.textContent = text.substring(0, i + 1);
-            i++;
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        } else {
-            clearInterval(typingInterval);
-            messageDiv.classList.remove('typing');
-        }
-    }, 20);
-}
-
-function addMessage(content, sender, type = 'normal') {
-    const messagesDiv = document.getElementById('chatMessages');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${sender}-message ${type}-message`;
-
-    // Formatage des retours à la ligne
-    const formattedContent = content.replace(/\n/g, '<br>');
-    messageDiv.innerHTML = formattedContent;
-
-    messagesDiv.appendChild(messageDiv);
-    messageDiv.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end'
-    });
-
-    // Animation sonore discrète (optionnelle)
-    if (sender === 'ai') {
-        playSound('notification');
-    }
-}
-
-// Fonction optionnelle pour les effets sonores
-function playSound(type) {
-    if (window.soundsEnabled) {
-        const audio = new Audio(`/sounds/${type}.mp3`);
-        audio.volume = 0.3;
-        audio.play().catch(e => console.log('Son désactivé'));
-    }
-}*/
-// ==================== FIN DE LA NOUVELLE VERSION ====================
-
-
-
-
-// Gestion du chat IA
-document.getElementById('aiButton').addEventListener('click', () => {
-    const aiChatEl = document.getElementById('aiChat');
-    aiChatEl.classList.toggle('active');
-});
-// Ajout de l'écouteur pour le bouton de fermeture
-document.querySelector('.close-ai').addEventListener('click', () => {
-    const aiChatEl = document.getElementById('aiChat');
-    aiChatEl.classList.remove('active');
-});
-
-document.getElementById('aiInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && !aiState.isProcessing) {
-        document.getElementById('sendButton').click();
-    }
-});
-
-document.getElementById('sendButton').addEventListener('click', async () => {
+async function handleAIMessage() {
     if (aiState.isProcessing) return;
 
     const input = document.getElementById('aiInput');
@@ -471,58 +387,33 @@ document.getElementById('sendButton').addEventListener('click', async () => {
     aiState.isProcessing = true;
     input.disabled = true;
     document.getElementById('sendButton').disabled = true;
-    document.getElementById('aiThinking').style.display = 'block';
 
     try {
         addMessage(message, 'user');
         input.value = '';
         const currentHtml = await getModifiedContent();
 
-        const minWaitTime = 1500;
-        const startTime = Date.now();
-
         const messages = [
-            {role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et CSS et Js. And you return only the code  not explanations."},
-            {role: "user", content: `Modifie ce template HTML selon ces instructions: ${message}\n\nHTML Actuel:\n${currentHtml}`}
+            { role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et CSS et Js. And you return only the code not explanations." },
+            { role: "user", content: `Modifie ce template HTML selon ces instructions: ${message}\n\nHTML Actuel:\n${currentHtml}` }
         ];
-
-        // ✅ Get CSRF token from meta tag
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 300000); // 120 seconds
 
         const response = await fetch('/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,  // ✅ Add CSRF token
+                'X-CSRF-TOKEN': csrfToken,
                 'Accept': 'application/json'
             },
-            body: JSON.stringify({messages})
+            body: JSON.stringify({ messages })
         });
 
-        const elapsed = Date.now() - startTime;
-        if (elapsed < minWaitTime) {
-            await new Promise(resolve => setTimeout(resolve, minWaitTime - elapsed));
-        }
-
-        // Check if response is actually JSON
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            const errorText = await response.text();
-            console.error('Server returned HTML:', errorText.substring(0, 500));
-            throw new Error('Server error - check Laravel logs');
-        }
-
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `HTTP ${response.status}`);
+            throw new Error(`HTTP ${response.status}`);
         }
 
         const data = await response.json();
-        
+
         if (data.choices && data.choices[0] && data.choices[0].message) {
             applyAiModifications(data.choices[0].message.content);
         } else {
@@ -531,56 +422,24 @@ document.getElementById('sendButton').addEventListener('click', async () => {
 
     } catch (error) {
         console.error('Erreur API:', error);
-        addMessage(`Erreur: ${error.message}. Vérifiez que l'API OpenRouter est configurée.`, 'ai');
+        addMessage(`Erreur: ${error.message}`, 'ai');
     } finally {
         aiState.isProcessing = false;
         input.disabled = false;
         document.getElementById('sendButton').disabled = false;
-        document.getElementById('aiThinking').style.display = 'none';
         input.focus();
     }
-});
+}
 
 function addMessage(content, sender) {
     const messagesDiv = document.getElementById('chatMessages');
+    if (!messagesDiv) return;
+    
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${sender}-message`;
     messageDiv.textContent = content;
     messagesDiv.appendChild(messageDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-
-async function autoDescribeTemplate() {
-    const currentHtml = await getModifiedContent();
-    const prompt = `Donne-moi une description concise du template HTML actuel sous forme de trois points, sans explications supplémentaires. HTML Actuel:\n${currentHtml}`;
-
-    aiState.isProcessing = true;
-    try {
-        addMessage("Chargement de la description...", 'ai');
-
-        const messages = [
-            {role: "system", content: "Vous êtes un assistant expert en édition de templates HTML et CSS."},
-            {role: "user", content: prompt}
-        ];
-
-        const response = await fetch('/chat', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({messages})
-        });
-
-        if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
-
-        const data = await response.json();
-        const aiResponse = data.choices[0].message.content;
-        addMessage(aiResponse, 'ai');
-    } catch (error) {
-        console.error('Erreur dans la description automatique:', error);
-        addMessage("Erreur lors de la description du template.", 'ai');
-    } finally {
-        aiState.isProcessing = false;
-    }
 }
 
 function applyAiModifications(aiResponse) {
@@ -606,175 +465,135 @@ function extractHtmlFromResponse(response) {
 }
 
 /******************************
- * FONCTIONS DE DÉPLOIEMENT
+ * DEPLOYMENT INITIALIZATION
  ******************************/
+
+function initializeDeployment() {
+    const deployBtn = document.getElementById('deployBtn');
+    
+    if (!deployBtn) {
+        console.log('Deploy button not found (user may not be subscribed)');
+        return;
+    }
+    
+    console.log('✅ Deploy button found, attaching listener');
+    
+    deployBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        console.log('🚀 Deploy button clicked!');
+        
+        deployBtn.disabled = true;
+        
+        try {
+            showDeploymentLoader();
+            
+            const modifiedContent = await getModifiedContent();
+            console.log('Content ready, deploying...');
+            
+            const response = await fetch('/deploy', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ content: modifiedContent })
+            });
+            
+            console.log('Deploy response:', response.status);
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `HTTP ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('✅ Deployment successful:', data);
+            
+            hideDeploymentLoader();
+            showDeployPopup(data.siteUrl);
+            
+        } catch (error) {
+            console.error('❌ Deployment error:', error);
+            hideDeploymentLoader();
+            alert(`Erreur lors du déploiement: ${error.message}`);
+        } finally {
+            deployBtn.disabled = false;
+        }
+    });
+}
+
+function showDeploymentLoader() {
+    const loader = document.getElementById('deploymentLoader');
+    if (!loader) return;
+    
+    loader.style.display = 'flex';
+    
+    const progressBar = document.getElementById('deployProgress');
+    let progress = 0;
+    
+    window.deployProgressInterval = setInterval(() => {
+        progress += 1;
+        if (progressBar) {
+            progressBar.style.width = `${progress}%`;
+        }
+
+        if (progress === 20) {
+            const el = document.getElementById('serverSetup');
+            if (el) el.innerHTML = "✓ Serveur configuré";
+        }
+        if (progress === 50) {
+            const el = document.getElementById('dbSetup');
+            if (el) el.innerHTML = "✓ Base de données prête";
+        }
+        if (progress === 80) {
+            const el = document.getElementById('securitySetup');
+            if (el) el.innerHTML = "✓ Sécurité activée";
+        }
+
+        if (progress >= 100) {
+            clearInterval(window.deployProgressInterval);
+        }
+    }, 800);
+}
+
+function hideDeploymentLoader() {
+    const loader = document.getElementById('deploymentLoader');
+    if (loader) {
+        loader.style.display = 'none';
+    }
+    
+    if (window.deployProgressInterval) {
+        clearInterval(window.deployProgressInterval);
+    }
+}
 
 function showDeployPopup(url) {
     const popup = document.getElementById('deployPopup');
     const deployLink = document.getElementById('deployLink');
-    const copyLinkBtn = document.getElementById('copyLinkBtn');
-    const closePopupBtn = document.getElementById('closePopupBtn');
+    
+    if (!popup || !deployLink) {
+        alert('Site déployé: ' + url);
+        return;
+    }
 
     deployLink.href = url;
     deployLink.textContent = url;
+    popup.style.display = 'flex';
 
-    copyLinkBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(url).then(() => {
-            alert('Lien copié dans le presse-papiers !');
-        }).catch(() => {
-            alert('Impossible de copier le lien.');
-        });
-    });
-
-    closePopupBtn.addEventListener('click', () => {
-        popup.classList.remove('active');
-    });
-
-    popup.classList.add('active');
-}
-
-function showDeploymentLoader() {
-    const loader = document.getElementById('deploymentLoader');
-    loader.classList.add('active');
-
-    const progressBar = document.getElementById('deployProgress');
-    let progress = 0;
-    // 50 000 ms / 100 pas = 500 ms entre chaque incrément
-    const interval = setInterval(() => {
-        progress += 1;
-        progressBar.style.width = `${progress}%`;
-
-        if (progress === 20) {
-            document.getElementById('serverSetup').textContent = "Serveur configuré ✓";
-        }
-        if (progress === 50) {
-            document.getElementById('dbSetup').textContent = "Base de données prête ✓";
-        }
-        if (progress === 80) {
-            document.getElementById('securitySetup').textContent = "Sécurité activée ✓";
-        }
-
-        if (progress >= 100) {
-            clearInterval(interval);
-        }
-    }, 800); // ← 500 ms pour atteindre 100 % en ~50 s
-}
-
-/*
-function showDeploymentLoader() {
-    const loader = document.getElementById('deploymentLoader');
-    loader.classList.add('active');
-
-    const progressBar = document.getElementById('deployProgress');
-    let progress = 0;
-    const interval = setInterval(() => {
-        progress += 1;
-        progressBar.style.width = `${progress}%`;
-
-        if (progress === 20) {
-            document.getElementById('serverSetup').textContent = "Serveur configuré ✓";
-        }
-        if (progress === 50) {
-            document.getElementById('dbSetup').textContent = "Base de données prête ✓";
-        }
-        if (progress === 80) {
-            document.getElementById('securitySetup').textContent = "Sécurité activée ✓";
-        }
-
-        if (progress >= 100) {
-            clearInterval(interval);
-        }
-    }, 300);
-}
-*/
-
-function hideDeploymentLoader() {
-    const loader = document.getElementById('deploymentLoader');
-    loader.classList.remove('active');
-}
-
-/*
-document.getElementById('deployBtn').addEventListener('click', async () => {
-    showDeploymentLoader();
-    document.getElementById('deployBtn').disabled = true;
-
-    try {
-        const minWaitTime = 45000;
-
-        setTimeout(async () => {
-            try {
-                const modifiedContent = await getModifiedContent();
-
-                const response = await fetch('/deploy', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({content: modifiedContent})
-                });
-
-                if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
-
-                const data = await response.json();
-                hideDeploymentLoader();
-                showDeployPopup(data.siteUrl);
-
-            } catch (error) {
-                console.error('Erreur de déploiement :', error);
-                hideDeploymentLoader();
-                alert("Erreur lors du déploiement. Veuillez réessayer.");
-            } finally {
-                document.getElementById('deployBtn').disabled = false;
-            }
-        }, 500);
-
-    } catch (error) {
-        hideDeploymentLoader();
-        document.getElementById('deployBtn').disabled = false;
-        console.error('Erreur initiale :', error);
+    const copyBtn = document.getElementById('copyLinkBtn');
+    if (copyBtn) {
+        copyBtn.onclick = () => {
+            navigator.clipboard.writeText(url)
+                .then(() => alert('Lien copié!'))
+                .catch(() => alert('Erreur de copie'));
+        };
     }
-});
-*/
-document.getElementById('deployBtn').addEventListener('click', async () => {
-    showDeploymentLoader();
-    document.getElementById('deployBtn').disabled = true;
 
-    try {
-        // On passe à 50 secondes (50 000 ms)
-        const minWaitTime = 80000;
-
-        setTimeout(async () => {
-            try {
-                const modifiedContent = await getModifiedContent();
-
-                const response = await fetch('/deploy', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({content: modifiedContent})
-                });
-
-                if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`);
-
-                const data = await response.json();
-                hideDeploymentLoader();
-                showDeployPopup(data.siteUrl);
-
-            } catch (error) {
-                console.error('Erreur de déploiement :', error);
-                hideDeploymentLoader();
-                alert("Erreur lors du déploiement. Veuillez réessayer.");
-            } finally {
-                document.getElementById('deployBtn').disabled = false;
-            }
-        }, minWaitTime); // ← on utilise minWaitTime ici
-
-    } catch (error) {
-        hideDeploymentLoader();
-        document.getElementById('deployBtn').disabled = false;
-        console.error('Erreur initiale :', error);
+    const closeBtn = document.getElementById('closePopupBtn');
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            popup.style.display = 'none';
+        };
     }
-});
+}
