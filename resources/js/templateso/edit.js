@@ -118,17 +118,27 @@ function showElementSettings(element) {
 
     const formGroups = Object.entries(commonProperties).map(([prop, label]) => {
         let value = '';
-        if (prop === 'textContent' || prop === 'href') {
+        if (prop === 'textContent') {
+            // Get only the direct text content, not from child elements
+            value = Array.from(element.childNodes)
+                .filter(node => node.nodeType === Node.TEXT_NODE)
+                .map(node => node.textContent.trim())
+                .join(' ') || '';
+        } else if (prop === 'href') {
             value = element[prop] || '';
         } else if (prop === 'src') {
             value = element.getAttribute('src') || '';
+        } else if (prop === 'color' || prop === 'backgroundColor') {
+            // Get computed style and convert rgb to hex
+            const computedValue = window.getComputedStyle(element)[prop];
+            value = rgbToHex(computedValue) || '#000000';
         } else {
             value = window.getComputedStyle(element)[prop] || '';
         }
 
         return `
             <div class="dynamic-form-group">
-                <label class="form-label">${label}</label>
+                <label class="form-label" style="color: black;">${label}</label>
                 ${getInputForProperty(prop, value)}
             </div>
         `;
@@ -136,6 +146,25 @@ function showElementSettings(element) {
 
     settingsPanel.innerHTML = formGroups.join('');
     attachEventListeners(element);
+}
+/* this fonction is for colors */
+function rgbToHex(rgb) {
+    // Handle rgba or rgb format
+    if (!rgb || rgb === 'transparent') return '#000000';
+    
+    // If already hex, return it
+    if (rgb.startsWith('#')) return rgb;
+    
+    // Extract rgb values
+    const match = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (!match) return '#000000';
+    
+    const r = parseInt(match[1]);
+    const g = parseInt(match[2]);
+    const b = parseInt(match[3]);
+    
+    // Convert to hex
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
 
 function getInputForProperty(prop, value) {
