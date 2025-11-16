@@ -74,9 +74,53 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 /******************************
- * FONCTIONS DE L'ÉDITEUR
+ * STYLES FOR HIGHLIGHTING
  ******************************/
+function injectHighlightStyles() {
+    const iframe = document.getElementById('templatePreview');
+    if (!iframe) return;
+    
+    iframe.addEventListener('load', function() {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        if (!iframeDoc) return;
 
+        // Check if styles already exist
+        if (iframeDoc.getElementById('editorHighlightStyles')) return;
+
+        const style = iframeDoc.createElement('style');
+        style.id = 'editorHighlightStyles';
+        style.textContent = `
+            .element-hover {
+                outline: 2px dashed #3b82f6 !important;
+                outline-offset: 2px !important;
+                cursor: pointer !important;
+                transition: outline 0.2s ease !important;
+            }
+            
+            .element-highlight {
+                outline: 3px solid #ec4899 !important;
+                outline-offset: 2px !important;
+                position: relative !important;
+            }
+            
+            .element-highlight::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(236, 72, 153, 0.1);
+                pointer-events: none;
+            }
+        `;
+        iframeDoc.head.appendChild(style);
+    });
+}
+
+/******************************
+ * ELEMENT PICKER FUNCTIONALITY
+ ******************************/
 function enableElementPicker() {
     const iframe = document.getElementById('templatePreview');
     if (!iframe) return;
@@ -85,77 +129,160 @@ function enableElementPicker() {
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
         if (!iframeDoc) return;
 
+        // Add hover effect
+        iframeDoc.body.addEventListener('mouseover', (e) => {
+            const element = e.target;
+            if (element !== iframeDoc.body && element !== state.selectedElement) {
+                element.classList.add('element-hover');
+            }
+        });
+
+        // Remove hover effect
+        iframeDoc.body.addEventListener('mouseout', (e) => {
+            const element = e.target;
+            element.classList.remove('element-hover');
+        });
+
+        // Click to select element
         iframeDoc.body.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             const element = e.target;
 
+            // Remove previous selection
             if (state.selectedElement) {
                 state.selectedElement.classList.remove('element-highlight');
             }
 
+            // Add new selection
             state.selectedElement = element;
+            element.classList.remove('element-hover');
             element.classList.add('element-highlight');
+            
             showElementSettings(element);
         });
     });
 }
 
+/******************************
+ * ELEMENT SETTINGS PANEL
+ ******************************/
 function showElementSettings(element) {
     const settingsPanel = document.getElementById('dynamicSettings');
     if (!settingsPanel) return;
     
     element.dataset.elementType = element.tagName;
 
-    const commonProperties = {
-        'textContent': 'Texte',
-        'color': 'Couleur du texte',
-        'backgroundColor': 'Couleur de fond',
-        'fontSize': 'Taille de police',
-        'src': 'Source image',
-        'href': 'Lien'
-    };
+    // Check if element has text content
+    const hasText = hasTextContent(element);
+    
+    // Define properties based on element type
+    let properties = {};
+    
+    if (hasText) {
+        properties = {
+            'textContent': 'Texte',
+            'color': 'Couleur du texte',
+            'backgroundColor': 'Couleur de fond',
+            'fontSize': 'Taille de police',
+            'fontFamily': 'Police'
+        };
+    } else {
+        properties = {
+            'backgroundColor': 'Couleur de fond'
+        };
+    }
 
-    const formGroups = Object.entries(commonProperties).map(([prop, label]) => {
-        let value = '';
-        if (prop === 'textContent') {
-            // Get only the direct text content, not from child elements
+    // Add image source for img elements
+    if (element.tagName === 'IMG') {
+        properties['src'] = 'Source image';
+    }
+
+    // Add href for links
+    if (element.tagName === 'A') {
+        properties['href'] = 'Lien';
+    }
+
+    const formGroups = Object.entries(properties).map(([prop, label]) => {
+        let value = getPropertyValue(element, prop);
+        
+        return `
+            <div class="dynamic-form-group" style="margin-bottom: 1.5rem;">
+                <label class="form-label" style="color: #1e293b; font-weight: 600; margin-bottom: 0.5rem; display: block;">${label}</label>
+                ${getInputForProperty(prop, value, element)}
+            </div>
+        `;
+    }).join('');
+
+    settingsPanel.innerHTML = `
+        <h5 class="section-title">Propriétés de ${element.tagName}</h5>
+        ${formGroups}
+    `;
+    
+    attachEventListeners(element);
+}
+
+/******************************
+ * HELPER FUNCTIONS
+ ******************************/
+function hasTextContent(element) {
+    const textTags = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'SPAN', 'A', 'BUTTON', 'LABEL', 'LI'];
+    
+    if (textTags.includes(element.tagName)) {
+        return true;
+    }
+    
+    // Check if element has direct text nodes
+    const directText = Array.from(element.childNodes)
+        .filter(node => node.nodeType === Node.TEXT_NODE)
+        .map(node => node.textContent.trim())
+        .join('');
+    
+    return directText.length > 0;
+}
+
+function getPropertyValue(element, prop) {
+    let value = '';
+    
+    switch (prop) {
+        case 'textContent':
             value = Array.from(element.childNodes)
                 .filter(node => node.nodeType === Node.TEXT_NODE)
                 .map(node => node.textContent.trim())
-                .join(' ') || '';
-        } else if (prop === 'href') {
-            value = element[prop] || '';
-        } else if (prop === 'src') {
-            value = element.getAttribute('src') || '';
-        } else if (prop === 'color' || prop === 'backgroundColor') {
-            // Get computed style and convert rgb to hex
+                .join(' ') || element.textContent.trim();
+            break;
+            
+        case 'href':
+        case 'src':
+            value = element.getAttribute(prop) || '';
+            break;
+            
+        case 'color':
+        case 'backgroundColor':
             const computedValue = window.getComputedStyle(element)[prop];
             value = rgbToHex(computedValue) || '#000000';
-        } else {
+            break;
+            
+        case 'fontSize':
+            const fontSize = window.getComputedStyle(element)[prop];
+            value = parseInt(fontSize) || 16;
+            break;
+            
+        case 'fontFamily':
+            value = window.getComputedStyle(element)[prop] || 'Arial';
+            break;
+            
+        default:
             value = window.getComputedStyle(element)[prop] || '';
-        }
-
-        return `
-            <div class="dynamic-form-group">
-                <label class="form-label" style="color: black;">${label}</label>
-                ${getInputForProperty(prop, value)}
-            </div>
-        `;
-    });
-
-    settingsPanel.innerHTML = formGroups.join('');
-    attachEventListeners(element);
-}
-/* this fonction is for colors */
-function rgbToHex(rgb) {
-    // Handle rgba or rgb format
-    if (!rgb || rgb === 'transparent') return '#000000';
+    }
     
-    // If already hex, return it
+    return value;
+}
+
+function rgbToHex(rgb) {
+    if (!rgb || rgb === 'transparent') return '#000000';
     if (rgb.startsWith('#')) return rgb;
     
-    // Extract rgb values
     const match = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
     if (!match) return '#000000';
     
@@ -163,18 +290,46 @@ function rgbToHex(rgb) {
     const g = parseInt(match[2]);
     const b = parseInt(match[3]);
     
-    // Convert to hex
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
 
-function getInputForProperty(prop, value) {
+function getInputForProperty(prop, value, element) {
     switch (prop) {
         case 'color':
         case 'backgroundColor':
-            return `<input type="color" class="form-control form-control-color" data-property="${prop}" value="${value || '#000000'}">`;
+            return `
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="color" class="form-control form-control-color" data-property="${prop}" value="${value || '#000000'}" style="width: 60px; height: 40px;">
+                    <input type="text" class="form-control" data-property="${prop}-text" value="${value || '#000000'}" readonly style="flex: 1; font-family: monospace;">
+                </div>
+            `;
+            
         case 'fontSize':
-            let size = parseInt(value) || 16;
-            return `<input type="range" class="form-range" min="8" max="72" data-property="${prop}" value="${size}">`;
+            return `
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="range" class="form-range" min="8" max="72" data-property="${prop}" value="${value}" style="flex: 1;">
+                    <span style="min-width: 50px; text-align: right; font-weight: 600; color: #3b82f6;">${value}px</span>
+                </div>
+            `;
+            
+        case 'fontFamily':
+            return `
+                <select class="form-select" data-property="${prop}">
+                    <option value="Arial" ${value.includes('Arial') ? 'selected' : ''}>Arial</option>
+                    <option value="Helvetica" ${value.includes('Helvetica') ? 'selected' : ''}>Helvetica</option>
+                    <option value="Georgia" ${value.includes('Georgia') ? 'selected' : ''}>Georgia</option>
+                    <option value="Times New Roman" ${value.includes('Times') ? 'selected' : ''}>Times New Roman</option>
+                    <option value="Courier New" ${value.includes('Courier') ? 'selected' : ''}>Courier New</option>
+                    <option value="Verdana" ${value.includes('Verdana') ? 'selected' : ''}>Verdana</option>
+                </select>
+            `;
+            
+        case 'textContent':
+            if (element.tagName === 'TEXTAREA') {
+                return `<textarea class="form-control" data-property="${prop}" rows="4">${value || ''}</textarea>`;
+            }
+            return `<input type="text" class="form-control" data-property="${prop}" value="${value || ''}">`;
+            
         default:
             return `<input type="text" class="form-control" data-property="${prop}" value="${value || ''}">`;
     }
@@ -186,26 +341,60 @@ function attachEventListeners(element) {
             const prop = input.dataset.property;
             let value = input.value;
 
-            if (input.type === 'file' && input.files.length > 0) {
-                const file = input.files[0];
-                value = `url(${URL.createObjectURL(file)})`;
+            // Update corresponding text input for color pickers
+            if ((prop === 'color' || prop === 'backgroundColor') && input.type === 'color') {
+                const textInput = document.querySelector(`[data-property="${prop}-text"]`);
+                if (textInput) {
+                    textInput.value = value;
+                }
             }
 
-            if (prop === 'textContent') {
-                element.textContent = value;
-            } else if (prop === 'src') {
-                element.setAttribute('src', value);
-            } else if (prop === 'href') {
-                element.setAttribute('href', value);
-            } else if (prop === 'fontSize') {
-                element.style[prop] = value + 'px';
-            } else {
-                element.style[prop] = value;
-            }
-
-            state.modifications.set(element, { ...(state.modifications.get(element) || {}), [prop]: value });
+            // Apply the change to the element
+            applyPropertyChange(element, prop, value);
         });
     });
+}
+
+function applyPropertyChange(element, prop, value) {
+    if (prop === 'textContent') {
+        element.textContent = value;
+    } else if (prop === 'src' || prop === 'href') {
+        element.setAttribute(prop, value);
+    } else if (prop === 'fontSize') {
+        element.style[prop] = value + 'px';
+        // Update the display value
+        const rangeInput = document.querySelector(`[data-property="${prop}"]`);
+        if (rangeInput && rangeInput.nextElementSibling) {
+            rangeInput.nextElementSibling.textContent = value + 'px';
+        }
+    } else if (prop.endsWith('-text')) {
+        // Skip the text input for color (it's readonly)
+        return;
+    } else {
+        element.style[prop] = value;
+    }
+
+    // Save modification to state
+    state.modifications.set(element, { 
+        ...(state.modifications.get(element) || {}), 
+        [prop]: value 
+    });
+}
+
+/******************************
+ * INITIALIZATION
+ ******************************/
+// Don't add DOMContentLoaded listener here - it's already in the main file
+// Just export the functions to be called from the main initialization
+if (typeof window !== 'undefined') {
+    window.injectHighlightStyles = injectHighlightStyles;
+    window.enableElementPickerWithHighlight = enableElementPicker;
+    
+    // Auto-initialize if iframe is already loaded
+    const iframe = document.getElementById('templatePreview');
+    if (iframe && iframe.contentDocument) {
+        injectHighlightStyles();
+    }
 }
 
 /******************************
