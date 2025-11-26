@@ -91,14 +91,14 @@ function injectHighlightStyles() {
         style.id = 'editorHighlightStyles';
         style.textContent = `
             .element-hover {
-                outline: 2px dashed #3b82f6 !important;
+                outline: 3px dashed #3b82f6 !important;
                 outline-offset: 2px !important;
                 cursor: pointer !important;
-                transition: outline 0.2s ease !important;
+                transition: outline 0.1s ease !important;
             }
             
             .element-highlight {
-                outline: 3px solid #ec4899 !important;
+                outline: 3px dashed #000 !important;
                 outline-offset: 2px !important;
                 position: relative !important;
             }
@@ -110,7 +110,6 @@ function injectHighlightStyles() {
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background: rgba(236, 72, 153, 0.1);
                 pointer-events: none;
             }
         `;
