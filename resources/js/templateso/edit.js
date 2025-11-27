@@ -174,17 +174,32 @@ function showElementSettings(element) {
 
     // Check if element has text content
     const hasText = hasTextContent(element);
+
+    // Get actual CSS properties from classes
+    const cssProps = getCSSClassProperties(element);
+    console.log(cssProps)
+
     
     // Define properties based on element type
     let properties = {};
+
+    if (cssProps.color) properties['color'] = 'Couleur du texte';
+    if (cssProps.backgroundColor) properties['backgroundColor'] = 'Couleur de fond';
+    if (cssProps.fontSize) properties['fontSize'] = 'Taille de police';
+    if (cssProps.fontFamily) properties['fontFamily'] = 'Police';
+    if (cssProps.padding) properties['padding'] = 'Padding';
+    if (cssProps.margin) properties['margin'] = 'Margin';
+    if (cssProps.border) properties['border'] = 'Bordure';
     
     if (hasText) {
         properties = {
             'textContent': 'Texte',
+            'fontFamily': 'Police',
             'color': 'Couleur du texte',
-            'backgroundColor': 'Couleur de fond',
             'fontSize': 'Taille de police',
-            'fontFamily': 'Police'
+            'backgroundColor': 'Couleur de fond'
+            
+            
         };
     } else {
         properties = {
@@ -453,6 +468,43 @@ if (saveDraftBtn) {
             alert('Erreur lors de la sauvegarde');
         }
     });
+}
+
+
+function getCSSClassProperties(element) {
+    const iframe = document.getElementById('templatePreview');
+    const iframeDoc = iframe.contentDocument;
+    const properties = {};
+    
+    // Get all stylesheets
+    const styleSheets = Array.from(iframeDoc.styleSheets);
+    
+    styleSheets.forEach(sheet => {
+        try {
+            const rules = Array.from(sheet.cssRules || []);
+            
+            rules.forEach(rule => {
+                // Check if this rule applies to the element
+                if (rule.selectorText && element.matches(rule.selectorText)) {
+                    // Get all properties from this rule
+                    const style = rule.style;
+                    
+                    for (let i = 0; i < style.length; i++) {
+                        const prop = style[i];
+                        const value = style.getPropertyValue(prop);
+                        
+                        // Convert CSS property names to camelCase
+                        const camelProp = prop.replace(/-([a-z])/g, g => g[1].toUpperCase());
+                        properties[camelProp] = value;
+                    }
+                }
+            });
+        } catch (e) {
+            console.warn('Cannot read stylesheet:', e);
+        }
+    });
+    
+    return properties;
 }
 
 /******************************

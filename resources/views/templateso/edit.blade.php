@@ -512,57 +512,7 @@
             background: #2563eb;
         }
 
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .editor-container {
-                flex-direction: column;
-                height: auto;
-            }
-
-            .editor-sidebar {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid #e2e8f0;
-            }
-
-            .editor-main {
-                width: 100%;
-                min-height: 600px;
-            }
-
-            .ai-panel {
-                width: calc(100% - 4rem);
-                max-width: 400px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .editor-header-wrapper {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .editor-header-left,
-            .editor-header-center {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .editor-actions {
-                width: 100%;
-                flex-wrap: wrap;
-            }
-
-            .editor-btn {
-                flex: 1;
-                min-width: 120px;
-            }
-
-            .editor-container {
-                padding: 0;
-                gap: 0;
-            }
-        }
+        
     </style>
 </head>
 
