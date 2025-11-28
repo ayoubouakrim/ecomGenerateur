@@ -196,15 +196,18 @@ function showElementSettings(element) {
             'textContent': 'Texte',
             'fontFamily': 'Police',
             'color': 'Couleur du texte',
-            'fontSize': 'Taille de police',
-            'backgroundColor': 'Couleur de fond'
-            
-            
+            'fontSize': 'Taille de police',    
         };
+
+        if (cssProps.backgroundColor) {
+            properties['backgroundColor'] = 'Couleur de fond';
+        }
     } else {
-        properties = {
+        if(cssProps.backgroundColor) {
+            properties = {
             'backgroundColor': 'Couleur de fond'
-        };
+            };
+        }
     }
 
     // Add image source for img elements
@@ -246,13 +249,7 @@ function hasTextContent(element) {
         return true;
     }
     
-    // Check if element has direct text nodes
-    const directText = Array.from(element.childNodes)
-        .filter(node => node.nodeType === Node.TEXT_NODE)
-        .map(node => node.textContent.trim())
-        .join('');
     
-    return directText.length > 0;
 }
 
 function getPropertyValue(element, prop) {
