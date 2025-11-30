@@ -203,10 +203,12 @@ function showElementSettings(element) {
             properties['backgroundColor'] = 'Couleur de fond';
         }
     } else {
-        if(cssProps.backgroundColor) {
+        if(cssProps.backgroundColor && cssProps.backgroundColor !== "initial") {
             properties = {
             'backgroundColor': 'Couleur de fond'
             };
+        } else {
+            properties = {};
         }
     }
 
